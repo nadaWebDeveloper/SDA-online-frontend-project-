@@ -20,6 +20,9 @@ const AdminSideBar = () => {
     <li>
       <Link to='/dashboard/admin/orders'>Orders</Link>
     </li>
+    <li>
+      <Link to='/dashboard/admin/users'>Users</Link>
+    </li>
   </ul>
   </aside>
   </>  )

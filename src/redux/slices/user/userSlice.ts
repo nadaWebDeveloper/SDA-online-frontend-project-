@@ -1,57 +1,71 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import api from '../../../api'
 
-export const fetchProducts = createAsyncThunk('users/fetchProducts', async() =>
+export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
 {
-  const response = await api.get('/mock/e-commerce/products.json')
+  const response = await api.get('/mock/e-commerce/users.json')
   return response.data
 })
 
-export type Product = {
+export type user = {
   id: number
-  name: string
-  image: string
-  description: string
-  categories: number[]
-  variants: string[]
-  sizes: string[]
+  firstName: string
+  lastName: string
+  email: string
+  password: string | number
+  role: string
 }
 
-export type ProductState = {
-  products: Product[]
+export type userState = {
+  users: user[]
   error: null | string
   isLoading: boolean
+  isLoggedIn: boolean
+  userData: user | null
 }
 
-const initialState: ProductState = {
-  products: [],
+//set the data in the local storage
+
+const initialState: userState = {
+  users: [],
   error: null,
-  isLoading: false
+  isLoading: false,
+  isLoggedIn: false,
+  userData: null
 }
 
-export const productSlice = createSlice({
-  name: 'products',
+export const userSlice = createSlice({
+  name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    login: (state, action) => {
+      state.isLoggedIn = true
+      state.userData = action.payload
+    },
+    logout: (state) => {
+      state.isLoggedIn = false
+      state.userData = null
+    }
+  },
   extraReducers(builder){
-    builder.addCase(fetchProducts.pending, (state)=> {
+    builder.addCase(fetchUser.pending, (state)=> {
       state.isLoading = true;
       state.error = null;
     })
-    builder.addCase(fetchProducts.fulfilled, (state,action) => {
-      state.products = action.payload
+    builder.addCase(fetchUser.fulfilled, (state,action) => {
+      state.users = action.payload
       state.isLoading = false
     })
-    builder.addCase(fetchProducts.rejected, (state, action) => {
+    builder.addCase(fetchUser.rejected, (state, action) => {
       state.error = action.error.message || 'An Error accured'
       state.isLoading = false
     })
 
   }
 })
-export const {  } = productSlice.actions
+export const { login ,logout } = userSlice.actions
 
-export default productSlice.reducer
+export default userSlice.reducer
 
 
 

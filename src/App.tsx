@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 
 import './App.css'
-import { HomeProducts } from './components/HomeProducts'
+import HomeProducts  from './components/HomeProducts'
 import Footer from './components/Footer'
 import NavBar from './components/NavBar'
 import Error from './components/Error'
@@ -16,6 +16,11 @@ import Admin from './components/admin/Admin'
 import Category from './components/Category'
 import AdminOrder from './components/admin/AdminOrder'
 import Products from './components/product/Products'
+import ListUser from './components/admin/ListUser'
+import Login from './components/loggin/Login'
+import ProtectRouterUser from './components/protectRouter/ProtectRouterUser'
+import ProtectRouterAdmin from './components/protectRouter/ProtectRouterAdmin'
+import Register from './components/loggin/Register'
 
 function App() {
   return (
@@ -26,24 +31,29 @@ function App() {
 <Routes>
 <Route path='/' element={<HomeProducts />} />
 <Route path='/contact' element={<Contact />} />
+<Route path='/login' element={<Login pathName='/' />} />
+<Route path='/register' element={<Register />} />
 <Route path='/product' element={<ProductDetails />} />
 
-<Route path='/dashboard/user' element={<User />} />
-<Route path='/dashboard/user/profile' element={<UserProfile />} />
-<Route path='/dashboard/user/orders' element={<UserOrders />} />
+<Route path='/dashboard' element={<ProtectRouterUser />}>  // this line to protected all inside in go to component and check if (isLoggedIn = true) then enter in all path
+<Route path='user' element={<User />} />
+<Route path='user/profile' element={<UserProfile />} />
+<Route path='user/orders' element={<UserOrders />} />
+</Route>
 
-<Route path='/dashboard/admin' element={<Admin />} />
-<Route path='/dashboard/admin/category' element={<Category />} />
-<Route path='/dashboard/admin/products' element={<Products />} />
-<Route path='/dashboard/admin/orders' element={<AdminOrder />} />
+<Route path='/dashboard' element={<ProtectRouterAdmin />}> //protected admin page & check (isLoggedIn = true && userData?.role === 'admin') can not anu user enter except admin
+<Route path='admin' element={<Admin />} />
+<Route path='admin/category' element={<Category />} />
+<Route path='admin/products' element={<Products />} />
+<Route path='admin/orders' element={<AdminOrder />} />
+<Route path='admin/users' element={<ListUser />} />
+</Route>
+
 
 <Route path='*' element={<Error />} />
 </Routes>
 <Footer/>
 </BrowserRouter>
-
-
-      <HomeProducts />
     </div>
   )
 }

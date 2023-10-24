@@ -1,57 +1,52 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import api from '../../../api'
 
-export const fetchProducts = createAsyncThunk('users/fetchProducts', async() =>
+export const fetchCategory = createAsyncThunk('users/fetchCategory', async() =>
 {
-  const response = await api.get('/mock/e-commerce/products.json')
+  const response = await api.get('/mock/e-commerce/categories.json')
   return response.data
 })
 
-export type Product = {
+export type category = {
   id: number
   name: string
-  image: string
-  description: string
-  categories: number[]
-  variants: string[]
-  sizes: string[]
 }
 
-export type ProductState = {
-  products: Product[]
+export type categoryState = {
+  categories: category[]
   error: null | string
   isLoading: boolean
 }
 
-const initialState: ProductState = {
-  products: [],
+const initialState: categoryState = {
+  categories: [],
   error: null,
   isLoading: false
 }
 
-export const productSlice = createSlice({
-  name: 'products',
+export const categorySlice = createSlice({
+  name: 'categories',
   initialState,
   reducers: {},
   extraReducers(builder){
-    builder.addCase(fetchProducts.pending, (state)=> {
+    builder.addCase(fetchCategory.pending, (state)=> {
       state.isLoading = true;
       state.error = null;
     })
-    builder.addCase(fetchProducts.fulfilled, (state,action) => {
-      state.products = action.payload
+    builder.addCase(fetchCategory.fulfilled, (state,action) => {
+      state.categories = action.payload
       state.isLoading = false
     })
-    builder.addCase(fetchProducts.rejected, (state, action) => {
+    builder.addCase(fetchCategory.rejected, (state, action) => {
       state.error = action.error.message || 'An Error accured'
       state.isLoading = false
     })
 
   }
 })
-export const {  } = productSlice.actions
+export const {  } = categorySlice.actions
 
-export default productSlice.reducer
+export default categorySlice.reducer
 
 
 
