@@ -27,6 +27,10 @@ const  HomeProducts = () => {
     Dispatch(searchProduct(inputValue))
   }
 
+  const searchProducts = searchTerm
+  ? products.filter((product) => product.name.toLowerCase().includes
+  (searchTerm.toLowerCase()))
+  : products
  
  
 
