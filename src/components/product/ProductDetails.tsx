@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router"
 import { AppDispatch, RootState } from "../../redux/store"
 import { useEffect } from "react"
-import {  findProductByName } from "../../redux/slices/products/productSlice"
+import {  findProductById } from "../../redux/slices/products/productSlice"
 import { FaHeart , FaCalendar, FaShapes} from "react-icons/fa";
 
 import Error from "../Error"
