@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../redux/store"
 
 function NavBar() {
 
-  const {isLoggedIn , userData} = useSelector((state: RootState) => state.users)
+  const {isLoggedIn , userData} = useSelector((state: RootState) => state.usersReducer)
 
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()

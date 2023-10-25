@@ -7,7 +7,7 @@ import Login from "../loggin/Login"
 const ProtectRouterAdmin = () => {
     const pathLocationEveryUser = useLocation()
 
-    const {isLoggedIn , userData} = useSelector((state: RootState) => state.users)
+    const {isLoggedIn , userData} = useSelector((state: RootState) => state.usersReducer)
     //عشان المستخدم لما يسجل دخول تتغير ل صح وبعدها يقدر يدخل على الصفحات اللي مسسموح له يدخلها لانها سجل دخول 
 
   return  isLoggedIn && userData?.role === 'admin' ? <Outlet /> : <Login pathName={pathLocationEveryUser.pathname} />

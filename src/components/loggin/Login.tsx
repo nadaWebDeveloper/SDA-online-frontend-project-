@@ -6,7 +6,7 @@ import { fetchUser, login } from "../../redux/slices/user/userSlice"
 
 const Login = ({pathName}: {pathName: string}) => {
 
-    const {users} = useSelector((state: RootState) => state.users)
+    const {users} = useSelector((state: RootState) => state.usersReducer)
     const dispatch=useDispatch<AppDispatch>();  //generics "is the better and more commonly used way to declare the type when working with Redux Toolkit and TypeScript in a React application."
 
     // const Dispatch: AppDispatch = useDispatch() ""

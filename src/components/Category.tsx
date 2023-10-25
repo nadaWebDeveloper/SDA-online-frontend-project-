@@ -8,7 +8,7 @@ import AdminSideBar from "./admin/AdminSideBar"
 
 const Category = () => {
 
-  const {categories, isLoading, error} = useSelector((state: RootState) => state.categories)
+  const {categories, isLoading, error} = useSelector((state: RootState) => state.categoriesReducer)
   const Dispatch: AppDispatch = useDispatch()
  
   useEffect(() => {

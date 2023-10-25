@@ -9,7 +9,7 @@ import { FaEdit } from "react-icons/fa";
 
 const ListUser = () => {
 
-    const {users, isLoading, error} = useSelector((state: RootState) => state.users)
+    const {users, isLoading, error} = useSelector((state: RootState) => state.usersReducer)
     const Dispatch: AppDispatch = useDispatch()
    
     useEffect(() => {

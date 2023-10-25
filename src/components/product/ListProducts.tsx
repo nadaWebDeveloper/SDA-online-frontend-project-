@@ -10,7 +10,7 @@ import { FaHeart } from "react-icons/fa";
 const ListProducts = () => {
 
 
-  const {products, isLoading, error} = useSelector((state: RootState) => state.products)
+  const {products, isLoading, error} = useSelector((state: RootState) => state.productsReducer)
   const Dispatch: AppDispatch = useDispatch()
  
   useEffect(() => {

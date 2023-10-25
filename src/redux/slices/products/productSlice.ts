@@ -21,18 +21,39 @@ export type ProductState = {
   products: Product[]
   error: null | string
   isLoading: boolean
+  searchTerm: string
+  singlePageProduct: Product
 }
 
 const initialState: ProductState = {
   products: [],
   error: null,
-  isLoading: false
+  isLoading: false,
+  searchTerm: '',
+  singlePageProduct: {} as Product
 }
 
 export const productSlice = createSlice({
   name: 'products',
   initialState,
-  reducers: {},
+  reducers: {
+    searchProduct:(state, action)=> {
+      state.searchTerm = action.payload
+    },
+     findProductById: (state, action) =>  
+    {
+          console.log(action.payload);
+          const id = action.payload
+          // const name = action.payload
+
+          const foundSingleProduct = state.products.find((product) => product.id === id )
+    if(foundSingleProduct)
+    {
+      state.singlePageProduct = foundSingleProduct
+
+    }
+}
+  },
   extraReducers(builder){
     builder.addCase(fetchProducts.pending, (state)=> {
       state.isLoading = true;
@@ -49,7 +70,7 @@ export const productSlice = createSlice({
 
   }
 })
-export const {  } = productSlice.actions
+export const { findProductById, searchProduct} = productSlice.actions
 
 export default productSlice.reducer
 
