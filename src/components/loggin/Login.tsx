@@ -7,10 +7,12 @@ import { fetchUser, login } from "../../redux/slices/user/userSlice"
 const Login = ({pathName}: {pathName: string}) => {
 
     const {users} = useSelector((state: RootState) => state.users)
-    const Dispatch: AppDispatch = useDispatch()
+    const dispatch=useDispatch<AppDispatch>();  //generics "is the better and more commonly used way to declare the type when working with Redux Toolkit and TypeScript in a React application."
+
+    // const Dispatch: AppDispatch = useDispatch() ""
    
     useEffect(() => {
-     Dispatch(fetchUser())
+        dispatch(fetchUser())
     }, [])
 const navigate =  useNavigate()
 const [user, setUser] = useState({
@@ -41,7 +43,7 @@ password: ''
         if(foundUser && foundUser.password === user.password)
         {
           //loggedin
-          Dispatch(login(foundUser))
+          dispatch(login(foundUser))
           navigate(pathName ? pathName : `/dashboard/${foundUser.role}`)
           console.log(`Welcome`);
         }

@@ -3,8 +3,20 @@ import api from '../../../api'
 
 export const fetchCategory = createAsyncThunk('users/fetchCategory', async() =>
 {
-  const response = await api.get('/mock/e-commerce/categories.json')
-  return response.data
+  try {
+    const response = await api.get('/mock/e-commerce/categories.json')
+      // checking there is any issue with network
+      if (!response) {
+        throw new Error('Network response error');
+      }
+    return response.data
+
+  } 
+  
+  catch (error) {
+    //checking if there is any issue when fetch process
+  console.log(error) 
+  }
 })
 
 export type category = {

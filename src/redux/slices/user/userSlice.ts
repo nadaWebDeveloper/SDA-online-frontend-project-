@@ -24,14 +24,18 @@ export type userState = {
   userData: user | null
 }
 
-//set the data in the local storage
+//set the data in the local storage if user refresh the page keep logged in (fetch data)
+const dataReLoad = localStorage.getItem('loginData') !== null 
+? JSON.parse(String(localStorage.getItem('loginData')))
+: []
+
 
 const initialState: userState = {
   users: [],
   error: null,
   isLoading: false,
-  isLoggedIn: false,
-  userData: null
+  isLoggedIn: dataReLoad.isLoggedIn,
+  userData: dataReLoad.userData
 }
 
 export const userSlice = createSlice({
@@ -41,10 +45,20 @@ export const userSlice = createSlice({
     login: (state, action) => {
       state.isLoggedIn = true
       state.userData = action.payload
+      //when log in save data in local Storage 
+      localStorage.setItem('loginData', JSON.stringify({
+        isLoggedIn: state.isLoggedIn,
+        userData: state.userData
+      }))
     },
     logout: (state) => {
       state.isLoggedIn = false
       state.userData = null
+        //when log out reset data in local Storage 
+        localStorage.setItem('loginData', JSON.stringify({
+          isLoggedIn: state.isLoggedIn,
+          userData: state.userData
+        }))
     }
   },
   extraReducers(builder){
