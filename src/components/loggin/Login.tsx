@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { AppDispatch, RootState } from '../../redux/store'
 import { fetchUser, login } from '../../redux/slices/user/userSlice'
+import { Link } from 'react-router-dom'
 
 const Login = ({ pathName }: { pathName: string }) => {
   const { users } = useSelector((state: RootState) => state.usersReducer)
@@ -98,6 +99,12 @@ const Login = ({ pathName }: { pathName: string }) => {
         />
         <button>Login</button>
       </form>
+
+         <div>
+          <h4>Don't have an account ? <span>   
+         <Link to="/register">Register</Link>
+        </span></h4>
+        </div>
     </>
   )
 }

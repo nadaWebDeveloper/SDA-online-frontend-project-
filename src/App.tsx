@@ -29,13 +29,14 @@ function App() {
    <BrowserRouter>
 <NavBar />
 <Routes>
-<Route path='/' element={<HomeProducts />} />
+  {/* when logout go to home page */}
+<Route path='/logout' element={<HomeProducts />} />
   {/* for single page  */}
 <Route path='/products/:name/:id' element={<ProductDetails />} />
 <Route path='/contact' element={<Contact />} />
 <Route path='/login' element={<Login pathName='/' />} />
 <Route path='/register' element={<Register />} />
-{/* <Route path='/product' element={<ProductDetails />} /> */}
+<Route path='/product' element={<ProductDetails />} />
 
 <Route path='/dashboard' element={<ProtectRouterUser />}>  // this line to protected all inside in go to component and check if (isLoggedIn = true) then enter in all path
 <Route path='user' element={<User />} />

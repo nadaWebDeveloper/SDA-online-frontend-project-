@@ -27,20 +27,24 @@ function NavBar() {
         <li>
         <Link to="/contact">Contact</Link>
         </li>
-        <li>
-        <Link to="/login">login</Link>
-        </li>
-        <li>
-          <Link to="/register">Register</Link>
-        </li>
-
+       
+       
         {isLoggedIn && (
           <>
         <li>
        <Link to="/logout" onClick={handleLogOut}>logout</Link>
        </li>
         <li>
-         <Link to={`/dashboard/${userData?.role}`}>{userData?.role} Dashboard</Link>
+         <Link to={`/dashboard/${userData?.role}`}>{userData?.role} </Link>
+        </li>
+          </>
+
+        )}
+
+      {!isLoggedIn && (
+          <>
+       <li>
+        <Link to="/login">login</Link>
         </li>
           </>
 
