@@ -14,6 +14,7 @@ export type user = {
   email: string
   password: string | number
   role: string
+  ban: boolean
 }
 
 export type userState = {
@@ -23,6 +24,7 @@ export type userState = {
   isLoggedIn: boolean
   userData: user | null
   searchTerm: string
+  ban: boolean
 
 }
 
@@ -38,7 +40,8 @@ const initialState: userState = {
   isLoading: false,
   isLoggedIn: dataReLoad.isLoggedIn,
   userData: dataReLoad.userData,
-  searchTerm: ''
+  searchTerm: '',
+  ban: false
 }
 
 export const userSlice = createSlice({
@@ -71,6 +74,14 @@ export const userSlice = createSlice({
       const filterUser= state.users.filter((user) => user.id !== action.payload)
       state.users = filterUser
 
+    },
+    blockUser :(state, action) =>{
+      const id = action.payload
+      const findUser= state.users.find((user) => user.id === id)
+      if(findUser){
+        findUser.ban = !findUser.ban //flip the value
+      }
+
     }
   },
   extraReducers(builder){
@@ -89,7 +100,7 @@ export const userSlice = createSlice({
 
   }
 })
-export const { login ,logout ,searchUser ,deleteUser  } = userSlice.actions
+export const { login ,logout ,searchUser ,deleteUser , blockUser  } = userSlice.actions
 
 export default userSlice.reducer
 
