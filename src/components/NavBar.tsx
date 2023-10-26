@@ -30,6 +30,9 @@ function NavBar() {
         <li>
         <Link to="/login">login</Link>
         </li>
+        <li>
+          <Link to="/register">Register</Link>
+        </li>
 
         {isLoggedIn && (
           <>

@@ -82,6 +82,9 @@ export const userSlice = createSlice({
         findUser.ban = !findUser.ban //flip the value
       }
 
+    },
+    registerUser: (state, action) =>{
+      state.users.push(action.payload)
     }
   },
   extraReducers(builder){
@@ -100,7 +103,7 @@ export const userSlice = createSlice({
 
   }
 })
-export const { login ,logout ,searchUser ,deleteUser , blockUser  } = userSlice.actions
+export const { login ,logout ,searchUser ,deleteUser , blockUser ,registerUser  } = userSlice.actions
 
 export default userSlice.reducer
 
