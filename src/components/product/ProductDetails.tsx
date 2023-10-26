@@ -45,6 +45,7 @@ const ProductDetails = () => {
 
   <div className="product-info">
   <h1 className="product-brand">{singlePageProduct.name}</h1>
+  <h1 className="product-brand">{singlePageProduct.price}</h1>
   <h1 className="product-short-des">{singlePageProduct.description}</h1>
   <h1 className="actual-price">{singlePageProduct.categories && singlePageProduct.categories.join(', ')}</h1>
   <h1 className="actual-price">{singlePageProduct.sizes && singlePageProduct.sizes.join(', ')}</h1>

@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect } from "react";
 import { fetchProducts, searchProduct } from "../redux/slices/products/productSlice";
 import { Link } from "react-router-dom"
 import {  FaHeart } from "react-icons/fa";
+import SortProducts from "./product/SortProducts";
 
 
 
@@ -40,10 +41,9 @@ const  HomeProducts = () => {
   <h3>Filter by Price</h3>
   <h3>Filter by Category</h3>
 </div>
-<div>
-<h3>search by Price</h3>
+<div className="filter">
 <input type="text" name= "search" placeholder="Search" value={searchTerm} onChange={handleSearch} />
-
+<SortProducts />
 </div>
 
 <div>
@@ -55,7 +55,7 @@ const  HomeProducts = () => {
       <button className="nxt-btn"></button>
 
      {searchProducts.map((product)=> {
-      const { id, name,image,description,categories,variants,sizes} = product
+      const { id, name,image,description,categories,variants,sizes, price} = product
       return(
         <div className="product-container" key={id}>
         <div className="product-card">
@@ -68,6 +68,7 @@ const  HomeProducts = () => {
           <div className="product-info">
             <h2 className="product-brand">{name}</h2>
             <p className="product-short-des">{description}</p>
+            <span className="price">{price} $</span>
             <span className="price">{sizes}</span>
             <span className="actual-price">{variants}</span>
             {/* <span className="price">{sizes} RS</span>

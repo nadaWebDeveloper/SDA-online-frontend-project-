@@ -5,6 +5,7 @@ import AdminSideBar from "../admin/AdminSideBar"
 import { AppDispatch, RootState } from "../../redux/store"
 import { fetchProducts, searchProduct } from "../../redux/slices/products/productSlice"
 import { FaEdit, FaHeart } from "react-icons/fa";
+import SortProducts from "./SortProducts"
 
 
 const Products = () => {
@@ -49,14 +50,14 @@ const searchProducts = searchTerm
       <button className="pre-btn"></button>
       <button className="nxt-btn"></button>
 
-      <div>
-<h3>search by Price</h3>
-<input type="text" name= "search" placeholder="Search" value={searchTerm} onChange={handleSearch} />
-
-</div>
+      <div className="filter">
+    
+      <input type="text" name= "search" placeholder="Search" value={searchTerm} onChange={handleSearch} />
+      <SortProducts />
+      </div>
 
      {searchProducts.map((product)=> {
-      const { id, name,image,description,categories,variants,sizes} = product
+      const { id, name,image,description,categories,variants,sizes, price} = product
       return(
         <div className="product-container" key={id}>
         <div className="product-card">
@@ -69,8 +70,10 @@ const searchProducts = searchTerm
           <div className="product-info">
             <h2 className="product-brand">{name}</h2>
             <p className="product-short-des">{description}</p>
-            <span className="price">{sizes}</span>
+            <span className="price">{price} $</span>
             <span className="actual-price">{variants}</span>
+            <span className="actual-price">{sizes}</span>
+
             {/* <span className="price">{sizes} RS</span>
             <span className="actual-price">{variants}</span> */}
              <button className="card-btn">Delete</button>

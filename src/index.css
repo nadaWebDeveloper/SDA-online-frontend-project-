@@ -319,3 +319,10 @@ grid-template-columns: auto auto
   display: grid;
   grid-template-columns: auto;
 }
+
+/* for search & sort */
+.filter
+{
+  display: flex;
+  justify-content: space-around;
+}

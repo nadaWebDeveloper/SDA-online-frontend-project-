@@ -15,6 +15,7 @@ export type Product = {
   categories: number[]
   variants: string[]
   sizes: string[]
+  price: number
 }
 
 export type ProductState = {
@@ -52,7 +53,16 @@ export const productSlice = createSlice({
       state.singlePageProduct = foundSingleProduct
 
     }
-}
+},
+    sortProducts: (state, action) =>
+   {
+    const sortCategory = action.payload
+    if(sortCategory === 'name'){
+      state.products.sort((a, b) => a.name.localeCompare(b.name))
+    }else if (sortCategory == 'price'){
+      state.products.sort((a, b) => a.price - b.price )
+    }
+   }
   },
   extraReducers(builder){
     builder.addCase(fetchProducts.pending, (state)=> {
@@ -70,7 +80,7 @@ export const productSlice = createSlice({
 
   }
 })
-export const { findProductById, searchProduct} = productSlice.actions
+export const { findProductById, searchProduct, sortProducts} = productSlice.actions
 
 export default productSlice.reducer
 
