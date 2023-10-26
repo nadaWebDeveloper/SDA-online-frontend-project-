@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router"
 import { AppDispatch, RootState } from "../../redux/store"
 import { useEffect } from "react"
-import {  findProductById } from "../../redux/slices/products/productSlice"
+import {  fetchProducts, findProductById } from "../../redux/slices/products/productSlice"
 import { FaHeart , FaCalendar, FaShapes} from "react-icons/fa";
 
 import Error from "../Error"
@@ -17,7 +17,9 @@ const ProductDetails = () => {
   const Dispatch = useDispatch<AppDispatch>()
  
   useEffect(() => {
-   Dispatch(findProductById(Number(id)))
+    //fetch all data on store then fetch single page because when user refresh the page not remove all data on screen
+    Dispatch(fetchProducts()).then(() => Dispatch(findProductById(Number(id)))
+    )
   }, [])
  
   if(isLoading)

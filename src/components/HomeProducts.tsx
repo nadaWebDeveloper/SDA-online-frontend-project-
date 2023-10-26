@@ -6,6 +6,7 @@ import { fetchProducts, searchProduct } from "../redux/slices/products/productSl
 import { Link } from "react-router-dom"
 import {  FaHeart } from "react-icons/fa";
 import SortProducts from "./product/SortProducts";
+import Search from "./Filtering/Search";
 
 
 
@@ -42,7 +43,7 @@ const  HomeProducts = () => {
   <h3>Filter by Category</h3>
 </div>
 <div className="filter">
-<input type="text" name= "search" placeholder="Search" value={searchTerm} onChange={handleSearch} />
+  <Search searchTerm= {searchTerm} handleSearch={handleSearch}/>
 <SortProducts />
 </div>
 

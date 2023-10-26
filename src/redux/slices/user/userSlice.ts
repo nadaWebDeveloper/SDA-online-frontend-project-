@@ -22,6 +22,8 @@ export type userState = {
   isLoading: boolean
   isLoggedIn: boolean
   userData: user | null
+  searchTerm: string
+
 }
 
 //set the data in the local storage if user refresh the page keep logged in (fetch data)
@@ -35,7 +37,8 @@ const initialState: userState = {
   error: null,
   isLoading: false,
   isLoggedIn: dataReLoad.isLoggedIn,
-  userData: dataReLoad.userData
+  userData: dataReLoad.userData,
+  searchTerm: ''
 }
 
 export const userSlice = createSlice({
@@ -59,6 +62,15 @@ export const userSlice = createSlice({
           isLoggedIn: state.isLoggedIn,
           userData: state.userData
         }))
+    },
+    searchUser:(state, action)=> {
+      state.searchTerm = action.payload
+    },
+    deleteUser :(state, action) =>{
+
+      const filterUser= state.users.filter((user) => user.id !== action.payload)
+      state.users = filterUser
+
     }
   },
   extraReducers(builder){
@@ -77,7 +89,7 @@ export const userSlice = createSlice({
 
   }
 })
-export const { login ,logout } = userSlice.actions
+export const { login ,logout ,searchUser ,deleteUser  } = userSlice.actions
 
 export default userSlice.reducer
 

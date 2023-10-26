@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../../redux/store"
 import { fetchProducts, searchProduct } from "../../redux/slices/products/productSlice"
 import { FaEdit, FaHeart } from "react-icons/fa";
 import SortProducts from "./SortProducts"
+import Search from "../Filtering/Search"
 
 
 const Products = () => {
@@ -51,8 +52,7 @@ const searchProducts = searchTerm
       <button className="nxt-btn"></button>
 
       <div className="filter">
-    
-      <input type="text" name= "search" placeholder="Search" value={searchTerm} onChange={handleSearch} />
+    <Search searchTerm={searchTerm} handleSearch={handleSearch} />
       <SortProducts />
       </div>
 

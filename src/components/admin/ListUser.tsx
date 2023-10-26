@@ -1,15 +1,16 @@
 import AdminSideBar from "./AdminSideBar"
 import { useDispatch, useSelector } from "react-redux"
-import { useEffect } from "react"
+import { ChangeEvent, useEffect } from "react"
 
 import { AppDispatch, RootState } from '../../redux/store'
-import { fetchUser } from '../../redux/slices/user/userSlice'
+import { deleteUser, fetchUser, searchUser } from '../../redux/slices/user/userSlice'
 import { FaEdit } from "react-icons/fa";
+import Search from "../Filtering/Search"
 
 
 const ListUser = () => {
 
-    const {users, isLoading, error} = useSelector((state: RootState) => state.usersReducer)
+    const {users, isLoading, error , searchTerm} = useSelector((state: RootState) => state.usersReducer)
     const Dispatch: AppDispatch = useDispatch()
    
     useEffect(() => {
@@ -20,28 +21,49 @@ const ListUser = () => {
     {return <h1>loading ...</h1>}
     if(error)
     {return <h1>{error}</h1>}
+
+    const handleSearch =(event: ChangeEvent<HTMLInputElement>)=>{
+      const inputValue = event.target.value
+      Dispatch(searchUser(inputValue))
+    }
+    
+    const searchUsers = searchTerm
+    ? users.filter((user) => user.firstName.toLowerCase().includes
+    (searchTerm.toLowerCase()))
+    : users
+
+
+     const handleDelete =(id: number)=>{
+    
+      Dispatch(deleteUser(id))
+    }
+
    
   return (
 <>
 
 <AdminSideBar />
+<Search searchTerm= {searchTerm} handleSearch={handleSearch}/>
       <div className="mainContent">
       <h2>List all the User here </h2> 
       </div>
  
- {users.length > 0 ?(   
+ {searchUsers.length > 0 ?(   
       
-      users.map((user)=> {
+      searchUsers.map((user)=> {
       const { id,firstName,lastName,email,role} = user
+    if(user.role !== 'admin') {  //this condition for display only user on dashboard admin 
       return(
         <div className="category" key={id}>
             <h2 className="product-brand">{`${firstName} ${lastName}`}</h2>
             <h4 className="product-brand">{role}</h4>           
              <h3 className="product-brand">{email}</h3>
-             <button >Delete</button>
+             <button onClick={()=> {handleDelete(user.id)}} >Delete</button>     
+              {/* to delete user from database */}
             <button ><FaEdit /></button> 
             </div>
-      ) 
+      )
+    }
      })):(  <h1>Not Add User Yet ... </h1>)}  
  
   
