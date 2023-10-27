@@ -4,8 +4,8 @@ import { AppDispatch, RootState } from "../../redux/store"
 import { useEffect } from "react"
 import {  fetchProducts, findProductById } from "../../redux/slices/products/productSlice"
 import { FaHeart , FaCalendar, FaShapes} from "react-icons/fa";
+import { fetchCategory } from "../../redux/slices/category/categorySlice"
 
-import Error from "../Error"
 
 const ProductDetails = () => {
   //to get name from path /products/{name}
@@ -20,8 +20,8 @@ const ProductDetails = () => {
  
   useEffect(() => {
     //fetch all data on store then fetch single page because when user refresh the page not remove all data on screen
-    Dispatch(fetchProducts()).then(() => Dispatch(findProductById(Number(id)))
-    )
+    Dispatch(fetchProducts()).then( () => Dispatch(findProductById(Number(id))) )
+    Dispatch(fetchCategory())
   }, [])
  
   if(isLoading)
@@ -31,13 +31,11 @@ const ProductDetails = () => {
 
   // console.log(singlePageProduct);
 
-  // console.log(categories);
 
   const getCategoryNameById = (categoryId: number) => {
-
-    const category = categories.find((category) => category.id == categoryId);
-    const valueCategory = category?(category.name + ' | ') : ('Not Found' );
-    return valueCategory
+    const category = categories.find((categoryTable) => categoryTable.id === categoryId);
+    const categoryName = !category? 'Not Found' : category.name 
+    return categoryName
 
   }
 
@@ -61,9 +59,10 @@ const ProductDetails = () => {
   <h1 className="product-brand">{singlePageProduct.name}</h1>
   <h1 className="product-brand">{singlePageProduct.price}</h1>
   <h1 className="product-short-des">{singlePageProduct.description}</h1>
-  <h1 > Categories: {' '}
-    {singlePageProduct.categories && 
-    singlePageProduct.categories.map((Id) => getCategoryNameById(Id))}</h1>
+  <p > Categories:{' '}
+    {singlePageProduct.categories && singlePageProduct.categories.map((categoryId) => getCategoryNameById(categoryId)) }
+  </p>
+
   <h1 className="actual-price">{singlePageProduct.sizes && singlePageProduct.sizes.join(', ')}</h1>
 
   </div>
