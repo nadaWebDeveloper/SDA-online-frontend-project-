@@ -7,6 +7,7 @@ export const fetchProducts = createAsyncThunk('users/fetchProducts', async() =>
   return response.data
 })
 
+
 export type Product = {
   id: number
   name: string
@@ -59,7 +60,7 @@ export const productSlice = createSlice({
     const sortCategory = action.payload
     if(sortCategory === 'name'){
       state.products.sort((a, b) => a.name.localeCompare(b.name))
-    }else if (sortCategory == 'price'){
+    }else if (sortCategory === 'price'){
       state.products.sort((a, b) => a.price - b.price )
     }
    }
@@ -76,7 +77,8 @@ export const productSlice = createSlice({
     builder.addCase(fetchProducts.rejected, (state, action) => {
       state.error = action.error.message || 'An Error accured'
       state.isLoading = false
-    })
+    });
+
 
   }
 })

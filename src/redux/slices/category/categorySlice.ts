@@ -28,18 +28,39 @@ export type categoryState = {
   categories: category[]
   error: null | string
   isLoading: boolean
+  selectedCategoryId: number | null; // `null` when no category is selected
+  // ... any other state properties
 }
 
 const initialState: categoryState = {
   categories: [],
   error: null,
-  isLoading: false
+  isLoading: false,
+  selectedCategoryId: null,
+
 }
 
 export const categorySlice = createSlice({
   name: 'categories',
   initialState,
-  reducers: {},
+  reducers: {
+    sortCategoryByName: (state, action) => {
+
+      const sortCategory = action.payload
+    if(sortCategory === state.categories){
+      state.categories.sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+      // const selectedCategoryName = action.payload;
+      // state.categories = state.categories.slice().sort((a, b) => {
+      //   if (a.name === selectedCategoryName) return -1;
+      //   if (b.name === selectedCategoryName) return 1;
+      //   return 0;
+      // }); 
+    },
+   
+},
+
   extraReducers(builder){
     builder.addCase(fetchCategory.pending, (state)=> {
       state.isLoading = true;
@@ -56,7 +77,7 @@ export const categorySlice = createSlice({
 
   }
 })
-export const {  } = categorySlice.actions
+export const { sortCategoryByName } = categorySlice.actions
 
 export default categorySlice.reducer
 

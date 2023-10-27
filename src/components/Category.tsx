@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { useEffect } from "react"
+import { ChangeEvent, useEffect } from "react"
 
 import { AppDispatch, RootState } from '../redux/store'
 import { fetchCategory } from '../redux/slices/category/categorySlice'
@@ -10,6 +10,7 @@ const Category = () => {
 
   const {categories, isLoading, error} = useSelector((state: RootState) => state.categoriesReducer)
   const Dispatch: AppDispatch = useDispatch()
+
  
   useEffect(() => {
    Dispatch(fetchCategory())
@@ -19,6 +20,8 @@ const Category = () => {
   {return <h1>loading ...</h1>}
   if(error)
   {return <h1>{error}</h1>}
+
+  
  
 
   return (

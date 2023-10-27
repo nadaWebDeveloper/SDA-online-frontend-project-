@@ -7,15 +7,21 @@ import { fetchProducts, searchProduct } from "../../redux/slices/products/produc
 import { FaEdit, FaHeart } from "react-icons/fa";
 import SortProducts from "./SortProducts"
 import Search from "../Filtering/Search"
+import Sort from "../Filtering/Sort";
+import { sortCategoryByName } from "../../redux/slices/category/categorySlice"
+
 
 
 const Products = () => {
 
  const {products, isLoading, error, searchTerm} = useSelector((state: RootState) => state.productsReducer)
- const Dispatch: AppDispatch = useDispatch()
+ const {categories} = useSelector((state: RootState) => state.categoriesReducer)
+ const dispatch: AppDispatch = useDispatch()
+ const optionArr = categories.map(category => category.name);
+
 
  useEffect(() => {
-  Dispatch(fetchProducts())
+  dispatch(fetchProducts())
  }, [])
 
  if(isLoading)
@@ -25,7 +31,7 @@ const Products = () => {
 
  const handleSearch =(event: ChangeEvent<HTMLInputElement>)=>{
   const inputValue = event.target.value
-  Dispatch(searchProduct(inputValue))
+  dispatch(searchProduct(inputValue))
 }
 
 const searchProducts = searchTerm
@@ -33,9 +39,15 @@ const searchProducts = searchTerm
 (searchTerm.toLowerCase()))
 : products
 
+const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) =>
+   {
 
+    const inputValue =event.target.value
+    dispatch(sortCategoryByName(inputValue))
+    
 
-
+   } 
+  
 
   return (
 <>
@@ -53,7 +65,8 @@ const searchProducts = searchTerm
 
       <div className="filter">
     <Search searchTerm={searchTerm} handleSearch={handleSearch} />
-      <SortProducts />
+    <Sort optionArr={optionArr} handleSortChange={handleSortChange} />
+    <SortProducts />
       </div>
 
      {searchProducts.map((product)=> {

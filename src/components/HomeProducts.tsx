@@ -2,11 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import ListProducts from "./product/ListProducts";
 import { AppDispatch, RootState } from "../redux/store";
 import { ChangeEvent, useEffect } from "react";
-import { fetchProducts, searchProduct } from "../redux/slices/products/productSlice";
+import { fetchProducts, searchProduct, sortProducts } from "../redux/slices/products/productSlice";
 import { Link } from "react-router-dom"
 import {  FaHeart } from "react-icons/fa";
 import SortProducts from "./product/SortProducts";
 import Search from "./Filtering/Search";
+import Sort from "./Filtering/Sort";
 
 
 
@@ -14,6 +15,8 @@ const  HomeProducts = () => {
 
   const {products, isLoading, error, searchTerm} = useSelector((state: RootState) => state.productsReducer)
   const Dispatch = useDispatch<AppDispatch>()
+
+  const optionArr = ['name', 'price']
  
   useEffect(() => {
    Dispatch(fetchProducts())
@@ -34,6 +37,14 @@ const  HomeProducts = () => {
   (searchTerm.toLowerCase()))
   : products
  
+
+  const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) =>
+  {
+
+   const inputValue =event.target.value
+   Dispatch(sortProducts(inputValue))
+
+  } 
  
 
   return (
@@ -44,7 +55,9 @@ const  HomeProducts = () => {
 </div>
 <div className="filter">
   <Search searchTerm= {searchTerm} handleSearch={handleSearch}/>
-<SortProducts />
+{/* <SortProducts /> */}
+
+<Sort optionArr={optionArr} handleSortChange={handleSortChange} />
 </div>
 
 <div>

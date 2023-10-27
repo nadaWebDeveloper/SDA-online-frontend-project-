@@ -30,7 +30,7 @@ function App() {
 <NavBar />
 <Routes>
   {/* when logout go to home page */}
-<Route path='/logout' element={<HomeProducts />} />
+<Route path='/' element={<HomeProducts />} />
   {/* for single page  */}
 <Route path='/products/:name/:id' element={<ProductDetails />} />
 <Route path='/contact' element={<Contact />} />

@@ -13,7 +13,9 @@ const ProductDetails = () => {
   //from name can fetch the data from store
   const navigate = useNavigate()
 
-  const {singlePageProduct,isLoading, error} = useSelector((state: RootState) => state.productsReducer)
+  const {singlePageProduct,isLoading, error} = useSelector((state: RootState) => state.productsReducer);
+  const {categories} = useSelector((state: RootState) => state.categoriesReducer);
+
   const Dispatch = useDispatch<AppDispatch>()
  
   useEffect(() => {
@@ -28,6 +30,16 @@ const ProductDetails = () => {
   {return <h1>{error}</h1>}
 
   // console.log(singlePageProduct);
+
+  // console.log(categories);
+
+  const getCategoryNameById = (categoryId: number) => {
+
+    const category = categories.find((category) => category.id == categoryId);
+    const valueCategory = category?(category.name + ' | ') : ('Not Found' );
+    return valueCategory
+
+  }
 
   return (
 <>
@@ -49,7 +61,9 @@ const ProductDetails = () => {
   <h1 className="product-brand">{singlePageProduct.name}</h1>
   <h1 className="product-brand">{singlePageProduct.price}</h1>
   <h1 className="product-short-des">{singlePageProduct.description}</h1>
-  <h1 className="actual-price">{singlePageProduct.categories && singlePageProduct.categories.join(', ')}</h1>
+  <h1 > Categories: {' '}
+    {singlePageProduct.categories && 
+    singlePageProduct.categories.map((Id) => getCategoryNameById(Id))}</h1>
   <h1 className="actual-price">{singlePageProduct.sizes && singlePageProduct.sizes.join(', ')}</h1>
 
   </div>

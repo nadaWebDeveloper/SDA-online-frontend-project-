@@ -82,7 +82,8 @@ const Login = ({ pathName }: { pathName: string }) => {
 
   return (
     <>
-      <form action="" onSubmit={handleSubmit}>
+    <section>
+    <form action="" onSubmit={handleSubmit}>
         <input
           type="email"
           name="email"
@@ -105,6 +106,7 @@ const Login = ({ pathName }: { pathName: string }) => {
          <Link to="/register">Register</Link>
         </span></h4>
         </div>
+    </section>
     </>
   )
 }
