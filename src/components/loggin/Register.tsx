@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, ChangeEvent, FormEvent } from 'react'
-import { faCheck, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom'
 
@@ -26,6 +26,7 @@ const Register = () => {
   const [pwd, setPwd] = useState('')
   const [validPwd, setValidPwd] = useState(false)
   const [pwdFocus, setPwdFocus] = useState(false)
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const [matchPwd, setMatchPwd] = useState('')
   const [validMatch, setValidMatch] = useState(false)
@@ -59,6 +60,11 @@ const Register = () => {
   useEffect(() => {
     setErrMsg('')
   }, [firstName,lastName, email, pwd, matchPwd])
+
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -124,14 +130,13 @@ const Register = () => {
           </p>
           <form onSubmit={handleSubmit}>
             <label htmlFor="FirstName">
-              FirstName:
               <FontAwesomeIcon icon={faCheck} className={validName ? 'valid' : 'hide'} />
               <FontAwesomeIcon icon={faTimes} className={validName || !firstName ? 'hide' : 'invalid'} />
             </label>
             <input
               type="text"
+              placeholder='First Name'
               id="FirstName"
-              // ref={userRef}
               autoComplete="off"
               onChange={(event) => setFirstName(event.target.value)}
               value={firstName}
@@ -153,13 +158,13 @@ const Register = () => {
             </p>
 
             <label htmlFor="LastName">
-              Last Name:
               <FontAwesomeIcon icon={faCheck} className={validLastName ? 'valid' : 'hide'} />
               <FontAwesomeIcon icon={faTimes} className={validLastName || !lastName ? 'hide' : 'invalid'} />
             </label>
 
             <input
               type="text"
+              placeholder='Last Name'
               id="LastName"
               value={lastName}
               onChange={(event) => setLastName(event.target.value)}
@@ -184,13 +189,13 @@ const Register = () => {
 
 
             <label htmlFor="email">
-              Email:
               <FontAwesomeIcon icon={faCheck} className={validEmail ? 'valid' : 'hide'} />
               <FontAwesomeIcon icon={faTimes} className={validEmail || !email ? 'hide' : 'invalid'} />
             </label>
             
              <input
               type="email"
+              placeholder='Email'
               id="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
@@ -215,16 +220,19 @@ const Register = () => {
               Must example 3 to 30 characters 
           
             </p>
+               
 
 
             <label htmlFor="password">
-              Password:
               <FontAwesomeIcon icon={faCheck} className={validPwd ? 'valid' : 'hide'} />
               <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? 'hide' : 'invalid'} />
             </label>
+
+            <div className="inputField">
             <input
-              type="password"
+              type= {isPasswordVisible ? 'text' : 'password'}             
               id="password"
+              placeholder='Password'
               onChange={(event) => setPwd(event.target.value)}
               value={pwd}
               required
@@ -233,6 +241,12 @@ const Register = () => {
               onFocus={() => setPwdFocus(true)}
               onBlur={() => setPwdFocus(false)}
             />
+            <span onClick={togglePasswordVisibility}>
+            <FontAwesomeIcon icon={isPasswordVisible ? faEye : faEyeSlash} />
+            </span>
+            </div>
+
+
             <p id="pwdnote" className={pwdFocus && !validPwd ? 'instructions' : 'offscreen'}>
               <FontAwesomeIcon icon={faInfoCircle} />
               8 to 24 characters.
@@ -245,7 +259,6 @@ const Register = () => {
             </p>
 
             <label htmlFor="confirm_pwd">
-              Confirm Password:
               <FontAwesomeIcon
                 icon={faCheck} className={validMatch && matchPwd ? 'valid' : 'hide'}  />
               <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? 'hide' : 'invalid'} />
@@ -253,6 +266,7 @@ const Register = () => {
             
             <input
               type="password"
+              placeholder='Confirm Password'
               id="confirm_pwd"
               onChange={(event) => setMatchPwd(event.target.value)}
               value={matchPwd}
