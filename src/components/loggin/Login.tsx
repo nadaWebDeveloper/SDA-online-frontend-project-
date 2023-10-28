@@ -4,12 +4,18 @@ import { useNavigate } from 'react-router'
 import { AppDispatch, RootState } from '../../redux/store'
 import { fetchUser, login } from '../../redux/slices/user/userSlice'
 import { Link } from 'react-router-dom'
+import {  faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+
 
 const Login = ({ pathName }: { pathName: string }) => {
   const { users } = useSelector((state: RootState) => state.usersReducer)
   const dispatch = useDispatch<AppDispatch>() //generics "is the better and more commonly used way to declare the type when working with Redux Toolkit and TypeScript in a React application."
 
   // const Dispatch: AppDispatch = useDispatch() ""
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
 
   useEffect(() => {
     dispatch(fetchUser())
@@ -80,25 +86,56 @@ const Login = ({ pathName }: { pathName: string }) => {
     })
   }
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+const handleButtonClick = () => {
+  setButtonClicked(true);
+  // Any other logic you want to execute on button click
+};
+
   return (
     <>
     <section>
     <form action="" onSubmit={handleSubmit}>
+
+    <div className="inputField">
         <input
           type="email"
           name="email"
-          placeholder="Example@rest.com"
+          placeholder="Email"
           onChange={handleInputChange}
           required
         />
+        </div>
+
+
+        <div className="inputField">
         <input
-          type="password"
+          type= {isPasswordVisible ? 'text' : 'password'} 
           name="password"
-          placeholder="At least 6 charchters"
+          placeholder="Password"
           onChange={handleInputChange}
           required
         />
-        <button>Login</button>
+        <span onClick={togglePasswordVisibility}>
+            <FontAwesomeIcon icon={isPasswordVisible ? faEye : faEyeSlash} />
+            </span>
+        </div>
+        {/* <p
+              id="confirmnote"
+              className={pwdFocus && !validPwd && buttonClicked ? 'instructions' : 'offscreen'>
+              <FontAwesomeIcon icon={faInfoCircle} />
+              Must match the first password input field.
+            </p> */}
+
+        
+        <button onClick={handleButtonClick} >
+          Login
+        </button>
       </form>
 
          <div>

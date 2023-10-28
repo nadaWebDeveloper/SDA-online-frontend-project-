@@ -157,6 +157,11 @@ button:focus-visible {
   font-weight: 600;
 }
 
+.closeProfile{
+  cursor: pointer;
+color: #560707;
+}
+
 
 /* for all product  */
 .product-container{
@@ -381,18 +386,6 @@ a, a:visited {
     color: #1c82ab;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"],
-button,
-textarea {
-  font-family: 'Nunito', sans-serif;
-  font-size: 22px;
-  padding: 10px;
-  border-radius: 24px;
-  align-items: center;
-  border: hidden;
-}
 
 label,
 button {
@@ -475,3 +468,5 @@ button {
 .inputField span{
   cursor: pointer;
 }
+
+

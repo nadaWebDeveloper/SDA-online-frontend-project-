@@ -2,6 +2,9 @@ import { useRef, useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '../../redux/store'
+import { fetchUser } from '../../redux/slices/user/userSlice'
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
@@ -10,6 +13,13 @@ const EMAIL_REGEX = /^[\w-\._\+%]+@(?!(live|hotmail|outlook|aol|yahoo|rocketmail
 const Register = () => {
   const userRef = useRef()
   const errRef = useRef()
+
+  const { users } = useSelector((state: RootState) => state.usersReducer)
+  const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    dispatch(fetchUser())
+  }, [])
 
   const [firstName, setFirstName] = useState('')
   const [validName, setValidName] = useState(false)
@@ -57,16 +67,57 @@ const Register = () => {
     setValidMatch(pwd === matchPwd)
   }, [pwd, matchPwd])
 
-  useEffect(() => {
-    setErrMsg('')
-  }, [firstName,lastName, email, pwd, matchPwd])
+  // useEffect(() => {
+  //   setErrMsg('')
+  // }, [firstName,lastName, email, pwd, matchPwd])
 
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const handleSubmit = async (event: FormEvent) => {
+
+  const setters  = {
+    firstName: setFirstName,
+    lastName: setLastName,
+    email: setEmail,
+    passWord:setPwd,
+    MatchPassword:setMatchPwd
+  };
+
+  const [user, setUser] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    passWord:'',
+    MatchPassword:''
+  })
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+
+
+    const nameInput = event.target.name
+    const valueInput = event.target.value
+    setUser((prevState) => {
+      return { ...prevState, [nameInput]: valueInput }
+    })
+    
+    // const valueInput = event.target.value
+
+    // setFirstName(valueInput)
+    // setLastName(valueInput)
+    // setEmail(valueInput)
+    // setPwd(valueInput)
+    // setMatchPwd(valueInput)
+
+
+    // const nameInput = event.target.name
+    // setUser((prevState) => {
+    //   return { ...prevState, [nameInput]: valueInput }
+    // })
+
+  }
+
+  const handleSubmit =  (event: FormEvent) => {
     event.preventDefault()
     // if button enabled with JS hack
     const v1 = USER_REGEX.test(firstName)
@@ -113,7 +164,7 @@ const Register = () => {
       {success ? (
         <section>
           <h1>Success!</h1>
-          <p>Welcome <h4>{firstName}</h4> To world</p>
+          <p>Welcome {firstName} To world</p>
           <h4>
             <Link to="/login">Sing In</Link>
           </h4>
@@ -133,12 +184,15 @@ const Register = () => {
               <FontAwesomeIcon icon={faCheck} className={validName ? 'valid' : 'hide'} />
               <FontAwesomeIcon icon={faTimes} className={validName || !firstName ? 'hide' : 'invalid'} />
             </label>
+
+            <div className="inputField">
             <input
               type="text"
               placeholder='First Name'
               id="FirstName"
+              name='FirstName'
               autoComplete="off"
-              onChange={(event) => setFirstName(event.target.value)}
+              onChange={handleInputChange}
               value={firstName}
               required
               aria-invalid={validName ? 'false' : 'true'}
@@ -146,9 +200,11 @@ const Register = () => {
               onFocus={() => setUserFocus(true)}
               onBlur={() => setUserFocus(false)}
             />
+            </div>
+
             <p
               id="FirstName"
-              className={userFocus && firstName && !validName ? 'instructions' : 'offscreen'}>
+              className={userFocus && !validName ? 'instructions' : 'offscreen'}>
               <FontAwesomeIcon icon={faInfoCircle} />
               4 to 24 characters.
               <br />
@@ -157,17 +213,21 @@ const Register = () => {
               Letters, numbers, underscores, hyphens allowed.
             </p>
 
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+
             <label htmlFor="LastName">
               <FontAwesomeIcon icon={faCheck} className={validLastName ? 'valid' : 'hide'} />
               <FontAwesomeIcon icon={faTimes} className={validLastName || !lastName ? 'hide' : 'invalid'} />
             </label>
 
+            <div className="inputField">
             <input
               type="text"
               placeholder='Last Name'
               id="LastName"
+              name='LastName'
               value={lastName}
-              onChange={(event) => setLastName(event.target.value)}
+              onChange={handleInputChange}
               autoComplete="off"
               required
               aria-invalid={validLastName ? 'false' : 'true'}
@@ -175,10 +235,11 @@ const Register = () => {
               onFocus={() => setUserLastFocus(true)}
               onBlur={() => setUserLastFocus(false)}
             />
+            </div>
 
             <p
               id="LastName"
-              className={userLastFocus && lastName && !validLastName ? 'instructions' : 'offscreen'}>
+              className={userLastFocus &&  !validLastName ? 'instructions' : 'offscreen'}>
               <FontAwesomeIcon icon={faInfoCircle} />
               4 to 24 characters.
               <br />
@@ -187,31 +248,33 @@ const Register = () => {
               Letters, numbers, underscores, hyphens allowed.
             </p>
 
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
             <label htmlFor="email">
               <FontAwesomeIcon icon={faCheck} className={validEmail ? 'valid' : 'hide'} />
               <FontAwesomeIcon icon={faTimes} className={validEmail || !email ? 'hide' : 'invalid'} />
             </label>
             
+            <div className="inputField">
              <input
               type="email"
               placeholder='Email'
               id="email"
+              name='email'
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={handleInputChange}
               autoComplete="off"
               required
               aria-invalid={validEmail ? 'false' : 'true'}
               aria-describedby="email"
               onFocus={() => setEmailFocus(true)}
               onBlur={() => setEmailFocus(false)}
-              // value={user.email}
-              // onChange={handleChange}
             /> 
+            </div>
 
              <p
               id="email"
-              className={emailFocus && email && !validEmail ? 'instructions' : 'offscreen'}>
+              className={emailFocus &&  !validEmail ? 'instructions' : 'offscreen'}>
               <FontAwesomeIcon icon={faInfoCircle} />
               example@domain.com
               <br />
@@ -221,7 +284,7 @@ const Register = () => {
           
             </p>
                
-
+             {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
             <label htmlFor="password">
               <FontAwesomeIcon icon={faCheck} className={validPwd ? 'valid' : 'hide'} />
@@ -233,7 +296,8 @@ const Register = () => {
               type= {isPasswordVisible ? 'text' : 'password'}             
               id="password"
               placeholder='Password'
-              onChange={(event) => setPwd(event.target.value)}
+              name='password'
+              onChange={handleInputChange}
               value={pwd}
               required
               aria-invalid={validPwd ? 'false' : 'true'}
@@ -246,7 +310,6 @@ const Register = () => {
             </span>
             </div>
 
-
             <p id="pwdnote" className={pwdFocus && !validPwd ? 'instructions' : 'offscreen'}>
               <FontAwesomeIcon icon={faInfoCircle} />
               8 to 24 characters.
@@ -258,17 +321,22 @@ const Register = () => {
               <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
             </p>
 
-            <label htmlFor="confirm_pwd">
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+
+            <label htmlFor="MatchPassword">
               <FontAwesomeIcon
                 icon={faCheck} className={validMatch && matchPwd ? 'valid' : 'hide'}  />
               <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? 'hide' : 'invalid'} />
             </label>
             
+            <div className="inputField">
             <input
               type="password"
               placeholder='Confirm Password'
-              id="confirm_pwd"
-              onChange={(event) => setMatchPwd(event.target.value)}
+              id="MatchPassword"
+              name='MatchPassword'
+              onChange={handleInputChange}
               value={matchPwd}
               required
               aria-invalid={validMatch ? 'false' : 'true'}
@@ -276,12 +344,16 @@ const Register = () => {
               onFocus={() => setMatchFocus(true)}
               onBlur={() => setMatchFocus(false)}
             />
+             </div>
+
             <p
               id="confirmnote"
               className={matchFocus && !validMatch ? 'instructions' : 'offscreen'}>
               <FontAwesomeIcon icon={faInfoCircle} />
               Must match the first password input field.
             </p>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
                
             <button disabled={!validName || !validLastName || !validEmail || !validPwd || !validMatch ? true : false}>
               Sign Up

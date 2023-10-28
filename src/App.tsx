@@ -21,6 +21,7 @@ import Login from './components/loggin/Login'
 import ProtectRouterUser from './components/protectRouter/ProtectRouterUser'
 import ProtectRouterAdmin from './components/protectRouter/ProtectRouterAdmin'
 import Register from './components/loggin/Register'
+import UserSideBar from './components/user/UserSideBar'
 
 function App() {
   return (
