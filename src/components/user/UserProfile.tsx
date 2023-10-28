@@ -2,22 +2,27 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 import profilePicture from '../../profilePicture.jpg';
 import { useNavigate } from "react-router";
-import { FaShapes} from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
+import useUserState from "../Hooks/useUserState";
+import { Link } from "react-router-dom";
 
 
 
 const UserProfile = () => {
 
   const navigate = useNavigate()
-  const {userData} = useSelector((state: RootState) => state.usersReducer)
+const {userData} = useUserState()
+const {id, firstName, lastName, email } = userData || {};
+
 
   const handleClick = () => {
     navigate('/dashboard/user');
   };
 
-
+  const handleClickProfileEdit = () => {
+    navigate('/editProfile');
+  };
 
   return (
 <>
@@ -28,12 +33,17 @@ const UserProfile = () => {
   </div>
   <div className="downProfile">
   <img src={profilePicture} alt="pictureProfile" />
-    <div className="titleProfile"><b>{userData?.firstName}  {userData?.lastName}</b></div>
-    <div className="descriptProfile">{userData?.email}</div>
+    <div className="titleProfile"><b>{firstName}  {lastName}</b></div>
+    <div className="descriptProfile">{email}</div>
+
+    <Link to="/editProfile" state={{id, firstName, lastName, email }}>
+    <FontAwesomeIcon icon={faEdit} onClick={handleClickProfileEdit} className="closeProfile"/>
+    </Link> 
+
   </div>
 </div>
 
-</>  )
+</> )
 }
 
 export default UserProfile

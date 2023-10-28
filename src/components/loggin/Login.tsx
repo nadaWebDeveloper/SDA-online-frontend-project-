@@ -20,6 +20,7 @@ const Login = ({ pathName }: { pathName: string }) => {
   useEffect(() => {
     dispatch(fetchUser())
   }, [])
+
   const navigate = useNavigate()
   const [user, setUser] = useState({
     email: '',
@@ -59,18 +60,11 @@ const Login = ({ pathName }: { pathName: string }) => {
         return
        }
 
-      //    if(foundUser){
         //loggedin
         dispatch(login(foundUser))
         navigate(pathName ? pathName : `/dashboard/${foundUser.role}`)
         console.log(`Welcome`)
-          
-
-      // else
-      // {
-      //     console.log('email is not exist on database');
-
-      // }
+  
       //step3: if matched then update the isloginIn state as true
       //if not matched then stay at same page
       //Routing protection :

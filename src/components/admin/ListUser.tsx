@@ -1,16 +1,17 @@
 import AdminSideBar from "./AdminSideBar"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { ChangeEvent, useEffect } from "react"
 
-import { AppDispatch, RootState } from '../../redux/store'
+import { AppDispatch } from '../../redux/store'
 import { blockUser, deleteUser, fetchUser, searchUser } from '../../redux/slices/user/userSlice'
 import { FaEdit } from "react-icons/fa";
 import Search from "../Filtering/Search"
+import useUserState from "../Hooks/useUserState"
 
 
 const ListUser = () => {
 
-    const {users, isLoading, error , searchTerm} = useSelector((state: RootState) => state.usersReducer)
+    const {users, isLoading, error , searchTerm} = useUserState()
     const Dispatch: AppDispatch = useDispatch()
    
     useEffect(() => {

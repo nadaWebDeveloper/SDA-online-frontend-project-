@@ -85,7 +85,29 @@ export const userSlice = createSlice({
     },
     registerUser: (state, action) =>{
       state.users.push(action.payload)
-    }
+    },
+    updateUser: (state, action) => {
+      const {id, firstName, lastName, email} = action.payload; 
+      console.log(action.payload);
+        const userExist = state.users.find((user)=> user.id === id)
+        console.log(userExist);
+      if(userExist){
+        userExist.firstName = firstName 
+        userExist.lastName = lastName 
+        userExist.email = email 
+        //to display on screen after updated tp update local storage
+        // state.userData = userExist
+        // localStorage.setItem('loginData',
+        //  JSON.stringify({
+        //   isLoggedIn: state.isLoggedIn,
+        //   state.userData : state.userData
+        // }))
+      }
+
+      state.userData = action.payload
+      
+},
+
   },
   extraReducers(builder){
     builder.addCase(fetchUser.pending, (state)=> {
@@ -103,7 +125,7 @@ export const userSlice = createSlice({
 
   }
 })
-export const { login ,logout ,searchUser ,deleteUser , blockUser ,registerUser  } = userSlice.actions
+export const { login ,logout ,searchUser ,deleteUser , blockUser ,registerUser , updateUser  } = userSlice.actions
 
 export default userSlice.reducer
 

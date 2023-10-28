@@ -420,3 +420,18 @@ export default Register
 // }
 
 // export default Register
+
+
+//     const [user, setUser] = useState({
+//         firstName: userData?.firstName,
+//         lastName: userData?.lastName,
+//         email: userData?.email
+//     })
+
+//     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+//          const nameInput = event.target.name
+//   const valueInput = event.target.value
+//   setUser((prevState) => {
+//     return { ...prevState, [nameInput]: valueInput }
+       
+//       }

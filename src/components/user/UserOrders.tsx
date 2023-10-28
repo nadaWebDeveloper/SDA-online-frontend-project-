@@ -1,3 +1,4 @@
+import ListProducts from "../product/ListProducts"
 import UserSideBar from "./UserSideBar"
 
 const UserOrders = () => {
@@ -6,7 +7,7 @@ const UserOrders = () => {
 <div className="container">
   <UserSideBar />
   <div className="mainContent">
-    order users goes here
+   <ListProducts />
   </div>
 </div>
 </> 

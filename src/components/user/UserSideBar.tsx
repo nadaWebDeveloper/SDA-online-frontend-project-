@@ -1,9 +1,12 @@
-import { useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
-import { RootState } from "../../redux/store"
+
+import profilePicture from '../../profilePicture.jpg';
+import useUserState from "../Hooks/useUserState";
+
 
 const UserSideBar =()=> {
-  const {userData} = useSelector((state: RootState) => state.usersReducer)
+
+  const {userData} = useUserState()
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -14,10 +17,14 @@ const UserSideBar =()=> {
   return (
 <>
 <aside className="sidebar">
-<div>
-  <h4 onClick={handleClick} className="closeProfile">{userData?.firstName}</h4>
+<div onClick={handleClick} className="closeProfile">
+<div className="downProfile">
+  <img src={profilePicture} alt="pictureProfile" />
+  </div>
+  <h4 >{userData?.firstName}</h4>
+  <div>
+  </div>
 </div>
-
 <ul>
   <li>
   <Link to='/dashboard/user/orders'>Order</Link>
