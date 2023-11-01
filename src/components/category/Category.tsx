@@ -22,13 +22,6 @@ const Category = () => {
     dispatch(fetchCategory())
   }, [])
 
-  if (isLoading) {
-    return <h1>loading ...</h1>
-  }
-  if (error) {
-    return <h1>{error}</h1>
-  }
-
   const handleDeleteCategory = (id: number) => {
 
     if(confirm("Are you sure to Add category")){
@@ -40,6 +33,13 @@ const Category = () => {
       return false;
   }
 
+  }
+
+  if (isLoading) {
+    return <h1>loading ...</h1>
+  }
+  if (error) {
+    return <h1>{error}</h1>
   }
 
   return (

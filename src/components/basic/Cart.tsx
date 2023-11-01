@@ -1,11 +1,28 @@
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
-import { RootState } from "../../redux/store"
-import { Link } from "react-router-dom"
+import { AppDispatch, RootState } from "../../redux/store"
+import { deleteFromCart } from "../../redux/slices/cart/cartSlice"
+import { faClose} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const Cart = ()=> {
 
  const {cartItem} = useSelector((state: RootState) => state.cartReducer)
+ const dispatch = useDispatch<AppDispatch>()
+
+
+ const handleDeleteCart = (id: number) => {
+
+  if(confirm("Are you sure to Add category")){
+
+  dispatch(deleteFromCart(id))
+  alert('success deleted');
+  
+  }else{
+    return false;
+}
+
+}
   return (
     <div>
         <h1>Cart Page</h1>
@@ -20,8 +37,13 @@ const Cart = ()=> {
               return (
                 <article className="product-container" key={id}>
                 <div className="rightSide">
-                      <img src={image} className="product-thumb" alt={name} />
+                     <FontAwesomeIcon  icon={faClose}  onClick={() => {
+                      handleDeleteCart(id)
+                    }}  />
+                 <img src={image} className="product-thumb" alt={name} />
                 </div>
+
+                
                 <div className="leftSide">
                 <h4 className="product-brand">{name}</h4>
                 <p>{description.substring(0, 10)} ...</p>
