@@ -8,7 +8,7 @@ import { deleteCategory, fetchCategory } from '../../redux/slices/category/categ
 import { FaEdit } from 'react-icons/fa'
 import AdminSideBar from '../admin/AdminSideBar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faDeleteLeft, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 
 

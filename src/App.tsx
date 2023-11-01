@@ -27,6 +27,7 @@ import AddProduct from './components/product/AddProduct'
 import EditCategory from './components/category/EditCategory'
 import EditProduct from './components/product/EditProduct'
 import AboutMe from './components/basic/AboutMe'
+import Cart from './components/basic/Cart'
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
   {/* when logout go to home page */}
 <Route path='/' element={<HomeProducts />} />
   {/* for single page  */}
+<Route path='/cart'  element={<Cart />} />
 <Route path='/products/:name/:id' element={<ProductDetails />} />
 <Route path='/login' element={<Login pathName='/' />} />
 <Route path='/register' element={<Register />} />

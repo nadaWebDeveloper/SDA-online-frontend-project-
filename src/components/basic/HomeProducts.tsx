@@ -13,6 +13,7 @@ import Sort from '../Filtering/Sort'
 import { faBasketShopping, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { prices } from '../../Price'
+import { addToCart } from '../../redux/slices/cart/cartSlice'
 
 const HomeProducts = () => {
   const { products, isLoading, error, searchTerm } = useSelector(
@@ -81,6 +82,12 @@ const HomeProducts = () => {
 
     return categoryMatch && searchMatch && priceMatch
   })
+
+ const handleAddToCart = (product: product)=> {
+
+  console.log(product);
+  dispatch(addToCart(product))
+ }
 
   if (isLoading) {
     return <h1>loading ...</h1>
@@ -164,7 +171,7 @@ const HomeProducts = () => {
                         <img src={image} className="product-thumb" alt={name} />
                       </Link>
                       <div className="div-card-btn">
-                        <FontAwesomeIcon icon={faBasketShopping} className="card-btn" />
+                        <FontAwesomeIcon icon={faBasketShopping} className="card-btn" onClick={()=>{handleAddToCart(product)}} />
                       </div>
                     </div>
 

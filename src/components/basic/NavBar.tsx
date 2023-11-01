@@ -4,9 +4,11 @@ import { logout } from '../../redux/slices/user/userSlice'
 import { AppDispatch, RootState } from '../../redux/store'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faSignOut } from '@fortawesome/free-solid-svg-icons'
+import CartShopping from './CartShopping'
 
 function NavBar() {
   const { isLoggedIn, userData } = useSelector((state: RootState) => state.usersReducer)
+  const {cartItem} = useSelector((state: RootState) => state.cartReducer)
 
   const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
@@ -21,17 +23,17 @@ function NavBar() {
       <nav>
         <ul>
           <li>
-            <Link to="/" className="noneLine">
+            <Link to="/" >
               Home{' '}
             </Link>
           </li>
           <li>
-            <Link to="/" className="noneLine">
+            <Link to="/" >
               Store{' '}
             </Link>
           </li>
           <li>
-            <Link to="/" className="noneLine">
+            <Link to="/" >
               About Me{' '}
             </Link>
           </li>
@@ -40,12 +42,17 @@ function NavBar() {
             <>
              
               <li>
-                <Link to={`/dashboard/${userData?.role}`} className="noneLine">
+                <Link to={`/dashboard/${userData?.role}`} >
                   {userData?.role}{' '}
                 </Link>
               </li>
               <li>
-                <Link to="/logout" onClick={handleLogOut} className="noneLine">
+                <Link to='/cart' >
+                  <CartShopping value={cartItem.length > 0 ? cartItem.length : 0} />
+                </Link>
+              </li>
+              <li>
+                <Link to="/logout" onClick={handleLogOut} >
                 <FontAwesomeIcon icon={faSignOut} className="" />
                 </Link>
               </li>
@@ -55,7 +62,7 @@ function NavBar() {
           {!isLoggedIn && (
             <>
               <li>
-                <Link to="/login" className="noneLine">
+                <Link to="/login" >
                   login
                 </Link>
               </li>
