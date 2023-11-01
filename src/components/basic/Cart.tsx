@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
 
 import { AppDispatch, RootState } from "../../redux/store"
-import { deleteFromCart } from "../../redux/slices/cart/cartSlice"
+import { deleteAllItemFromCart, deleteFromCart } from "../../redux/slices/cart/cartSlice"
 import { faClose} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -21,14 +21,29 @@ const Cart = ()=> {
   }else{
     return false;
 }
+}
+const handleClearTheCart =() => {
+
+  if(confirm("Are you sure to clear the Cart")){
+
+    dispatch(deleteAllItemFromCart())
+    alert('success deleted all items');
+    
+    }else{
+      return false;
+  }
 
 }
+
+
+
   return (
     <div>
         <h1>Cart Page</h1>
         <div>
           <h2>You have {cartItem.length > 0 ? cartItem.length : 0} Item in the cart</h2>
           <div className="cartShop">
+            <button onClick={handleClearTheCart}>Clear the Cart</button>
             {cartItem.length >0 && 
             <>
             <div className="cartElement">
