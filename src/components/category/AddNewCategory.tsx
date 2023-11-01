@@ -31,8 +31,9 @@ const handleSubmit = (event: FormEvent) =>
       name: categoryName  };
   
     dispatch(addCategory(addNewCategory));
-    toast.info("You Add Category");
     navigate('/admin/category');
+    alert('success added category');
+
    
   }else{
     return false;

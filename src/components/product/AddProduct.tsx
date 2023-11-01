@@ -57,6 +57,8 @@ const AddProduct = () => {
         sizes: [],
         price: 0
       })
+      alert('success added  product');
+
 
     }else{
       return false;

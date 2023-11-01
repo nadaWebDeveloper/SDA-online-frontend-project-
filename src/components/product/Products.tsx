@@ -55,6 +55,8 @@ const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) =>
 
 if(confirm("Are you sure you Delete Product")){
   dispatch(deleteProduct(id))
+  alert('success delete  product');
+
 }else{
   return false;
 }

@@ -78,6 +78,8 @@ function EditProduct() {
   
       dispatch(updateProduct(editProduct))
       navigate('/admin/products')
+      alert('success edit  product');
+
       
     }else{
       return false;

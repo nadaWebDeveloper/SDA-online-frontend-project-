@@ -38,6 +38,8 @@ const ListUser = () => {
     
       if(confirm("Are you sure to Delete user")){
         Dispatch(deleteUser(id))
+        alert('success deleted user');
+
       }else{
         return false;
     }}
@@ -46,6 +48,8 @@ const ListUser = () => {
      
       if(confirm("Are you sure to block user")){
         Dispatch(blockUser(id))
+        alert('success blocked user');
+
       }else{
         return false;
     

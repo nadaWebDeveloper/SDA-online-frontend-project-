@@ -43,21 +43,26 @@ const EditProfile = () => {
      {
       event.preventDefault();
 
-      const updateUserinfo = {
-        id: state.id,
-        firstName: firstName,
-        lastName: lastName,
-        email: email
-      };
-      console.log(updateUserinfo); // Check if id is present
+      if(confirm("Are you sure to edit profile")){
 
-
-
-     dispatch(updateUser(updateUserinfo));
-      navigate('/dashboard/user');
+        const updateUserinfo = {
+          id: state.id,
+          firstName: firstName,
+          lastName: lastName,
+          email: email
+        };
+        console.log(updateUserinfo); // Check if id is present
+       dispatch(updateUser(updateUserinfo));
+        navigate('/dashboard/user');
+        alert('success edited profile');
+        
+        }else{
+          return false;
+      }
      }             
 
      const handleClick = () => {
+
         navigate('/dashboard/user');
       };
 

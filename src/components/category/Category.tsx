@@ -36,6 +36,7 @@ const Category = () => {
     if(confirm("Are you sure to Add category")){
 
     dispatch(deleteCategory(id))
+    alert('success deleted');
     
     }else{
       return false;

@@ -33,6 +33,8 @@ function EditCategory() {
 
         dispatch(updateCategory(editCategory));
        navigate('/admin/category');
+       alert('success edited category');
+
         
         }else{
           return false;
