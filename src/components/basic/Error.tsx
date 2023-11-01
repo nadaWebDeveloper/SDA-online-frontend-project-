@@ -1,7 +1,12 @@
 
 function Error() {
   return (
-    <div>404 Not Found</div>
+    <>
+    <div className="error">
+    <h1>404 Not Found</h1>
+    </div>
+    
+    </>
   )
 }
 

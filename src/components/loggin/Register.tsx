@@ -16,10 +16,6 @@ const Register = () => {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  useEffect(() => {
-    dispatch(fetchUser())
-  }, [])
-
   const [firstName, setFirstName] = useState('')
   const [validName, setValidName] = useState(false)
   const [userFocus, setUserFocus] = useState(false)
@@ -44,10 +40,10 @@ const Register = () => {
   const [errMsg, setErrMsg] = useState('')
   const [success, setSuccess] = useState(false)
   
-
   useEffect(() => {
-    // userRef.current.focus();
+    dispatch(fetchUser())
   }, [])
+
 
   useEffect(() => {
     setValidName(USER_REGEX.test(firstName))
