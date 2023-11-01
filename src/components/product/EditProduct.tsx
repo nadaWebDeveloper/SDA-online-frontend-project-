@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ChangeEvent, FormEvent, useState } from 'react'
 
 import { FaEdit } from 'react-icons/fa'
-import { toast } from 'react-toastify'
 import { AppDispatch } from '../../redux/store'
 import { updateProduct } from '../../redux/slices/products/productSlice'
 
@@ -96,7 +95,7 @@ function EditProduct() {
         </label>
         <input
           type="text"
-          name="nameEditProduct"
+          name="nameEdit"
           id="nameEditProduct"
           value={nameEditProduct}
           onChange={handleChange}
@@ -108,7 +107,7 @@ function EditProduct() {
         </label>
         <input
           type="text"
-          name="imageEditProduct"
+          name="imageEdit"
           id="imageEditProduct"
           value={imageEditProduct}
           onChange={handleChangeImage}
@@ -120,7 +119,7 @@ function EditProduct() {
         </label>
         <input
           type='text'
-          name="descriptionEditProduct"
+          name="descriptionEdit"
           id="descriptionEditProduct"
           value={descriptionEditProduct}
           onChange={handleChangeDesc}
@@ -133,7 +132,7 @@ function EditProduct() {
         </label>
         <input
           type="text"
-          name="categoriesEditProduct"
+          name="categoriesEdit"
           id="categoriesEditProduct"
           value={categoriesEditProduct}
           onChange={handleChangeCategory}
@@ -145,7 +144,7 @@ function EditProduct() {
         </label>
         <input
           type="text"
-          name="variantsEditProduct"
+          name="variantsEdit"
           id="variantsEditProduct"
           value={variantsEditProduct}
           onChange={handleChangeVariants}
@@ -157,7 +156,7 @@ function EditProduct() {
         </label>
         <input
           type="text"
-          name="priceEditProduct"
+          name="priceEdit"
           id="priceEditProduct"
           value={priceEditProduct}
           onChange={handleChangePrice}
@@ -169,7 +168,7 @@ function EditProduct() {
         </label>
         <input
           type="text"
-          name="sizesEditProduct"
+          name="sizesEdit"
           id="sizesEditProduct"
           value={sizesEditProduct}
           onChange={handleChangeSize}

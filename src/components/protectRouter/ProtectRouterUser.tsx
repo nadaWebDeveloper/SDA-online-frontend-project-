@@ -8,7 +8,7 @@ const ProtectRouterUser = () =>{
 
 
     const pathLocationEveryUser = useLocation()
-    const {isLoggedIn} = useSelector((state: RootState) => state.usersReducer)
+    const {isLoggedIn,isLoading} = useSelector((state: RootState) => state.usersReducer)
     //عشان المستخدم لما يسجل دخول تتغير ل صح وبعدها يقدر يدخل على الصفحات اللي مسسموح له يدخلها لانها سجل دخول 
 
   return  isLoggedIn ? <Outlet /> : <Login pathName={pathLocationEveryUser.pathname}/>

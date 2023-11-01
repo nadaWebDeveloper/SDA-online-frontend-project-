@@ -1,17 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux'
 import {  useEffect } from 'react'
-import React from 'react';
 
 
 import { AppDispatch, RootState } from '../../redux/store'
+
 import { deleteCategory, fetchCategory } from '../../redux/slices/category/categorySlice'
 import { FaEdit } from 'react-icons/fa'
 import AdminSideBar from '../admin/AdminSideBar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faDeleteLeft, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
-import { ToastContainer ,toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
 
 
 const Category = () => {

@@ -74,7 +74,7 @@ const AddProduct = () => {
           <input
             type="text"
             name="name"
-            autoComplete="off"
+            
             id='nameAddProduct'
             value={addProduct.name}
             onChange={handleInputChange}
@@ -87,7 +87,7 @@ const AddProduct = () => {
           <input
             type="text"
             name="image"
-            autoComplete="off"
+            
             id='imageAddProduct'
             value={addProduct.image}
             onChange={handleInputChange}
@@ -101,7 +101,7 @@ const AddProduct = () => {
             type='text'
             name="description"
             id='descAddProduct'
-            autoComplete="off"
+            
             value={addProduct.description}
             onChange={handleInputChange}
           />
@@ -112,7 +112,7 @@ const AddProduct = () => {
             type="text"
             name="categories"
             id='categoryAddProduct'
-            autoComplete="off"
+           
             value={Array.isArray(addProduct.categories) ? addProduct.categories.join(',') : ''}
             onChange={handleInputChange}
           />
@@ -125,7 +125,7 @@ const AddProduct = () => {
             type="text"
             name="variants"
             id='variaAddProduct'
-            autoComplete="off"
+           
             value={Array.isArray(addProduct.variants) ? addProduct.variants.join(',') : ''}
             onChange={handleInputChange}
           />
@@ -138,7 +138,7 @@ const AddProduct = () => {
             type="text"
             name="sizes"
             id='sizeAddProduct'
-            autoComplete="off"
+           
             value={Array.isArray(addProduct.sizes) ? addProduct.sizes.join(',') : ''}
             onChange={handleInputChange}
           />
@@ -151,7 +151,7 @@ const AddProduct = () => {
             type="text"
             name="price"
             id='priceAddProduct'
-            autoComplete="off"
+       
             value={addProduct.price}
             onChange={handleInputChange}
           />

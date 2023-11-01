@@ -1,7 +1,8 @@
 import { useSelector } from "react-redux"
+import { Outlet, useLocation } from "react-router"
 
 import { RootState } from "../../redux/store"
-import { Outlet, useLocation } from "react-router"
+
 import Login from "../loggin/Login"
 
 const ProtectRouterAdmin = () => {

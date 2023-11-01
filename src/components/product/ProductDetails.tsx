@@ -19,12 +19,12 @@ const ProductDetails = () => {
   const [focus, setFocus] = useState(false)
 
 
-  const Dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>()
  
   useEffect(() => {
     //fetch all data on store then fetch single page because when user refresh the page not remove all data on screen
-    Dispatch(fetchProducts()).then( () => Dispatch(findProductById(Number(id))) )
-    Dispatch(fetchCategory())
+    dispatch(fetchProducts()).then( () => dispatch(findProductById(Number(id))) )
+    dispatch(fetchCategory())
   }, [])
  
   if(isLoading)
@@ -32,8 +32,7 @@ const ProductDetails = () => {
   if(error)
   {return <h1>{error}</h1>}
 
-  // console.log(singlePageProduct);
-
+  
 
   const getCategoryNameById = (categoryId: number) => {
     const category = categories.find((categoryTable) => categoryTable.id === categoryId);

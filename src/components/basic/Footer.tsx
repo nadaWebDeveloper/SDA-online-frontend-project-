@@ -1,13 +1,9 @@
-import {
-	Box,
-} from "./FooterStyles";
 
-
-function Footer() {
+const Footer =()=> {
   return (
 <>
-<Box>
-	<footer>
+
+	<footer className="footer">
 	<h1
 				style={{
 					color: "black",
@@ -21,7 +17,7 @@ function Footer() {
 			</h1> 
 	</footer>
 	
-		</Box>
+	
 
 </>  
 )}

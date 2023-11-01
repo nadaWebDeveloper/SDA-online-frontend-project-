@@ -401,6 +401,18 @@ body {
 
   }
 
+  .footer {
+	padding: 5% 2.5%;
+	background: #c5c3b7af;
+	 /* position: absolute; */
+	 bottom: 0;
+	width: 100%;
+	@media (max-width: 1000px) {
+		padding: 40px 20px;
+
+	}}
+
+
   .headerSection{
   padding: 3% 2.5%;
 	background: #c5c3b7af;

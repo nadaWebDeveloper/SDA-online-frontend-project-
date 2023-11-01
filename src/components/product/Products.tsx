@@ -9,8 +9,7 @@ import Sort from "../Filtering/Sort";
 import { sortCategoryByName } from "../../redux/slices/category/categorySlice"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {  faAdd, faDeleteLeft, faEdit } from "@fortawesome/free-solid-svg-icons"
-import { Link, useNavigate } from "react-router-dom"
-import { toast } from "react-toastify"
+import { Link } from "react-router-dom"
 import AdminSideBar from "../admin/AdminSideBar"
 
 
@@ -21,12 +20,12 @@ const Products = () => {
  const {categories} = useSelector((state: RootState) => state.categoriesReducer)
  const dispatch: AppDispatch = useDispatch()
  const optionArr = categories.map(category => category.name);
-   const navigate = useNavigate()
+  
 
 
  useEffect(() => {
   dispatch(fetchProducts())
- }, [])
+ }, [dispatch])
 
  if(isLoading)
  {return <h1>loading ...</h1>}
@@ -61,8 +60,9 @@ if(confirm("Are you sure you Delete Product")){
   return false;
 }
       }
- 
- 
+
+    
+
 
   return (
 <>
@@ -95,10 +95,7 @@ if(confirm("Are you sure you Delete Product")){
      {searchProducts.map((product)=> {
       const { id, name,image, price ,description ,variants , sizes, categories} = product
       return(
-        
-
-        <div className="product-container" key={id}>
-          
+        <div className="product-container" key={id}>  
         <div className="product-card">
            <div className="product-imageAdmin">
             <span className="discount-tag">50% off</span>

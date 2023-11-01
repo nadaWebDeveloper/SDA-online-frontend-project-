@@ -21,18 +21,18 @@ const HomeProducts = () => {
   const { categories } = useSelector((state: RootState) => state.categoriesReducer)
   const [priceRange, setPriceRange] = useState<number[]>([])
 
-  const Dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>()
   const [checkedCategory, setCheckedCategory] = useState<number[]>([])
 
   const optionArr = ['name', 'price']
 
   useEffect(() => {
-    Dispatch(fetchProducts())
+    dispatch(fetchProducts())
   }, [])
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value
-    Dispatch(searchProduct(inputValue))
+    dispatch(searchProduct(inputValue))
   }
 
   // const searchProducts = searchTerm
@@ -42,7 +42,7 @@ const HomeProducts = () => {
 
   const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const inputValue = event.target.value
-    Dispatch(sortProducts(inputValue))
+    dispatch(sortProducts(inputValue))
   }
 
   const handelCheckCategory = (idCategory: number) => {
@@ -127,15 +127,15 @@ const HomeProducts = () => {
         <div>
           <h2>Filter by Category</h2>
           {categories.length > 0 &&
-            categories.map((category) => {
-              const { id, name } = category
+            categories.map((categoryfilter) => {
+              const { id, name } = categoryfilter
               return (
                 <div key={id}>
                   <label htmlFor="filterCategory" >
                     <input
                       type="checkbox"
                       name="fiCategory"
-                      value={id}
+                      value={name}
                       onChange={() => {
                         handelCheckCategory(id)
                       }}

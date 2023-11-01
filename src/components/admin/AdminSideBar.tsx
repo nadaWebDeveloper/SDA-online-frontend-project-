@@ -15,7 +15,7 @@ const AdminSideBar = () => {
 <div className="">
   <span><h1>{userData?.role}  : {userData?.firstName}</h1></span>
 </div> 
-
+<aside> 
   <ul>
   <li>
       <Link to='/dashboard/admin/users'>Users</Link>
@@ -30,7 +30,7 @@ const AdminSideBar = () => {
       <Link to='/dashboard/admin/orders'>Orders</Link>
     </li>
   </ul>
-
+  </aside>
  
   </>  )
 }

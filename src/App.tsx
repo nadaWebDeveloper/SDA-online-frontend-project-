@@ -1,6 +1,8 @@
 // import { ProductsManager } from './components/ProductsManager'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
+import { RootState } from './redux/store'
 
 import './App.css'
 import HomeProducts  from './components/basic/HomeProducts'
@@ -22,18 +24,12 @@ import Register from './components/loggin/Register'
 import EditProfile from './components/user/EditProfile'
 import Header from './components/basic/Header'
 import AddProduct from './components/product/AddProduct'
-import { useSelector } from 'react-redux'
-import { RootState } from './redux/store'
 import EditCategory from './components/category/EditCategory'
 import EditProduct from './components/product/EditProduct'
 import AboutMe from './components/basic/AboutMe'
 
 function App() {
 
-  const {products} = useSelector((state: RootState) => state.productsReducer)
-  // const product = [{ id: 1 }, { id: 2 }, /* ... other products ... */];
-  // const productId = new Date().getMilliseconds
-  // productId = 
 
   return (
     <div className="App">

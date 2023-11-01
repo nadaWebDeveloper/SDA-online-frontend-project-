@@ -12,10 +12,10 @@ import useUserState from "../Hooks/useUserState"
 const ListUser = () => {
 
     const {users, isLoading, error , searchTerm} = useUserState()
-    const Dispatch: AppDispatch = useDispatch()
+    const dispatch = useDispatch< AppDispatch >()
    
     useEffect(() => {
-     Dispatch(fetchUser())
+      dispatch(fetchUser())
     }, [])
    
     if(isLoading)
@@ -25,7 +25,7 @@ const ListUser = () => {
 
     const handleSearch =(event: ChangeEvent<HTMLInputElement>)=>{
       const inputValue = event.target.value
-      Dispatch(searchUser(inputValue))
+      dispatch(searchUser(inputValue))
     }
     
     const searchUsers = searchTerm
@@ -37,7 +37,7 @@ const ListUser = () => {
      const handleDelete =(id: number)=>{
     
       if(confirm("Are you sure to Delete user")){
-        Dispatch(deleteUser(id))
+        dispatch(deleteUser(id))
         alert('success deleted user');
 
       }else{
@@ -47,7 +47,7 @@ const ListUser = () => {
     const handleBlock =(id: number)=>{
      
       if(confirm("Are you sure to block user")){
-        Dispatch(blockUser(id))
+        dispatch(blockUser(id))
         alert('success blocked user');
 
       }else{

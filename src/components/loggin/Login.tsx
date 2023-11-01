@@ -16,21 +16,19 @@ const Login = ({ pathName }: { pathName: string }) => {
 
   // const Dispatch: AppDispatch = useDispatch() ""
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-
-  useEffect(() => {
-    dispatch(fetchUser())
-  }, [])
-
   const navigate = useNavigate()
   const [user, setUser] = useState({
     email: '',
     password: ''
   })
 
+  useEffect(() => {
+    dispatch(fetchUser())
+  }, [])
+
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const nameInput = event.target.name
-    const valueInput = event.target.value
+    const { name: nameInput, value: valueInput } = event.target;
     setUser((prevState) => {
       return { ...prevState, [nameInput]: valueInput }
     })
