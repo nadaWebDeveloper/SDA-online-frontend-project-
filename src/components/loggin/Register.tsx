@@ -1,20 +1,19 @@
-import { useRef, useState, useEffect, ChangeEvent, FormEvent } from 'react'
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react'
+import { Link } from 'react-router-dom'
+import { useDispatch} from 'react-redux'
+
+
 import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '../../redux/store'
-import { fetchUser } from '../../redux/slices/user/userSlice'
+import { AppDispatch} from '../../redux/store'
+import { fetchUser, registerUser } from '../../redux/slices/user/userSlice'
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
 const EMAIL_REGEX = /^[\w-\._\+%]+@(?!(live|hotmail|outlook|aol|yahoo|rocketmail|gmail|gmx\.com|mail\.com|inbox\.com|icloud|aim|yandex|zoho)$)(?:[\w-]+\.)+[\w]{2,30}$/;
 
 const Register = () => {
-  const userRef = useRef()
-  const errRef = useRef()
 
-  const { users } = useSelector((state: RootState) => state.usersReducer)
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
@@ -67,9 +66,9 @@ const Register = () => {
     setValidMatch(pwd === matchPwd)
   }, [pwd, matchPwd])
 
-  // useEffect(() => {
-  //   setErrMsg('')
-  // }, [firstName,lastName, email, pwd, matchPwd])
+  useEffect(() => {
+    setErrMsg('')
+  }, [firstName,lastName, email, pwd, matchPwd])
 
 
   const togglePasswordVisibility = () => {
@@ -77,45 +76,26 @@ const Register = () => {
   };
 
 
-  const setters  = {
-    firstName: setFirstName,
-    lastName: setLastName,
-    email: setEmail,
-    passWord:setPwd,
-    MatchPassword:setMatchPwd
-  };
-
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    passWord:'',
-    MatchPassword:''
-  })
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-
-
-    const nameInput = event.target.name
-    const valueInput = event.target.value
-    setUser((prevState) => {
-      return { ...prevState, [nameInput]: valueInput }
-    })
-    
-    // const valueInput = event.target.value
-
-    // setFirstName(valueInput)
-    // setLastName(valueInput)
-    // setEmail(valueInput)
-    // setPwd(valueInput)
-    // setMatchPwd(valueInput)
-
-
-    // const nameInput = event.target.name
-    // setUser((prevState) => {
-    //   return { ...prevState, [nameInput]: valueInput }
-    // })
-
-  }
+  const handleFirstNameChange = (event : ChangeEvent<HTMLInputElement>) =>
+ {
+  setFirstName(event.target.value);
+ }
+ const handleLastNameChange = (event : ChangeEvent<HTMLInputElement>) =>
+ {
+  setLastName(event.target.value);
+ }
+ const handleEmailChange = (event : ChangeEvent<HTMLInputElement>) =>
+ {
+  setEmail(event.target.value);
+ }
+ const handlePassWordChange = (event : ChangeEvent<HTMLInputElement>) =>
+ {
+  setPwd(event.target.value);
+ }
+ const handleMatchPasswordChange = (event : ChangeEvent<HTMLInputElement>) =>
+ {
+  setMatchPwd(event.target.value);
+ }
 
   const handleSubmit =  (event: FormEvent) => {
     event.preventDefault()
@@ -130,33 +110,18 @@ const Register = () => {
     }
 
     setSuccess(true);
-    // try {
-    //     const response = await axios.post(REGISTER_URL,
-    //         JSON.stringify({ user, pwd }),
-    //         {
-    //             headers: { 'Content-Type': 'application/json' },
-    //             withCredentials: true
-    //         }
-    //     );
-    //     console.log(response?.data);
-    //     console.log(response?.accessToken);
-    //     console.log(JSON.stringify(response))
-    //     setSuccess(true);
-    //     //clear state and controlled inputs
-    //     //need value attrib on inputs for this
-    //     setUser('');
-    //     setPwd('');
-    //     setMatchPwd('');
-    // } catch (err) {
-    //     if (!err?.response) {
-    //         setErrMsg('No Server Response');
-    //     } else if (err.response?.status === 409) {
-    //         setErrMsg('Username Taken');
-    //     } else {
-    //         setErrMsg('Registration Failed')
-    //     }
-    //     errRef.current.focus();
-    // }
+
+    const newUser ={
+    id: new Date().getMilliseconds() ,
+    firstName: firstName,
+    lastName: lastName,
+    email:email,
+    pwd:pwd
+    };
+    console.log(newUser);
+
+    dispatch(registerUser(newUser));
+
   }
 
   return (
@@ -171,14 +136,13 @@ const Register = () => {
         </section>
       ) : (
         <>
-        <h1>Register</h1>
         <section>
           <p
-            // ref={errRef}
             className={errMsg ? 'errmsg' : 'offscreen'}
             aria-live="assertive">
             {errMsg}
           </p>
+          <h1>Register</h1>
           <form onSubmit={handleSubmit}>
             <label htmlFor="FirstName">
               <FontAwesomeIcon icon={faCheck} className={validName ? 'valid' : 'hide'} />
@@ -192,7 +156,7 @@ const Register = () => {
               id="FirstName"
               name='FirstName'
               autoComplete="off"
-              onChange={handleInputChange}
+              onChange={handleFirstNameChange}
               value={firstName}
               required
               aria-invalid={validName ? 'false' : 'true'}
@@ -227,7 +191,7 @@ const Register = () => {
               id="LastName"
               name='LastName'
               value={lastName}
-              onChange={handleInputChange}
+              onChange={handleLastNameChange}
               autoComplete="off"
               required
               aria-invalid={validLastName ? 'false' : 'true'}
@@ -262,7 +226,7 @@ const Register = () => {
               id="email"
               name='email'
               value={email}
-              onChange={handleInputChange}
+              onChange={handleEmailChange}
               autoComplete="off"
               required
               aria-invalid={validEmail ? 'false' : 'true'}
@@ -297,7 +261,8 @@ const Register = () => {
               id="password"
               placeholder='Password'
               name='password'
-              onChange={handleInputChange}
+              autoComplete="new-password"
+              onChange={handlePassWordChange}
               value={pwd}
               required
               aria-invalid={validPwd ? 'false' : 'true'}
@@ -336,7 +301,7 @@ const Register = () => {
               placeholder='Confirm Password'
               id="MatchPassword"
               name='MatchPassword'
-              onChange={handleInputChange}
+              onChange={handleMatchPasswordChange}
               value={matchPwd}
               required
               aria-invalid={validMatch ? 'false' : 'true'}

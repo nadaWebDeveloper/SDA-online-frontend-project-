@@ -3,20 +3,19 @@ import api from '../../../api'
 
 export const fetchCategory = createAsyncThunk('users/fetchCategory', async() =>
 {
-  // try {
+  try {
     const response = await api.get('/mock/e-commerce/categories.json')
       // checking there is any issue with network
-      // if (!response) {
-        // throw new Error('Network response error');
-      // }
+      if (!response) {
+        throw new Error('Network response error');
+      }
     return response.data
-
-  // } 
+  } 
   
-  // catch (error) {
-  //   //checking if there is any issue when fetch process
-  // console.log(error) 
-  // }
+  catch (error) {
+    //checking if there is any issue when fetch process
+  console.log(error) 
+  }
 })
 
 export type category = {
@@ -44,6 +43,13 @@ export const categorySlice = createSlice({
   name: 'categories',
   initialState,
   reducers: {
+    categoryRequest: (state) => {
+      state.isLoading = true
+    },
+    categoriesSuccess: (state, action) => {
+      state.isLoading = false
+      state.categories = action.payload
+    },
     sortCategoryByName: (state, action) => {
 
       const sortCategory = action.payload
@@ -58,7 +64,30 @@ export const categorySlice = createSlice({
       //   return 0;
       // }); 
     },
-   
+    addCategory: (state, action) =>{
+
+      console.log(action.payload);
+      state.categories.push(action.payload)
+
+    },
+
+    deleteCategory :(state, action) =>{
+
+      const filterCategory= state.categories.filter((category) => category.id !== action.payload)
+      state.categories = filterCategory
+
+    },
+    updateCategory: (state, action) => {
+      const {id,name } = action.payload; 
+      console.log(action.payload);
+        const categoryExist = state.categories.find((category)=> category.id === id)
+        console.log(categoryExist);
+      if(categoryExist){
+        categoryExist.name = name 
+      }
+
+      // state.userData = action.payload   
+},
 },
 
   extraReducers(builder){
@@ -77,57 +106,9 @@ export const categorySlice = createSlice({
 
   }
 })
-export const { sortCategoryByName } = categorySlice.actions
+export const { sortCategoryByName, categoryRequest, categoriesSuccess,addCategory, deleteCategory, updateCategory } = categorySlice.actions
 
 export default categorySlice.reducer
 
 
 
-
-
-// export type Product = {
-//   id: number
-//   name: string
-//   image: string
-//   description: string
-//   categories: number[]
-//   variants: string[]
-//   sizes: string[]
-// }
-
-// export type ProductState = {
-//   items: Product[]
-//   error: null | string
-//   isLoading: boolean
-// }
-
-// const initialState: ProductState = {
-//   items: [],
-//   error: null,
-//   isLoading: false
-// }
-
-// export const userSlice = createSlice({
-//   name: 'user',
-//   initialState,
-//   reducers: {
-//     productsRequest: (state) => {
-//       state.isLoading = true
-//     },
-//     productsSuccess: (state, action) => {
-//       state.isLoading = false
-//       state.items = action.payload
-//     },
-//     addProduct: (state, action: { payload: { product: Product } }) => {
-//       // let's append the new product to the beginning of the array
-//       state.items = [action.payload.product, ...state.items]
-//     },
-//     removeProduct: (state, action: { payload: { productId: number } }) => {
-//       const filteredItems = state.items.filter((product) => product.id !== action.payload.productId)
-//       state.items = filteredItems
-//     }
-//   }
-// })
-// export const { removeProduct, addProduct, productsRequest, productsSuccess } = userSlice.actions
-
-// export default userSlice.reducer

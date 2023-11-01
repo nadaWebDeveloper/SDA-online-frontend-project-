@@ -1,16 +1,17 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
-import { AppDispatch, RootState } from '../../redux/store'
+import { AppDispatch } from '../../redux/store'
 import { fetchUser, login } from '../../redux/slices/user/userSlice'
 import { Link } from 'react-router-dom'
 import {  faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import useUserState from '../Hooks/useUserState'
 
 
 
 const Login = ({ pathName }: { pathName: string }) => {
-  const { users } = useSelector((state: RootState) => state.usersReducer)
+  const {users} = useUserState()
   const dispatch = useDispatch<AppDispatch>() //generics "is the better and more commonly used way to declare the type when working with Redux Toolkit and TypeScript in a React application."
 
   // const Dispatch: AppDispatch = useDispatch() ""
@@ -94,6 +95,8 @@ const handleButtonClick = () => {
   return (
     <>
     <section>
+    <h1>Sign In</h1>
+
     <form action="" onSubmit={handleSubmit}>
 
     <div className="inputField">
@@ -101,6 +104,7 @@ const handleButtonClick = () => {
           type="email"
           name="email"
           placeholder="Email"
+          autoComplete="email"
           onChange={handleInputChange}
           required
         />
@@ -112,6 +116,7 @@ const handleButtonClick = () => {
           type= {isPasswordVisible ? 'text' : 'password'} 
           name="password"
           placeholder="Password"
+          autoComplete="current-password"
           onChange={handleInputChange}
           required
         />
@@ -128,7 +133,7 @@ const handleButtonClick = () => {
 
         
         <button onClick={handleButtonClick} >
-          Login
+        Sign In
         </button>
       </form>
 

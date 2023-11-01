@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux"
-import { RootState } from "../../redux/store"
 import profilePicture from '../../profilePicture.jpg';
 import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +9,7 @@ import { Link } from "react-router-dom";
 
 const UserProfile = () => {
 
-  const navigate = useNavigate()
+const navigate = useNavigate()
 const {userData} = useUserState()
 const {id, firstName, lastName, email } = userData || {};
 
@@ -21,7 +19,7 @@ const {id, firstName, lastName, email } = userData || {};
   };
 
   const handleClickProfileEdit = () => {
-    navigate('/editProfile');
+    navigate('/user/editProfile');
   };
 
   return (

@@ -3,17 +3,15 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 
 import './App.css'
-import HomeProducts  from './components/HomeProducts'
-import Footer from './components/Footer'
-import NavBar from './components/NavBar'
-import Error from './components/Error'
-import Contact from './components/Contact'
+import HomeProducts  from './components/basic/HomeProducts'
+import Footer from './components/basic/Footer'
+import Error from './components/basic/Error'
 import ProductDetails from './components/product/ProductDetails'
 import User from './components/user/User'
 import UserProfile from './components/user/UserProfile'
 import UserOrders from './components/user/UserOrders'
 import Admin from './components/admin/Admin'
-import Category from './components/Category'
+import Category from './components/category/Category'
 import AdminOrder from './components/admin/AdminOrder'
 import Products from './components/product/Products'
 import ListUser from './components/admin/ListUser'
@@ -21,29 +19,40 @@ import Login from './components/loggin/Login'
 import ProtectRouterUser from './components/protectRouter/ProtectRouterUser'
 import ProtectRouterAdmin from './components/protectRouter/ProtectRouterAdmin'
 import Register from './components/loggin/Register'
-import UserSideBar from './components/user/UserSideBar'
 import EditProfile from './components/user/EditProfile'
+import Header from './components/basic/Header'
+import AddProduct from './components/product/AddProduct'
+import { useSelector } from 'react-redux'
+import { RootState } from './redux/store'
+import EditCategory from './components/category/EditCategory'
+import EditProduct from './components/product/EditProduct'
+import AboutMe from './components/basic/AboutMe'
 
 function App() {
+
+  const {products} = useSelector((state: RootState) => state.productsReducer)
+  // const product = [{ id: 1 }, { id: 2 }, /* ... other products ... */];
+  // const productId = new Date().getMilliseconds
+  // productId = 
+
   return (
     <div className="App">
-      {/*<ProductsManager /> */}
+      {/* <ProductsManager /> */}
    <BrowserRouter>
-<NavBar />
+<Header />
 <Routes>
   {/* when logout go to home page */}
 <Route path='/' element={<HomeProducts />} />
   {/* for single page  */}
 <Route path='/products/:name/:id' element={<ProductDetails />} />
-<Route path='/contact' element={<Contact />} />
 <Route path='/login' element={<Login pathName='/' />} />
 <Route path='/register' element={<Register />} />
 <Route path='/product' element={<ProductDetails />} />
-<Route path='/editProfile' element={<EditProfile />} />
 
 <Route path='/dashboard' element={<ProtectRouterUser />}>  // this line to protected all inside in go to component and check if (isLoggedIn = true) then enter in all path
 <Route path='user' element={<User />} />
 <Route path='user/profile' element={<UserProfile />} />
+<Route path='user/editProfile' element={<EditProfile />} />
 <Route path='user/orders' element={<UserOrders />} />
 </Route>
 
@@ -51,13 +60,16 @@ function App() {
 <Route path='admin' element={<Admin />} />
 <Route path='admin/category' element={<Category />} />
 <Route path='admin/products' element={<Products />} />
+<Route path='admin/editProduct' element={<EditProduct />} />
+<Route path='admin/addProduct'  element={<AddProduct />}  />
+<Route path='admin/editCategory'  element={<EditCategory  />} />
 <Route path='admin/orders' element={<AdminOrder />} />
 <Route path='admin/users' element={<ListUser />} />
 </Route>
 
-
 <Route path='*' element={<Error />} />
 </Routes>
+<AboutMe />
 <Footer/>
 </BrowserRouter>
     </div>

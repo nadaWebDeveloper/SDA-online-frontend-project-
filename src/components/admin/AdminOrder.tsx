@@ -4,9 +4,11 @@ const AdminOrder=() => {
   return (
 <>
 <div className="container">
-  <AdminSideBar/>
+<div className="sectionAdmin">
+  <AdminSideBar />
+</div>
   <div className="mainContent">
-    order admin goes here
+    order admin goes 
   </div>
 </div>
 </>  )

@@ -1,14 +1,15 @@
+import Products from "../product/Products"
 import AdminSideBar from "./AdminSideBar"
 
 const  Admin =()=> {
   return (
 <>
-<div className="container">
+<div className="sectionAdmin">
   <AdminSideBar />
-  <div className="mainContent">
-    main content goes here
-  </div>
 </div>
+
+
+
 </>  )
 }
 

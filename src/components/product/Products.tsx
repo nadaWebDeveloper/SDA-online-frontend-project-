@@ -1,14 +1,17 @@
 import { useDispatch, useSelector } from "react-redux"
 import { ChangeEvent, useEffect } from "react"
-
-import AdminSideBar from "../admin/AdminSideBar"
 import { AppDispatch, RootState } from "../../redux/store"
-import { fetchProducts, searchProduct } from "../../redux/slices/products/productSlice"
-import { FaEdit, FaHeart } from "react-icons/fa";
+
+import { deleteProduct, fetchProducts, searchProduct } from "../../redux/slices/products/productSlice"
 import SortProducts from "./SortProducts"
 import Search from "../Filtering/Search"
 import Sort from "../Filtering/Sort";
 import { sortCategoryByName } from "../../redux/slices/category/categorySlice"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {  faAdd, faDeleteLeft, faEdit } from "@fortawesome/free-solid-svg-icons"
+import { Link, useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
+import AdminSideBar from "../admin/AdminSideBar"
 
 
 
@@ -18,6 +21,7 @@ const Products = () => {
  const {categories} = useSelector((state: RootState) => state.categoriesReducer)
  const dispatch: AppDispatch = useDispatch()
  const optionArr = categories.map(category => category.name);
+   const navigate = useNavigate()
 
 
  useEffect(() => {
@@ -41,62 +45,93 @@ const searchProducts = searchTerm
 
 const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) =>
    {
-
     const inputValue =event.target.value
     dispatch(sortCategoryByName(inputValue))
-    
-
    } 
   
+
+   const handleDeleteProduct = (id: number) =>
+   {
+
+if(confirm("Are you sure you Delete Product")){
+  dispatch(deleteProduct(id))
+}else{
+  return false;
+}
+      }
+ 
+ 
 
   return (
 <>
 
-  <AdminSideBar />
-  
- 
 
   {searchProducts.length > 0 ? 
         (
-      <div id="Product" className="product">
-      <h2 className="product-category">best selling</h2>
-      <button className="pre-btn"></button>
-      <button className="nxt-btn"></button>
+     
+    <> 
 
-      <div className="filter">
+<div className="sectionAdmin">
+        <AdminSideBar />
+      </div>
+  
+
+    <div className="filter">
     <Search searchTerm={searchTerm} handleSearch={handleSearch} />
     <Sort optionArr={optionArr} handleSortChange={handleSortChange} />
     <SortProducts />
       </div>
+    
 
+<div id="Product" className="homePage">
+
+<Link to='/admin/addProduct' >
+<FontAwesomeIcon icon={faAdd}  className="addProduct" />
+</Link>
+
+<div className="product">
      {searchProducts.map((product)=> {
-      const { id, name,image,description,categories,variants,sizes, price} = product
+      const { id, name,image, price ,description ,variants , sizes, categories} = product
       return(
+        
+
         <div className="product-container" key={id}>
+          
         <div className="product-card">
-           <div className="product-image">
+           <div className="product-imageAdmin">
             <span className="discount-tag">50% off</span>
             <img src={image} className="product-thumb" alt={name} />
-            <button className="card-btn"><FaHeart /></button>
-          </div>
+            <div className="">
+            <FontAwesomeIcon icon={faDeleteLeft} onClick={() => {handleDeleteProduct(id)}}  className="iconAdminProduct"/>
+            <Link to="/admin/editProduct" state={{ id,name , image , price ,description ,variants , sizes, categories}}>
+            <FontAwesomeIcon icon={faEdit}  className="iconAdminProduct1" />
+            </Link>
+            </div>
+            </div>
+           
 
           <div className="product-info">
             <h2 className="product-brand">{name}</h2>
-            <p className="product-short-des">{description}</p>
-            <span className="price">{price} $</span>
-            <span className="actual-price">{variants}</span>
-            <span className="actual-price">{sizes}</span>
-
-            {/* <span className="price">{sizes} RS</span>
-            <span className="actual-price">{variants}</span> */}
-             <button className="card-btn">Delete</button>
-            <button className="card-btn"><FaEdit /></button>
+            <span className="price">{price} RS</span>
+            <br />
+            <b>{description}</b>
+            <br />
+            <p>categories: {categories}</p>
+            <br />
+            <p>variants: {variants}</p>
+            <br />
+            <p>sizes: {sizes}</p>
           </div>  
         </div>
       </div>
+      
       )
-     })}
-    </div>):(<h1>Not Add Products Yet ... </h1>) } 
+     }
+     )}
+     </div>
+    </div>
+    
+    </>):(<h1> Not Add Products Yet ... </h1>)} 
   
 </>  )
 }

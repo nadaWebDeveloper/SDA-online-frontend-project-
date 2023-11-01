@@ -36,23 +36,43 @@ const ListUser = () => {
 
      const handleDelete =(id: number)=>{
     
-      Dispatch(deleteUser(id))
-    }
+      if(confirm("Are you sure to Delete user")){
+        Dispatch(deleteUser(id))
+      }else{
+        return false;
+    }}
 
-    const handleBlack =(id: number)=>{
-      Dispatch(blockUser(id))
+    const handleBlock =(id: number)=>{
+     
+      if(confirm("Are you sure to block user")){
+        Dispatch(blockUser(id))
+      }else{
+        return false;
     
-    }
+    }}
+
+    
    
   return (
 <>
 
-<AdminSideBar />
+<div className="sectionAdmin">
+  <AdminSideBar />
+</div>
+
+
+<div className="filter">
 <Search searchTerm= {searchTerm} handleSearch={handleSearch}/>
+</div>
+
+
       <div className="mainContent">
       <h2>List all the User here </h2> 
       </div>
- 
+
+ <div className="contentUser">
+ <div className="user">
+
  {searchUsers.length > 0 ?(   
       
       searchUsers.map((user)=> {
@@ -65,16 +85,18 @@ const ListUser = () => {
              <h3 className="product-brand">{email}</h3>
              <button onClick={()=> {handleDelete(id)}} >Delete</button>     
               {/* to delete user from database */}
-              <button onClick={()=> {handleBlack(id)}} >
+              <button onClick={()=> {handleBlock(id)}} >
                 {ban ? 'unban' : 'ban'}
                 </button>     
             <button ><FaEdit /></button> 
             </div>
       )
     }
-     })):(  <h1>Not Add User Yet ... </h1>)}  
+     })
+     ):(  <h1>Not Add User Yet ... </h1>)}
+ </div>  
+ </div>
  
-  
 </>  )
 }
 

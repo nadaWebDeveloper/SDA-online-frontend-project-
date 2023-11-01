@@ -1,16 +1,25 @@
 import { Link } from "react-router-dom"
+import useUserState from "../Hooks/useUserState"
 
 const AdminSideBar = () => {
+
+  const {userData} = useUserState()
+
   return (
+
 <>
-<aside className="sidebar">
-<div>
-  <h1>User Profile</h1>
-  <p>nada yahya</p>
-  <p>nadayahya@hotmail.com</p>
+
+
+
+
+<div className="">
+  <span><h1>{userData?.role}  : {userData?.firstName}</h1></span>
 </div> 
 
   <ul>
+  <li>
+      <Link to='/dashboard/admin/users'>Users</Link>
+    </li>
     <li>
       <Link to='/dashboard/admin/category'>Category</Link>
     </li>
@@ -20,11 +29,9 @@ const AdminSideBar = () => {
     <li>
       <Link to='/dashboard/admin/orders'>Orders</Link>
     </li>
-    <li>
-      <Link to='/dashboard/admin/users'>Users</Link>
-    </li>
   </ul>
-  </aside>
+
+ 
   </>  )
 }
 

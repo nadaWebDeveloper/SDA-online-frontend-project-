@@ -3,8 +3,18 @@ import api from '../../../api'
 
 export const fetchProducts = createAsyncThunk('users/fetchProducts', async() =>
 {
+  try {
   const response = await api.get('/mock/e-commerce/products.json')
+  if (!response) {
+    throw new Error('Network response error');
+  }
   return response.data
+} 
+  
+catch (error) {
+  //checking if there is any issue when fetch process
+console.log(error) 
+}
 })
 
 
@@ -18,7 +28,6 @@ export type Product = {
   sizes: string[]
   price: number
 }
-
 export type ProductState = {
   products: Product[]
   error: null | string
@@ -35,21 +44,29 @@ const initialState: ProductState = {
   singlePageProduct: {} as Product
 }
 
+
 export const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
+    productsRequest: (state) => {
+            state.isLoading = true
+          },
+    productsSuccess: (state, action) => {
+            state.isLoading = false
+            state.products = action.payload
+          },
     searchProduct:(state, action)=> {
       state.searchTerm = action.payload
     },
-     findProductById: (state, action) =>  
+   findProductById: (state, action) =>  
     {
           // console.log(action.payload);
-          const id = action.payload
+    const id = action.payload
           
           // const name = action.payload
 
-          const foundSingleProduct = state.products.find((product) => product.id === id )
+    const foundSingleProduct = state.products.find((product) => product.id === id )
     if(foundSingleProduct)
     {
       state.singlePageProduct = foundSingleProduct
@@ -64,7 +81,32 @@ export const productSlice = createSlice({
     }else if (sortCategory === 'price'){
       state.products.sort((a, b) => a.price - b.price )
     }
-   }
+   },
+   addNewProduct: (state, action) =>{
+
+    console.log(action.payload);
+    state.products.push(action.payload)
+
+  },
+
+  deleteProduct :(state, action) =>{
+
+    const filterProduct= state.products.filter((product) => product.id !== action.payload)
+    state.products = filterProduct
+
+  },
+  updateProduct: (state, action) => {
+   
+    const {id,name , image ,description, categories, variants, sizes, price } = action.payload; 
+    console.log(action.payload);
+      const categoryExist = state.products.find((category)=> category.id === id)
+      console.log(categoryExist);
+    if(categoryExist){
+      categoryExist.name = name 
+    }
+
+    // state.userData = action.payload   
+},
   },
   extraReducers(builder){
     builder.addCase(fetchProducts.pending, (state)=> {
@@ -83,9 +125,27 @@ export const productSlice = createSlice({
 
   }
 })
-export const { findProductById, searchProduct, sortProducts} = productSlice.actions
+export const { findProductById, searchProduct, sortProducts , productsRequest , productsSuccess , addNewProduct , deleteProduct ,updateProduct } = productSlice.actions
 
 export default productSlice.reducer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

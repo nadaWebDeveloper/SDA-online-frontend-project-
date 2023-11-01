@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import api from '../../../api'
 
-export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
+export const fetchOrder = createAsyncThunk('users/fetchOrder', async() =>
 {
   try {
-  const response = await api.get('/mock/e-commerce/users.json')
+  const response = await api.get('/mock/e-commerce/orders.json')
   if (!response) {
     throw new Error('Network response error');
   }
@@ -18,13 +18,10 @@ console.log(error)
 })
 
 export type user = {
-  id: number
-  firstName: string
-  lastName: string
-  email: string
-  password: string | number
-  role: string
-  ban: boolean
+id: number,
+productId: number,
+userId: number,
+ purchasedAt:string
 }
 
 export type userState = {

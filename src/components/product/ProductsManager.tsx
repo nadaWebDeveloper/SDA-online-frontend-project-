@@ -6,14 +6,15 @@
 //   productsSuccess,
 //   removeProduct
 // } from '../../redux/slices/products/productSlice'
+
 // import { AppDispatch, RootState } from '../../redux/store'
 // import { NewProductWrapper } from './NewProductWrapper'
 // import api from '../../api'
 
 // export function ProductsManager() {
 //   const dispatch = useDispatch<AppDispatch>()
-//   const state = useSelector((state: RootState) => state)
-//   const products = state.products
+//   const {items, isLoading } = useSelector((state: RootState) => state.productsReducer)
+// // const products = state.products
 
 //   useEffect(() => {
 //     handleGetProducts()
@@ -34,10 +35,10 @@
 //   return (
 //     <div className="grid grid-cols-1 md:grid-cols-2 w-full">
 //       <NewProductWrapper />
-//       {products.isLoading && <h3> Loading products...</h3>}
+//       {isLoading && <h3> Loading products...</h3>}
 //       <div className="card grid gap-4">
 //         <ul>
-//           {products.items.map((product) => (
+//           {items.map((product) => (
 //             <li key={product.id} className="flex items-center gap-4 text-2xl mb-2">
 //               <img src={product.image} alt={product.name} width="50" />
 //               <span>{product.name}</span>

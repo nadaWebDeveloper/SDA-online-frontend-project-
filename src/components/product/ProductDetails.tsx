@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router"
 import { AppDispatch, RootState } from "../../redux/store"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import {  fetchProducts, findProductById } from "../../redux/slices/products/productSlice"
-import { FaHeart , FaCalendar, FaShapes} from "react-icons/fa";
 import { fetchCategory } from "../../redux/slices/category/categorySlice"
+import { faClose, faBasketShopping , faHeart} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 const ProductDetails = () => {
@@ -13,8 +14,10 @@ const ProductDetails = () => {
   //from name can fetch the data from store
   const navigate = useNavigate()
 
-  const {singlePageProduct,isLoading, error} = useSelector((state: RootState) => state.productsReducer);
+  const {singlePageProduct,isLoading, error , products} = useSelector((state: RootState) => state.productsReducer);
   const {categories} = useSelector((state: RootState) => state.categoriesReducer);
+  const [focus, setFocus] = useState(false)
+
 
   const Dispatch = useDispatch<AppDispatch>()
  
@@ -39,42 +42,42 @@ const ProductDetails = () => {
 
   }
 
+  const categorySize = (size: string )=>
+{
+
+}
   return (
 <>
-{singlePageProduct &&
-(
-  <>
-     <div id="Product" className="product">
-     <div className="product">
-  <div className="product-card">
+<div className="backDetail" > 
 
-  <div  className="product-image">
-  <button className="btn"><FaCalendar /></button>
-  <button className="btn" onClick={()=>{navigate('/')}}><FaShapes /></button>
+<div  className="wrapper">
+  <div className="card">
+  <FontAwesomeIcon  icon={faClose}  onClick={()=>{navigate('/')}} className="closeRight" />
+  <div  className="poster">
  <img src={singlePageProduct.image} alt={singlePageProduct.name} className="product-thumb" />
- <button className="card-btn"><FaHeart /></button>
-  </div>
-
-  <div className="product-info">
-  <h1 className="product-brand">{singlePageProduct.name}</h1>
-  <h1 className="product-brand">{singlePageProduct.price}</h1>
-  <h1 className="product-short-des">{singlePageProduct.description}</h1>
-  <p > Categories:{' '}
-    {singlePageProduct.categories && singlePageProduct.categories.map((categoryId) => getCategoryNameById(categoryId)) }
-  </p>
-
-  <h1 className="actual-price">{singlePageProduct.sizes && singlePageProduct.sizes.join(', ')}</h1>
-
-  </div>
-
+  </div >
+ <FontAwesomeIcon icon={faHeart}  className="heartIcon" />
+ <FontAwesomeIcon icon={faBasketShopping} className="shopIcon" />
 </div>
   </div>
 
-     </div>
- 
-</>
 
-)}
+  <div className="backInfo">
+  <h1 className="nameDetail">{singlePageProduct.name}</h1>
+  <h2 className="priceDetail">{singlePageProduct.price} SR</h2>
+  <p className="descDetail">{singlePageProduct.description}</p>
+  
+  <p className="categoryDetail"> 
+    {singlePageProduct.categories && singlePageProduct.categories.map((categoryId) => getCategoryNameById(categoryId)).join(' | ') }
+  </p>
+
+  <p className="sizeDetail"> <br /> {singlePageProduct.sizes && singlePageProduct.sizes.join('  |  ')}</p>
+  </div>
+
+  </div>
+
+
+
 
 </>  )
 }
