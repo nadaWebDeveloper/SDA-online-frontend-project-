@@ -468,6 +468,22 @@ font-size: 19px;
 
   }
   }
+  .pagination
+  {
+    display: flex;
+    justify-content: space-around;
+  
+  }
+
+  .pagination div button {
+    font-size: 50px;
+    color: #1fe654;
+    background: #edebeb00;
+    cursor: pointer;
+
+  }
+
+
 
   .countCart{
     margin: 0.3em;

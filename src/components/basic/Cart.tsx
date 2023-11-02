@@ -35,6 +35,13 @@ const handleClearTheCart =() => {
 
 }
 
+const TotalForBasket = () =>
+{
+  let totalAmount = 0
+  cartItem.map((cartItem) => (totalAmount = totalAmount +cartItem.price))
+   return totalAmount;
+}
+
 
 
   return (
@@ -43,9 +50,10 @@ const handleClearTheCart =() => {
         <div>
           <h2>You have {cartItem.length > 0 ? cartItem.length : 0} Item in the cart</h2>
           <div className="cartShop">
-            <button onClick={handleClearTheCart}>Clear the Cart</button>
             {cartItem.length >0 && 
             <>
+            <button onClick={handleClearTheCart}>Clear the Cart</button>
+
             <div className="cartElement">
              {cartItem.map((cartElement) => {
                 const  {id, name, image, price , description} = cartElement
@@ -69,6 +77,9 @@ const handleClearTheCart =() => {
 
               )
              })}
+             <div>
+              <h2>Total for basket : {TotalForBasket()} RS</h2>
+             </div>
             </div>        
             </>
             }

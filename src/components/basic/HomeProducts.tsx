@@ -10,22 +10,27 @@ import {
 import { Link } from 'react-router-dom'
 import Search from '../Filtering/Search'
 import Sort from '../Filtering/Sort'
-import { faBasketShopping, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faBasketShopping, faArrowAltCircleLeft, faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { prices } from '../../Price'
 import { addToCart } from '../../redux/slices/cart/cartSlice'
 
 const HomeProducts = () => {
-  const { products, isLoading, error, searchTerm } = useSelector(
-    (state: RootState) => state.productsReducer
+   
+  //pagination  1- current page number 2- item per page 
+
+  const { products, isLoading, error, searchTerm } = useSelector((state: RootState) => state.productsReducer
   )
   const { categories } = useSelector((state: RootState) => state.categoriesReducer)
   const [priceRange, setPriceRange] = useState<number[]>([])
-
   const dispatch = useDispatch<AppDispatch>()
   const [checkedCategory, setCheckedCategory] = useState<number[]>([])
-
   const optionArr = ['name', 'price']
+
+  //current page
+  const [currentPage, setCurrentPage ] = useState(1)
+  //how item shown in one page in this case 3 item
+  const [itemPerPage] = useState(3)
 
   useEffect(() => {
     dispatch(fetchProducts())
@@ -35,11 +40,6 @@ const HomeProducts = () => {
     const inputValue = event.target.value
     dispatch(searchProduct(inputValue))
   }
-
-  // const searchProducts = searchTerm
-  // ? products.filter((product) => product.name.toLowerCase().includes
-  // (searchTerm.toLowerCase()))
-  // : products
 
   const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const inputValue = event.target.value
@@ -83,10 +83,41 @@ const HomeProducts = () => {
     return categoryMatch && searchMatch && priceMatch
   })
 
- const handleAddToCart = (product: product)=> {
+  //  pagination logic 2
+  const indexOfLastItem = currentPage * itemPerPage;  //6
+  const indexOfFirstItem = indexOfLastItem - itemPerPage;  //6 - 3 = 3
+  const currentItem = filterProducts.slice(indexOfFirstItem, indexOfLastItem )
+
+  const totalPages = Math.ceil(filterProducts.length / itemPerPage)  //12 item / 3 itemPerPage = 4 pages we have  if the result 3.4 the ceil become equal 4
+
+ //  pagination logic 3
+ const handlePageChange =(page: number) =>
+ {
+  setCurrentPage( page )
+ }
+
+ const handleNextPage =() =>
+ {
+  setCurrentPage( currentPage + 1 )
+ }
+
+ const handlePrevPage =() =>
+ {
+  setCurrentPage( currentPage - 1 )
+ }
+
+
+ const handleAddToCart = (product: product )=> {
 
   console.log(product);
   dispatch(addToCart(product))
+ }
+
+ //to display number of page between next and prev button
+ let buttonPageNumber = []
+ for (let pageNumber = 2 ; pageNumber <= totalPages -1 ; pageNumber++){
+  buttonPageNumber.push
+  (<button onClick={()=>{handlePageChange(pageNumber)}}>{pageNumber}</button>)
  }
 
   if (isLoading) {
@@ -95,6 +126,10 @@ const HomeProducts = () => {
   if (error) {
     return <h1>{error}</h1>
   }
+
+
+
+
 
   return (
     <>
@@ -158,9 +193,9 @@ const HomeProducts = () => {
       <div className="homePage">
         <h1 className="productTitle">best selling</h1>
 
-        {filterProducts.length > 0 ? (
+        {currentItem.length > 0 ? (
           <div id="Product" className="product">
-            {filterProducts.map((product) => {
+            {currentItem.map((product) => {
               const { id, name, image, price } = product
               return (
                 <div className="product-container" key={id}>
@@ -186,11 +221,35 @@ const HomeProducts = () => {
                 </div>
               )
             })}
+            
           </div>
+
+          
         ) : (
           <h1>Not Add Products Yet ... </h1>
         )}
+
+   {/* pagination logic 1*/}
+   <div className='pagination'>
+        <div>
+          <button onClick={handlePrevPage}  disabled={currentPage === 1}>
+          <FontAwesomeIcon icon={faArrowAltCircleLeft}  />
+          </button>
+        </div>
+        <div>
+           {buttonPageNumber}
+        </div>
+        <div>
+          <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+          <FontAwesomeIcon icon={faArrowAltCircleRight}  />
+          </button>
+        </div>
       </div>
+
+      </div>
+
+
+
     </>
   )
 }
