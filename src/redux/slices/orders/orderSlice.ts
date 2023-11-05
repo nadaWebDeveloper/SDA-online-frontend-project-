@@ -61,7 +61,7 @@ export const ordersSlice = createSlice({
 
     deleteOrder :(state, action) =>{
 
-      const filterCategory= state.orders.filter((category) => category.id !== action.payload)
+      const filterCategory= state.orders.filter((order) => order.id !== action.payload)
       state.orders = filterCategory
 
     },
@@ -71,9 +71,8 @@ export const ordersSlice = createSlice({
         const orderExist = state.orders.find((category)=> category.id === id)
 
       // state.userData = action.payload   
+}
 },
-},
-
   extraReducers(builder){
     builder.addCase(fetchOrders.pending, (state)=> {
       state.isLoading = true;
@@ -90,7 +89,7 @@ export const ordersSlice = createSlice({
 
   }
 })
-export const {  } = ordersSlice.actions
+export const { deleteOrder } = ordersSlice.actions
 
 export default ordersSlice.reducer
 

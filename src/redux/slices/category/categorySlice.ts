@@ -27,17 +27,26 @@ export type categoryState = {
   categories: category[]
   error: null | string
   isLoading: boolean
+  categoryData: category | null
   selectedCategoryId: number | null; // `null` when no category is selected
   // ... any other state properties
 }
+
+
+const data= localStorage.getItem('categories') !== null 
+? JSON.parse(String(localStorage.getItem('categories')))
+: []
 
 const initialState: categoryState = {
   categories: [],
   error: null,
   isLoading: false,
+  categoryData: data.categoryData,
   selectedCategoryId: null,
 
 }
+
+
 
 export const categorySlice = createSlice({
   name: 'categories',
@@ -68,6 +77,8 @@ export const categorySlice = createSlice({
 
       console.log(action.payload);
       state.categories.push(action.payload)
+      localStorage.setItem('categories', JSON.stringify(state.categories))
+      state.categoryData =action.payload
 
     },
 
@@ -75,6 +86,9 @@ export const categorySlice = createSlice({
 
       const filterCategory= state.categories.filter((category) => category.id !== action.payload)
       state.categories = filterCategory
+      localStorage.setItem('categories', JSON.stringify(state.categories)) 
+      state.categoryData =action.payload
+
 
     },
     updateCategory: (state, action) => {
@@ -85,6 +99,8 @@ export const categorySlice = createSlice({
       if(categoryExist){
         categoryExist.name = name 
       }
+      state.categoryData = action.payload
+
 
       // state.userData = action.payload   
 },

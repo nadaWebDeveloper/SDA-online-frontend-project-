@@ -1,69 +1,59 @@
-import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ChangeEvent, FormEvent, useState } from 'react'
 
-import { FaEdit } from 'react-icons/fa'
+import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../redux/store'
 import { updateProduct } from '../../redux/slices/products/productSlice'
 
 function EditProduct() {
-
-
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const { state } = useLocation()
+  console.log(state)
 
+  const [nameEditProduct, setNameEditProduct] = useState(state.name)
+  const [imageEditProduct, setImageEditProduct] = useState(state.image)
+  const [descriptionEditProduct, setDescriptionEditProduct] = useState(state.description)
+  const [categoriesEditProduct, setCategoriesEditProduct] = useState(state.categories)
+  const [variantsEditProduct, setVariantsEditProduct] = useState(state.variants)
+  const [sizesEditProduct, setSizesEditProduct] = useState(state.sizes)
+  const [priceEditProduct, setPriceEditProduct] = useState(state.price)
 
-  const [nameEditProduct, setNameEditProduct] = useState(state.nameEditProduct)
-  const [imageEditProduct, setImageEditProduct] = useState(state.imageEditProduct)
-  const [descriptionEditProduct, setDescriptionEditProduct] = useState(state.descriptionEditProduct)
-  const [categoriesEditProduct, setCategoriesEditProduct] = useState(state.categoriesEditProduct)
-  const [variantsEditProduct, setVariantsEditProduct] = useState(state.variantsEditProduct)
-  const [sizesEditProduct, setSizesEditProduct] = useState(state.sizesEditProduct)
-  const [priceEditProduct, setPriceEditProduct] = useState(state.priceEditProduct)
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value
-    setNameEditProduct(inputValue)
-  }
-
-  const handleChangeImage = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value
-    setImageEditProduct(inputValue)
-  }
-
-  const handleChangeDesc = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value
-    setDescriptionEditProduct(inputValue)
-  }
-
-  const handleChangeCategory = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value
-    setCategoriesEditProduct(inputValue)
-  }
-
-  const handleChangeVariants = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value
-    setVariantsEditProduct(inputValue)
-  }
-
-  const handleChangeSize = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value
-    setSizesEditProduct(inputValue)
-  }
-
-  const handleChangePrice = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value
-    setPriceEditProduct(inputValue)
+    switch (name) {
+      case 'nameEditProduct':
+        setNameEditProduct(value)
+        break
+      case 'imageEditProduct':
+        setImageEditProduct(value)
+        break
+      case 'descriptionEditProduct':
+        setDescriptionEditProduct(value)
+        break
+      case 'categoriesEditProduct':
+        setCategoriesEditProduct(value)
+        break
+      case 'variantsEditProduct':
+        setVariantsEditProduct(value)
+        break
+      case 'sizesEditProduct':
+        setSizesEditProduct(value)
+        break
+      case 'priceEditProduct':
+        setPriceEditProduct(value)
+        break
+      default:
+        break
+    }
   }
 
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
 
-
-    if(confirm("Are you sure to Edit Product")){
-
+    if (confirm('Are you sure to Edit Product')) {
       const editProduct = {
         id: state.id,
         name: nameEditProduct,
@@ -74,111 +64,97 @@ function EditProduct() {
         sizes: sizesEditProduct,
         price: priceEditProduct
       }
-  
-      dispatch(updateProduct(editProduct))
-      navigate('/admin/products')
-      alert('success edit  product');
 
-      
-    }else{
-      return false;
-  }}
-  
+      dispatch(updateProduct(editProduct))
+      console.log(editProduct)
+      navigate('/dashboard/admin/products')
+      alert('success edit  product')
+    } else {
+      return false
+    }
+  }
 
   return (
     <>
-      <h2>Edit Product</h2>
-      <form onSubmit={handleSubmit} >
-       <div> 
-      <label htmlFor="nameEditProduct">
-          Name:
-        </label>
-        <input
-          type="text"
-          name="nameEdit"
-          id="nameEditProduct"
-          value={nameEditProduct}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="imageEditProduct">
-          Image URL:
-        </label>
-        <input
-          type="text"
-          name="imageEdit"
-          id="imageEditProduct"
-          value={imageEditProduct}
-          onChange={handleChangeImage}
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="descriptionEditProduct" >
-          Description:
-        </label>
-        <input
-          type='text'
-          name="descriptionEdit"
-          id="descriptionEditProduct"
-          value={descriptionEditProduct}
-          onChange={handleChangeDesc}
-        
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="categoriesEditProduct">
-          Categories: (use comma , to create multiple)
-        </label>
-        <input
-          type="text"
-          name="categoriesEdit"
-          id="categoriesEditProduct"
-          value={categoriesEditProduct}
-          onChange={handleChangeCategory}
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="variantsEditProduct">
-          Variants: (use comma , to create multiple)
-        </label>
-        <input
-          type="text"
-          name="variantsEdit"
-          id="variantsEditProduct"
-          value={variantsEditProduct}
-          onChange={handleChangeVariants}
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="priceEditProduct">
-          Price:
-        </label>
-        <input
-          type="text"
-          name="priceEdit"
-          id="priceEditProduct"
-          value={priceEditProduct}
-          onChange={handleChangePrice}
-        />
-        </div>
-      <div className="mb-4">
-        <label htmlFor="sizesEditProduct">
-          Sizes: 
-        </label>
-        <input
-          type="text"
-          name="sizesEdit"
-          id="sizesEditProduct"
-          value={sizesEditProduct}
-          onChange={handleChangeSize}
-        />
-        </div>
+      <div className="mainContentCategory">
+        <h2 className="titleCategory">Edit Product</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="nameEditProduct"></label>
+          <div className="inputField">
+            <input
+              type="text"
+              placeholder="Name"
+              name="nameEditProduct"
+              value={nameEditProduct}
+              onChange={handleInputChange}
+            />
+          </div>
 
-        <button type="submit" >
-          <FaEdit />
-        </button>
-      </form>
+          <label htmlFor="imageEditProduct"></label>
+          <div className="inputField">
+            <input
+              type="text"
+              name="imageEditProduct"
+              placeholder="Image URL"
+              value={imageEditProduct}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <label htmlFor="descriptionEditProduct"></label>
+          <div className="inputField">
+            <input
+              type="text"
+              name="descriptionEditProduct"
+              placeholder="Description"
+              value={descriptionEditProduct}
+              onChange={handleInputChange}
+            />
+          </div>
+          <label htmlFor="categoriesEditProduct"></label>
+          <div className="inputField">
+            <input
+              type="text"
+              name="categoriesEditProduct"
+              placeholder="Categories"
+              value={categoriesEditProduct}
+              onChange={handleInputChange}
+            />
+          </div>
+          <label htmlFor="variantsEditProduct"></label>
+          <div className="inputField">
+            <input
+              type="text"
+              name="variantsEditProduct"
+              placeholder="Variants"
+              value={variantsEditProduct}
+              onChange={handleInputChange}
+            />
+          </div>
+          <label htmlFor="priceEditProduct"></label>
+          <div className="inputField">
+            <input
+              type="text"
+              name="priceEditProduct"
+              placeholder="Price"
+              value={priceEditProduct}
+              onChange={handleInputChange}
+            />
+          </div>
+          <label htmlFor="sizesEditProduct"></label>
+          <div className="inputField">
+            <input
+              type="text"
+              name="sizesEditProduct"
+              placeholder="Sizes"
+              value={sizesEditProduct}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <button type="submit">Edit</button>
+        </form>
+      </div>
     </>
   )
 }

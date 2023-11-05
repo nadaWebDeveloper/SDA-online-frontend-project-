@@ -1,11 +1,13 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import { useDispatch} from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import {FaEdit} from 'react-icons/fa'
+import { ChangeEvent, FormEvent, useState } from "react";
+
+
+import { useDispatch} from "react-redux";
 import { AppDispatch } from "../../redux/store";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { updateUser} from '../../redux/slices/user/userSlice'
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes , faEdit} from "@fortawesome/free-solid-svg-icons";
 
 
 const EditProfile = () => {
@@ -20,24 +22,23 @@ const EditProfile = () => {
     const [email, setEmail] = useState(state.email)
 
 
-  const handleInputChangeFirstName = (event: ChangeEvent<HTMLInputElement>) => {
-    const valueInput = event.target.value
-
-    setFirstName(valueInput)
-   
-  }
-
-  const handleInputChangeLastName = (event: ChangeEvent<HTMLInputElement>) => {
-    const valueInput = event.target.value
-    setLastName(valueInput)
-   
-  }
-
-  const handleInputChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
-    const valueInput = event.target.value
-    setEmail(valueInput)
-   
-  }
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    
+    switch (name) {
+      case 'firstName':
+        setFirstName(value);
+        break;
+      case 'lastName':
+        setLastName(value);
+        break;
+      case 'email':
+        setEmail(value);
+        break;
+      default:
+        break;
+    }
+  };
     
      const handleSubmit =  (event: FormEvent) =>
      {
@@ -54,7 +55,6 @@ const EditProfile = () => {
         console.log(updateUserinfo); // Check if id is present
        dispatch(updateUser(updateUserinfo));
         navigate('/dashboard/user');
-        alert('success edited profile');
         
         }else{
           return false;
@@ -78,14 +78,23 @@ const EditProfile = () => {
   </div>
   <div className="downProfile">
 
+<section> 
   <form onSubmit={handleSubmit}>
-    <input type="text"  name="firstName"  placeholder="first Name" value={firstName} onChange={handleInputChangeFirstName}/>
-    <input type="text"  name="lastName" placeholder="last Name" value={lastName} onChange={handleInputChangeLastName}/>
-    <input type="email"  name="email" placeholder="Email" value={email} onChange={handleInputChangeEmail}/>
+  <div className="inputField">
+    <input type="text"  name="firstName"  placeholder="first Name" value={firstName} onChange={handleInputChange}/>
+    </div>
+    <div className="inputField"> 
+    <input type="text"  name="lastName" placeholder="last Name" value={lastName} onChange={handleInputChange}/>
+    </div>
+    <div className="inputField"> 
+    <input type="email"  name="email" placeholder="Email" value={email} onChange={handleInputChange}/>
+    </div>
 
-    <button type="submit"><FaEdit /></button>
+    <button type="submit">
+    <FontAwesomeIcon icon={faEdit} />
+    </button>
     </form>
-
+    </section>
   </div>
 </div>
 

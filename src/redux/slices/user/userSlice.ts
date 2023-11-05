@@ -117,17 +117,11 @@ export const userSlice = createSlice({
         userExist.firstName = firstName 
         userExist.lastName = lastName 
         userExist.email = email 
-        //to display on screen after updated tp update local storage
-        // state.userData = userExist
-        // localStorage.setItem('loginData',
-        //  JSON.stringify({
-        //   isLoggedIn: state.isLoggedIn,
-        //   state.userData : state.userData
-        // }))
+
       }
 
       state.userData = action.payload
-      
+
 },
 
   },

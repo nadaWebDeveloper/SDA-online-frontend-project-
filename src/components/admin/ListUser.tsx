@@ -60,48 +60,97 @@ const ListUser = () => {
   return (
 <>
 
-<div className="sectionAdmin">
-  <AdminSideBar />
-</div>
 
 
 <div className="filter">
 <Search searchTerm= {searchTerm} handleSearch={handleSearch}/>
 </div>
 
-
-      <div className="mainContent">
-      <h2>List all the User here </h2> 
-      </div>
-
- <div className="contentUser">
- <div className="user">
-
- {searchUsers.length > 0 ?(   
-      
-      searchUsers.map((user)=> {
+<div className="contentUser"> 
+{searchUsers.length > 0 ? (
+  <>
+    <div className="tableDiv">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th> * </th>
+          </tr>
+        </thead>
+        <tbody>
+          {searchUsers.map((user) => {
       const { id,firstName,lastName,email,role, ban} = user
-    if(user.role !== 'admin') {  //this condition for display only user on dashboard admin 
-      return(
-        <div className="category" key={id}>
-            <h2 className="product-brand">{`${firstName} ${lastName}`}</h2>
-            <h4 className="product-brand">{role}</h4>           
-             <h3 className="product-brand">{email}</h3>
+      if(user.role !== 'admin') { 
+            return (
+              <tr key={id}>
+                <td>
+                {`${firstName} ${lastName}`}
+                </td>
+                <td>{email}</td>
+                <td>{role}</td>
+                <td>
              <button onClick={()=> {handleDelete(id)}} >Delete</button>     
-              {/* to delete user from database */}
-              <button onClick={()=> {handleBlock(id)}} >
-                {ban ? 'unban' : 'ban'}
-                </button>     
-            <button ><FaEdit /></button> 
-            </div>
-      )
-    }
-     })
-     ):(  <h1>Not Add User Yet ... </h1>)}
- </div>  
- </div>
+                 <button onClick={()=> {handleBlock(id)}} >
+                {ban ? 'unban' : 'ban'} 
+                </button>  
+                </td>
+              </tr>
+            )}
+          })}
+        </tbody>
+      </table>
+    </div>
+   
+  </>
+) :(<h2>Not Add User Yet ... </h2>) }
+ </div>    
+
+
  
 </>  )
 }
 
 export default ListUser
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// <div className="contentUser">
+// <div className="user">
+
+// {searchUsers.length > 0 ?(   
+     
+//      searchUsers.map((user)=> {
+//      const { id,firstName,lastName,email,role, ban} = user
+//    if(user.role !== 'admin') {  //this condition for display only user on dashboard admin 
+//      return(
+//        <div className="category" key={id}>
+//            <h2 className="product-brand">{`${firstName} ${lastName}`}</h2>
+//            <h4 className="product-brand">{role}</h4>           
+//             <h3 className="product-brand">{email}</h3>
+//             <button onClick={()=> {handleDelete(id)}} >Delete</button>     
+//              {/* to delete user from database */}
+//              <button onClick={()=> {handleBlock(id)}} >
+//                {ban ? 'unban' : 'ban'}
+//                </button>     
+//            <button ><FaEdit /></button> 
+//            </div>
+//      )
+//    }
+//     })
+//     ):(  <h1>Not Add User Yet ... </h1>)}
+// </div>  
+// </div>

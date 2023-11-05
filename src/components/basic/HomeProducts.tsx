@@ -1,19 +1,24 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '../../redux/store'
 import { ChangeEvent, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+
 
 import {
+  Product,
   fetchProducts,
   searchProduct,
   sortProducts
 } from '../../redux/slices/products/productSlice'
-import { Link } from 'react-router-dom'
+import { addToCart } from '../../redux/slices/cart/cartSlice'
+
+
 import Search from '../Filtering/Search'
 import Sort from '../Filtering/Sort'
-import { faBasketShopping, faArrowAltCircleLeft, faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBasketShopping, faArrowAltCircleLeft, faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
 import { prices } from '../../Price'
-import { addToCart } from '../../redux/slices/cart/cartSlice'
 
 const HomeProducts = () => {
    
@@ -46,7 +51,7 @@ const HomeProducts = () => {
     dispatch(sortProducts(inputValue))
   }
 
-  const handelCheckCategory = (idCategory: number) => {
+  const handelCheckCategory = (idCategory:number) => {
     if (checkedCategory.includes(idCategory)) {
       const filteredCategory = checkedCategory.filter((category) => category !== idCategory)
       setCheckedCategory(filteredCategory)
@@ -107,10 +112,10 @@ const HomeProducts = () => {
  }
 
 
- const handleAddToCart = (product: product )=> {
+ const handleAddToCart = (products:Product)=> {
 
-  console.log(product);
-  dispatch(addToCart(product))
+  console.log(products);
+  dispatch(addToCart(products))
  }
 
  //to display number of page between next and prev button
@@ -142,9 +147,11 @@ const HomeProducts = () => {
         </div>
       </div>
 
+     <div className=''>  
       {/* filter by category and price */}
-      <div className="heroSection">
-        <div>
+      <div className="leftSideHome">
+      {/* <div className="heroSection"> */}
+        <div className='filterPrice'>
           <h2>Filter by Price</h2>
           {prices.length > 0 &&
             prices.map((category) => {
@@ -166,11 +173,11 @@ const HomeProducts = () => {
               )
             })}
         </div>
-        <div>
+        <div className='filterCategory'>
           <h2>Filter by Category</h2>
           {categories.length > 0 &&
-            categories.map((categoryfilter) => {
-              const { id, name } = categoryfilter
+            categories.map((categoryFilter) => {
+              const { id, name } = categoryFilter
               return (
                 <div key={id}>
                   <label htmlFor="filterCategory" >
@@ -190,14 +197,15 @@ const HomeProducts = () => {
         </div>
       </div>
 
-      <div className="homePage">
+      <div className="homePageRight">
         <h1 className="productTitle">best selling</h1>
 
         {currentItem.length > 0 ? (
-          <div id="Product" className="product">
+          <div className="productHome">
             {currentItem.map((product) => {
               const { id, name, image, price } = product
               return (
+                
                 <div className="product-container" key={id}>
                   <div className="product-card">
                     <div className="product-image">
@@ -220,35 +228,33 @@ const HomeProducts = () => {
                   </div>
                 </div>
               )
+              
             })}
-            
+               {/* pagination logic 1*/}
+         <div className='pagination'>
+         <div key='prev'>
+           <button onClick={handlePrevPage}  disabled={currentPage === 1}>
+           <FontAwesomeIcon icon={faArrowAltCircleLeft}  />
+           </button>
+         </div>
+         <div key='numberPage'>
+            {buttonPageNumber}
+         </div>
+         <div key='next'>
+           <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+           <FontAwesomeIcon icon={faArrowAltCircleRight}  />
+           </button>
+         </div>
+       </div>
+       
           </div>
 
-          
         ) : (
           <h1>Not Add Products Yet ... </h1>
         )}
-
-   {/* pagination logic 1*/}
-   <div className='pagination'>
-        <div>
-          <button onClick={handlePrevPage}  disabled={currentPage === 1}>
-          <FontAwesomeIcon icon={faArrowAltCircleLeft}  />
-          </button>
-        </div>
-        <div>
-           {buttonPageNumber}
-        </div>
-        <div>
-          <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          <FontAwesomeIcon icon={faArrowAltCircleRight}  />
-          </button>
-        </div>
       </div>
 
       </div>
-
-
 
     </>
   )

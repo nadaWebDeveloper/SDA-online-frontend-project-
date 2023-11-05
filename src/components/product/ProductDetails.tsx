@@ -1,9 +1,12 @@
-import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router"
-import { AppDispatch, RootState } from "../../redux/store"
 import { useEffect, useState } from "react"
+
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "../../redux/store"
 import {  fetchProducts, findProductById } from "../../redux/slices/products/productSlice"
 import { fetchCategory } from "../../redux/slices/category/categorySlice"
+
+
 import { faClose, faBasketShopping , faHeart} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -14,9 +17,8 @@ const ProductDetails = () => {
   //from name can fetch the data from store
   const navigate = useNavigate()
 
-  const {singlePageProduct,isLoading, error , products} = useSelector((state: RootState) => state.productsReducer);
+  const {singlePageProduct,isLoading, error } = useSelector((state: RootState) => state.productsReducer);
   const {categories} = useSelector((state: RootState) => state.categoriesReducer);
-  const [focus, setFocus] = useState(false)
 
 
   const dispatch = useDispatch<AppDispatch>()
@@ -41,17 +43,15 @@ const ProductDetails = () => {
 
   }
 
-  const categorySize = (size: string )=>
-{
 
-}
+
   return (
 <>
 <div className="backDetail" > 
 
 <div  className="wrapper">
   <div className="card">
-  <FontAwesomeIcon  icon={faClose}  onClick={()=>{navigate('/')}} className="closeRight" />
+  <FontAwesomeIcon  icon={faClose}  onClick={()=>{navigate('/homeProducts')}} className="closeRight" />
   <div  className="poster">
  <img src={singlePageProduct.image} alt={singlePageProduct.name} className="product-thumb" />
   </div >
@@ -64,7 +64,7 @@ const ProductDetails = () => {
   <div className="backInfo">
   <h1 className="nameDetail">{singlePageProduct.name}</h1>
   <h2 className="priceDetail">{singlePageProduct.price} SR</h2>
-  <p className="descDetail">{singlePageProduct.description}</p>
+  <p className="">{singlePageProduct.description}</p>
   
   <p className="categoryDetail"> 
     {singlePageProduct.categories && singlePageProduct.categories.map((categoryId) => getCategoryNameById(categoryId)).join(' | ') }

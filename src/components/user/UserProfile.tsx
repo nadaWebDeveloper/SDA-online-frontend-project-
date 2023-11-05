@@ -1,9 +1,12 @@
-import profilePicture from '../../profilePicture.jpg';
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
+
+import useUserState from "../Hooks/useUserState";
+
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
-import useUserState from "../Hooks/useUserState";
-import { Link } from "react-router-dom";
+import profilePicture from '../../profilePicture.jpg';
 
 
 
@@ -18,12 +21,11 @@ const {id, firstName, lastName, email } = userData || {};
     navigate('/dashboard/user');
   };
 
-  const handleClickProfileEdit = () => {
-    navigate('/user/editProfile');
-  };
+ 
 
   return (
 <>
+
 <div className="upc">
 <FontAwesomeIcon icon={faTimes} onClick={handleClick} className="closeProfile"/>
   <div className="grad">
@@ -34,8 +36,8 @@ const {id, firstName, lastName, email } = userData || {};
     <div className="titleProfile"><b>{firstName}  {lastName}</b></div>
     <div className="descriptProfile">{email}</div>
 
-    <Link to="/editProfile" state={{id, firstName, lastName, email }}>
-    <FontAwesomeIcon icon={faEdit} onClick={handleClickProfileEdit} className="closeProfile"/>
+    <Link to="/dashboard/user/editProfile" state={{id, firstName, lastName, email }}>
+    <FontAwesomeIcon icon={faEdit}  className="closeProfile"/>
     </Link> 
 
   </div>

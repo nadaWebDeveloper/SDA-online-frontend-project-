@@ -1,8 +1,9 @@
-import { useDispatch, useSelector } from "react-redux"
-import AdminSideBar from "./AdminSideBar"
-import { AppDispatch, RootState } from "../../redux/store"
 import { useEffect } from "react"
-import { fetchOrder } from "../../redux/slices/order/order"
+import { useDispatch, useSelector } from "react-redux"
+
+
+import { AppDispatch, RootState } from "../../redux/store"
+import { deleteOrder, fetchOrders } from "../../redux/slices/orders/orderSlice"
 
 const AdminOrder=() => {
 
@@ -10,8 +11,20 @@ const AdminOrder=() => {
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    dispatch(fetchOrder())
+    dispatch(fetchOrders())
   }, [])
+
+  const handleDelete = (id: number) => {
+
+    if(confirm("Are you sure to delete order")){
+
+    dispatch(deleteOrder(id))
+    
+    }else{
+      return false;
+  }
+
+  }
 
   if (isLoading) {
     return <h1>loading ...</h1>
@@ -19,36 +32,53 @@ const AdminOrder=() => {
   if (error) {
     return <h1>{error}</h1>
   }
+  
   return (
 <>
-<div className="container">
-<div className="sectionAdmin">
-  <AdminSideBar />
-</div>
-  <div className="mainContent">
-    
-    
-  {orders.length > 0 ? (
-          <div className="product">
-            {orders.map((order) => {
-              const { id, productId, userId, purchasedAt } = order
-              return (
-                <div  key={id}>
-                  <h2 >{productId}</h2>
-                  <p>{userId}</p>
-                  <p>{purchasedAt}</p>
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <h1>Not Add orders Yet ... </h1>
-        )}
+<div className="mainContent"> 
+{orders.length > 0 ? (
+  <>
+    <div className="tableDiv">
+      <table>
+        <thead>
+          <tr>
+            <th>Product Id</th>
+            <th>User Id</th>
+            <th>purchasedAt</th>
+            <th> * </th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order) => {
+     const { id, productId, userId, purchasedAt } = order
+            return (
+              <tr key={id}>
+                <td>
+                {productId}
+                </td>
+                <td>{userId}</td>
+                <td>{purchasedAt}</td>
+                <td>
+             <button onClick={()=> {handleDelete(id)}} >Delete</button>     
+                 
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+   
+  </>
+) :(<h2>Not Add orders Yet ... </h2>) }
+ </div>  
 
-
-  </div>
-</div>
 </>  )
 }
 
 export default AdminOrder
+
+
+
+
+ 

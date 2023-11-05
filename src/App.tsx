@@ -1,8 +1,6 @@
 // import { ProductsManager } from './components/ProductsManager'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 
-import { RootState } from './redux/store'
 
 import './App.css'
 import HomeProducts  from './components/basic/HomeProducts'
@@ -28,6 +26,8 @@ import EditCategory from './components/category/EditCategory'
 import EditProduct from './components/product/EditProduct'
 import AboutMe from './components/basic/AboutMe'
 import Cart from './components/basic/Cart'
+import NavBar from './components/basic/NavBar'
+import AddNewCategory from './components/category/AddNewCategory'
 
 function App() {
 
@@ -36,10 +36,12 @@ function App() {
     <div className="App">
       {/* <ProductsManager /> */}
    <BrowserRouter>
-<Header />
+   <NavBar />
 <Routes>
   {/* when logout go to home page */}
-<Route path='/' element={<HomeProducts />} />
+<Route path='/' element={<Header />} />
+<Route path='/homeProducts' element={<HomeProducts />} />
+<Route path='/aboutMe' element={<AboutMe />} />
   {/* for single page  */}
 <Route path='/cart'  element={<Cart />} />
 <Route path='/products/:name/:id' element={<ProductDetails />} />
@@ -61,13 +63,13 @@ function App() {
 <Route path='admin/editProduct' element={<EditProduct />} />
 <Route path='admin/addProduct'  element={<AddProduct />}  />
 <Route path='admin/editCategory'  element={<EditCategory  />} />
+<Route path='admin/ddNewCategory'  element={<AddNewCategory  />} />
 <Route path='admin/orders' element={<AdminOrder />} />
 <Route path='admin/users' element={<ListUser />} />
 </Route>
 
 <Route path='*' element={<Error />} />
 </Routes>
-<AboutMe />
 <Footer/>
 </BrowserRouter>
     </div>

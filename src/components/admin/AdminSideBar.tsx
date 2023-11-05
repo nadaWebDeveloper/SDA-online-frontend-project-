@@ -1,18 +1,14 @@
 import { Link } from "react-router-dom"
+
 import useUserState from "../Hooks/useUserState"
 
+
 const AdminSideBar = () => {
-
   const {userData} = useUserState()
-
   return (
-
 <>
-
-
-
-
-<div className="">
+<div>
+<div >
   <span><h1>{userData?.role}  : {userData?.firstName}</h1></span>
 </div> 
 <aside> 
@@ -31,7 +27,8 @@ const AdminSideBar = () => {
     </li>
   </ul>
   </aside>
- 
+</div>
+
   </>  )
 }
 

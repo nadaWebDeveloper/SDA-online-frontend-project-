@@ -1,64 +1,79 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch} from '../../redux/store'
-import { ChangeEvent, FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { ChangeEvent, FormEvent, useState } from 'react'
 
-import { addNewProduct } from '../../redux/slices/products/productSlice'
+import { useDispatch } from 'react-redux'
+import { AppDispatch} from '../../redux/store'
+
+import { addNewProduct, fetchProducts } from '../../redux/slices/products/productSlice'
 
 
 const AddProduct = () => {
 
-
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const [addProduct, setAddProduct] = useState({
-    name: '',
-    image: '',
-    description: '',
-    categories: [],
-    variants: [],
-    sizes: [],
-    price: 0
-  })
+  const [name , setName] = useState('')
+  const [image , setImage] = useState('')
+  const [description , setDescription] = useState('')
+  const [categories , setCategories] = useState('')
+  const [variants , setVariants] = useState('')
+  const [size , setSize] = useState('')
+  const [price , setPrice] = useState('')
 
-  
- 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name: nameInput, value: valueInput } = event.target;
-    setAddProduct((prevState) => {
-      return { ...prevState, [nameInput]: valueInput }
-    })
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value
+    setName(inputValue)
   }
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value
+    setImage(inputValue)
+  }
+
+  const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value
+    setDescription(inputValue)
+  }
+
+  const handleCategoriesChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value
+    setCategories(inputValue)
+  }
+
+  const handleVariantsChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value
+    setVariants(inputValue)
+  }
+
+  const handlePriceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value
+    setPrice(inputValue)
+  }
+
+  const handleSizeChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value
+    setSize(inputValue)
+  }
+
+
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
 
-  
     if(confirm("Are you sure to Add Product")){
       
-      const newProduct = {
-        name: addProduct.name,
-        image: addProduct.image ,
-        description: addProduct.description,
-        categories: addProduct.categories,
-        variants: addProduct.variants,
-        sizes: addProduct.sizes,
-        price: addProduct.price
-      }
-      dispatch(addNewProduct(newProduct))
-      navigate('/admin')
-     
-      setAddProduct({
-        name: '',
-        image: '',
-        description: '',
-        categories: [],
-        variants: [],
-        sizes: [],
-        price: 0
-      })
-      alert('success added  product');
+      const newProduct = {id: new Date().getMilliseconds() , 
+        name: name,
+        image:image,
+        description:description,
+        categories:categories,
+        variants:variants,
+        sizes:size,
+        price:price}
 
+      // dispatch(fetchProducts()).then(() => dispatch(addNewProduct(newProduct))) 
+      dispatch(addNewProduct(newProduct))
+      navigate('/dashboard/admin/products')
+      // alert('success added  product');
 
     }else{
       return false;
@@ -68,98 +83,103 @@ const AddProduct = () => {
 
   return (
     <>
+         <div className="mainContentCategory"> 
+         <h2 className='titleCategory'>Add Product</h2>
+
+     {/* <section>   */}
       <form onSubmit={handleSubmit} >
-        <div className="mb-4">
-          <label htmlFor='nameAddProduct'>Name:</label>
+       
+          <label htmlFor='nameAddProduct'></label>
+          <div className='inputField'>
           <input
             type="text"
-            name="name"
-            
-            id='nameAddProduct'
-            value={addProduct.name}
-            onChange={handleInputChange}
+            name="nameAddProduct"
+            placeholder='Name'
+            value={name}
+            onChange={handleNameChange}
           />
         </div>
-        <div className="mb-4">
+
           <label htmlFor='imageAddProduct'>
-            Image URL:
           </label>
+          <div className='inputField'>
           <input
             type="text"
-            name="image"
-            
-            id='imageAddProduct'
-            value={addProduct.image}
-            onChange={handleInputChange}
+            name="imageAddProduct"
+            placeholder='Image URL'
+            value={image}
+            onChange={handleImageChange}
           />
-        </div>
-        <div className="mb-4">
+          </div>
           <label htmlFor='descAddProduct'>
-            Description:
           </label>
+          <div className='inputField'>
           <input
             type='text'
-            name="description"
-            id='descAddProduct'
-            
-            value={addProduct.description}
-            onChange={handleInputChange}
+            name="descAddProduct"
+            placeholder='Description'
+            value={description}
+            onChange={handleDescriptionChange}
           />
-        </div>
-        <div className="mb-4">
-          <label htmlFor='categoryAddProduct'>Categories: (use comma , to create multiple)</label>
+          </div>
+          <label htmlFor='categoryAddProduct'>
+            </label>
+            <div className='inputField'>
           <input
             type="text"
-            name="categories"
-            id='categoryAddProduct'
-           
-            value={Array.isArray(addProduct.categories) ? addProduct.categories.join(',') : ''}
-            onChange={handleInputChange}
+            name="categoryAddProduct"
+            placeholder='Categories:(use comma ,to create multiple)'
+            // value={Array.isArray(addProduct.categories) ? addProduct.categories.join(',') : ''}
+            value={categories}
+            onChange={handleCategoriesChange}
           />
         </div>
-        <div className="mb-4">
           <label htmlFor='variaAddProduct'>
-            Variants: (use comma , to create multiple)
           </label>
+          <div className='inputField'>
           <input
             type="text"
-            name="variants"
-            id='variaAddProduct'
-           
-            value={Array.isArray(addProduct.variants) ? addProduct.variants.join(',') : ''}
-            onChange={handleInputChange}
+            name="variaAddProduct"
+            placeholder='Variants:(use comma , to create multiple)'
+            // value={Array.isArray(addProduct.variants) ? addProduct.variants.join(',') : ''}
+            value={variants}
+            onChange={handleVariantsChange}
           />
         </div>
-        <div className="mb-4">
           <label htmlFor='sizeAddProduct'>
-            Sizes: (use comma , to create multiple)
           </label>
+          <div className='inputField'>
           <input
             type="text"
-            name="sizes"
-            id='sizeAddProduct'
-           
-            value={Array.isArray(addProduct.sizes) ? addProduct.sizes.join(',') : ''}
-            onChange={handleInputChange}
+            name="sizeAddProduct"
+            placeholder='Sizes: (use comma ,to create multiple)'
+            // value={Array.isArray(addProduct.sizes) ? addProduct.sizes.join(',') : ''}
+            value={size}
+            onChange={handleSizeChange}
           />
         </div>
-        <div className="mb-4">
           <label htmlFor='priceAddProduct'>
-            Price: 
           </label>
+          <div className='inputField'>
           <input
             type="text"
-            name="price"
-            id='priceAddProduct'
-       
-            value={addProduct.price}
-            onChange={handleInputChange}
+            name="priceAddProduct"
+            placeholder='Price'
+            value={price}
+            onChange={handlePriceChange}
           />
         </div>
+        
         <button type="submit">Add Product</button>
       </form>
+      {/* </section> */}
+      </div>
+
     </>
   )
 }
 
 export default AddProduct
+
+
+

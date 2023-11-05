@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import profilePicture from '../../profilePicture.jpg';
 import useUserState from "../Hooks/useUserState";
@@ -16,7 +16,7 @@ const UserSideBar =()=> {
 
   return (
 <>
-<aside className="sidebar">
+<aside >
 <div onClick={handleClick} className="closeProfile">
 <div className="downProfile">
   <img src={profilePicture} alt="pictureProfile" />
@@ -25,11 +25,6 @@ const UserSideBar =()=> {
   <div>
   </div>
 </div>
-<ul>
-  <li>
-  <Link to='/dashboard/user/orders'>Order</Link>
-  </li>
-</ul>
 </aside>
 </>  )
 }

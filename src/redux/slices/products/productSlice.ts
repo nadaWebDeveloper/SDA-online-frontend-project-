@@ -33,14 +33,20 @@ export type ProductState = {
   error: null | string
   isLoading: boolean
   searchTerm: string
+  productData: Product | null
   singlePageProduct: Product
 }
+
+const dataReLoad = localStorage.getItem('products') !== null 
+? JSON.parse(String(localStorage.getItem('products')))
+: []
 
 const initialState: ProductState = {
   products: [],
   error: null,
   isLoading: false,
   searchTerm: '',
+  productData: dataReLoad.productData,
   singlePageProduct: {} as Product
 }
 
@@ -86,6 +92,8 @@ export const productSlice = createSlice({
 
     console.log(action.payload);
     state.products.push(action.payload)
+    state.productData = action.payload   
+
 
   },
 
@@ -99,13 +107,19 @@ export const productSlice = createSlice({
    
     const {id,name , image ,description, categories, variants, sizes, price } = action.payload; 
     console.log(action.payload);
-      const categoryExist = state.products.find((category)=> category.id === id)
+      const categoryExist = state.products.find((product)=> product.id === id)
       console.log(categoryExist);
     if(categoryExist){
       categoryExist.name = name 
+      categoryExist.image =image
+      categoryExist.description = description
+      categoryExist.categories = categories
+      categoryExist.variants = variants
+      categoryExist.sizes = sizes
+      categoryExist.price = price
     }
 
-    // state.userData = action.payload   
+    state.productData = action.payload   
 },
   },
   extraReducers(builder){

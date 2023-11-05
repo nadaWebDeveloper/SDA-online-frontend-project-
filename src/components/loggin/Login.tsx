@@ -1,9 +1,12 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
+import { Link } from 'react-router-dom'
+
+
+import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../redux/store'
 import { fetchUser, login } from '../../redux/slices/user/userSlice'
-import { Link } from 'react-router-dom'
+
 import {  faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import useUserState from '../Hooks/useUserState'
@@ -14,7 +17,6 @@ const Login = ({ pathName }: { pathName: string }) => {
   const {users} = useUserState()
   const dispatch = useDispatch<AppDispatch>() //generics "is the better and more commonly used way to declare the type when working with Redux Toolkit and TypeScript in a React application."
 
-  // const Dispatch: AppDispatch = useDispatch() ""
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const navigate = useNavigate()
   const [user, setUser] = useState({
@@ -45,17 +47,17 @@ const Login = ({ pathName }: { pathName: string }) => {
       const foundUser = users.find((userData) => userData.email === user.email) //to checked if email exist on database or not & if email found then match the password
       //blockuser if is not found 
       if(!foundUser){
-        console.log("user not match email in DB");
+        alert("user not match email in DB");
         return
        }
 
        if(foundUser.password !== user.password){
-        console.log("password in not match");
+        alert("password in not match");
         return
        }
 
        if(foundUser.ban){
-        console.log("banned account , connect with company");
+        alert("banned account , connect with company");
         return
        }
 

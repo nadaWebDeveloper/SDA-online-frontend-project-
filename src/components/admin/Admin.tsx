@@ -1,4 +1,3 @@
-import Products from "../product/Products"
 import AdminSideBar from "./AdminSideBar"
 
 const  Admin =()=> {
