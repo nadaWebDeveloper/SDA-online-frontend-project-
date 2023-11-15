@@ -1,9 +1,8 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-
-import { AppDispatch, RootState } from "../../redux/store"
 import { deleteOrder, fetchOrders } from "../../redux/slices/orders/orderSlice"
+import { AppDispatch, RootState } from "../../redux/store"
 
 const AdminOrder=() => {
 
@@ -34,10 +33,10 @@ const AdminOrder=() => {
   }
   
   return (
-<>
+
 <div className="mainContent"> 
 {orders.length > 0 ? (
-  <>
+  <div>
     <div className="tableDiv">
       <table>
         <thead>
@@ -69,11 +68,11 @@ const AdminOrder=() => {
       </table>
     </div>
    
-  </>
+  </div>
 ) :(<h2>Not Add orders Yet ... </h2>) }
  </div>  
 
-</>  )
+ )
 }
 
 export default AdminOrder

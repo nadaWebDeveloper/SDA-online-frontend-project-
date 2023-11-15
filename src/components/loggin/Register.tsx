@@ -2,11 +2,12 @@ import { useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch} from 'react-redux'
 
-
-import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AppDispatch} from '../../redux/store'
 import { fetchUser, registerUser } from '../../redux/slices/user/userSlice'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
@@ -121,7 +122,7 @@ const Register = () => {
   }
 
   return (
-    <>
+    <div>
       {success ? (
         <section>
           <h1>Success!</h1>
@@ -131,7 +132,6 @@ const Register = () => {
           </h4>
         </section>
       ) : (
-        <>
         <section>
           <p
             className={errMsg ? 'errmsg' : 'offscreen'}
@@ -328,9 +328,8 @@ const Register = () => {
             </span>
           </h4>
         </section>
-      </>
       )}
-    </>
+    </div>
   )
 }
 

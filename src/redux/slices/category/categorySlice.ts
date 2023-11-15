@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+
 import api from '../../../api'
 
 export const fetchCategory = createAsyncThunk('users/fetchCategory', async() =>
@@ -66,12 +67,6 @@ export const categorySlice = createSlice({
       state.categories.sort((a, b) => a.name.localeCompare(b.name))
     }
 
-      // const selectedCategoryName = action.payload;
-      // state.categories = state.categories.slice().sort((a, b) => {
-      //   if (a.name === selectedCategoryName) return -1;
-      //   if (b.name === selectedCategoryName) return 1;
-      //   return 0;
-      // }); 
     },
     addCategory: (state, action) =>{
 
@@ -101,8 +96,6 @@ export const categorySlice = createSlice({
       }
       state.categoryData = action.payload
 
-
-      // state.userData = action.payload   
 },
 },
 
@@ -116,7 +109,7 @@ export const categorySlice = createSlice({
       state.isLoading = false
     })
     builder.addCase(fetchCategory.rejected, (state, action) => {
-      state.error = action.error.message || 'An Error accured'
+      state.error = action.error.message || 'An Error accrued'
       state.isLoading = false
     })
 

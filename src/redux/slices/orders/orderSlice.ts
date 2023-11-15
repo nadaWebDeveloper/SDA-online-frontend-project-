@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+
 import api from '../../../api'
 
 export const fetchOrders = createAsyncThunk('users/fetchOrders', async() =>
@@ -69,8 +70,6 @@ export const ordersSlice = createSlice({
       const {id,name } = action.payload; 
       console.log(action.payload);
         const orderExist = state.orders.find((category)=> category.id === id)
-
-      // state.userData = action.payload   
 }
 },
   extraReducers(builder){
@@ -83,7 +82,7 @@ export const ordersSlice = createSlice({
       state.isLoading = false
     })
     builder.addCase(fetchOrders.rejected, (state, action) => {
-      state.error = action.error.message || 'An Error accured'
+      state.error = action.error.message || 'An Error accrued'
       state.isLoading = false
     })
 

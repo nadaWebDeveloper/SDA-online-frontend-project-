@@ -3,9 +3,9 @@ import { ChangeEvent, FormEvent, useState } from 'react'
 
 import { AppDispatch } from '../../redux/store'
 import { useDispatch } from 'react-redux'
+import { updateCategory } from '../../redux/slices/category/categorySlice'
 
 import { FaEdit } from 'react-icons/fa'
-import { updateCategory } from '../../redux/slices/category/categorySlice'
 
 const EditCategory = () => {
   const navigate = useNavigate()
@@ -34,7 +34,6 @@ const EditCategory = () => {
   }
 
   return (
-    <>
       <div className='mainContentCategory'>
         <h2 className='titleCategory'>Edit Category</h2>
         <form onSubmit={handleSubmit}>
@@ -53,7 +52,6 @@ const EditCategory = () => {
           </button>
         </form>
       </div>
-    </>
   )
 }
 

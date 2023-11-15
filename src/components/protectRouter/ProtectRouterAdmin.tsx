@@ -1,19 +1,27 @@
-import { useSelector } from "react-redux"
-import { Outlet, useLocation } from "react-router"
+import { useSelector } from 'react-redux'
+import { Outlet, useLocation } from 'react-router'
+import { Link } from 'react-router-dom'
 
-import { RootState } from "../../redux/store"
+import { RootState } from '../../redux/store'
 
-import Login from "../loggin/Login"
+import Login from '../loggin/Login'
 
-const ProtectRouterAdmin = () => {
-    const pathLocationEveryUser = useLocation()
+const ProtectRouterAdmin = ({ children }:{ children:{} }) => {
+  const pathLocationEveryUser = useLocation()
 
-    const {isLoggedIn , userData} = useSelector((state: RootState) => state.usersReducer)
-    //عشان المستخدم لما يسجل دخول تتغير ل صح وبعدها يقدر يدخل على الصفحات اللي مسسموح له يدخلها لانها سجل دخول 
+  const { isLoggedIn, isLoading, userData } = useSelector((state: RootState) => state.usersReducer)
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
-  return  isLoggedIn && userData?.role === 'admin' ? <Outlet /> : <Login pathName={pathLocationEveryUser.pathname} />
-  //اذا سجل الدخول وتغيرت لصح يقدر يمر على الروابط اللي كانت محجوبه واذا كانت خطا يبقى في نفس الصفحة}
+  if (!isLoggedIn) {
+    return <Link to="/login" />
+  }
+  return children && isLoggedIn && userData?.role === 'admin' ? (
+    <Outlet />
+  ) : (
+    <Login pathName={pathLocationEveryUser.pathname} />
+  )
 }
-
 
 export default ProtectRouterAdmin

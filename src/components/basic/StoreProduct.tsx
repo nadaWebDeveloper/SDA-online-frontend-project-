@@ -3,7 +3,6 @@ import { AppDispatch, RootState } from '../../redux/store'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-
 import {
   Product,
   fetchProducts,
@@ -12,15 +11,14 @@ import {
 } from '../../redux/slices/products/productSlice'
 import { addToCart } from '../../redux/slices/cart/cartSlice'
 
-
 import Search from '../Filtering/Search'
 import Sort from '../Filtering/Sort'
+import { prices } from '../../Price'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBasketShopping, faArrowAltCircleLeft, faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
-import { prices } from '../../Price'
 
-const HomeProducts = () => {
+const StoreProduct = () => {
    
   //pagination  1- current page number 2- item per page 
 
@@ -133,11 +131,8 @@ const HomeProducts = () => {
   }
 
 
-
-
-
   return (
-    <>
+    <div>
       <div className="filter">
         <div>
           <Search searchTerm={searchTerm} handleSearch={handleSearch} />
@@ -256,8 +251,8 @@ const HomeProducts = () => {
 
       </div>
 
-    </>
+    </div>
   )
 }
 
-export default HomeProducts
+export default StoreProduct

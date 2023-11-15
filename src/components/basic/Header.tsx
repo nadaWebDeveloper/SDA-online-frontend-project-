@@ -1,13 +1,11 @@
-import AboutMe from "./AboutMe"
-import Hero from "./Hero"
+import Hero from './Hero'
 
 function Header() {
   return (
-<>
-<header className="headerSectionOne">
-<Hero />
-</header>
-</>  )
+    <header className="headerSectionOne">
+      <Hero />
+    </header>
+  )
 }
 
 export default Header

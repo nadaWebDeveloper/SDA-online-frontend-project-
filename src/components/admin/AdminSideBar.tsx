@@ -6,7 +6,6 @@ import useUserState from "../Hooks/useUserState"
 const AdminSideBar = () => {
   const {userData} = useUserState()
   return (
-<>
 <div>
 <div >
   <span><h1>{userData?.role}  : {userData?.firstName}</h1></span>
@@ -14,7 +13,7 @@ const AdminSideBar = () => {
 <aside> 
   <ul>
   <li>
-      <Link to='/dashboard/admin/users'>Users</Link>
+      <Link to='/dashboard/admin/listUser'>Users</Link>
     </li>
     <li>
       <Link to='/dashboard/admin/category'>Category</Link>
@@ -29,7 +28,7 @@ const AdminSideBar = () => {
   </aside>
 </div>
 
-  </>  )
+ )
 }
 
 export default AdminSideBar

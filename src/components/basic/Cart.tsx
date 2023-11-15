@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
+
 import { AppDispatch, RootState } from '../../redux/store'
 import { deleteAllItemFromCart, deleteFromCart } from '../../redux/slices/cart/cartSlice'
 
-import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faClose } from '@fortawesome/free-solid-svg-icons'
 
 const Cart = () => {
   const { cartItem } = useSelector((state: RootState) => state.cartReducer)
@@ -25,10 +26,9 @@ const Cart = () => {
     }
   }
 
-  const TotalForBasket = () => {
-    let totalAmount = 0
-    cartItem.map((cartItem) => (totalAmount = totalAmount + cartItem.price))
-    return totalAmount
+  const TotalAmountOfCart = () => {
+    const totalAmount = cartItem.reduce((accumulator, currentItem) => accumulator + currentItem.price, 0);
+    return totalAmount;
   }
 
   return (
@@ -42,7 +42,7 @@ const Cart = () => {
       )}
 
       {cartItem.length > 0 && (
-        <>
+        <div>
           <button onClick={handleClearTheCart}>Clear the Cart</button>
           <br />
           <br />
@@ -85,9 +85,9 @@ const Cart = () => {
           <br />
           <br />
 
-            <h2>Total for basket : {TotalForBasket()} RS</h2>
+            <h2>Total for basket : {TotalAmountOfCart()} RS</h2>
          
-        </>
+        </div>
       )}
     </div>
   )

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+
 import api from '../../../api'
 
 export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
@@ -135,7 +136,7 @@ export const userSlice = createSlice({
       state.isLoading = false
     })
     builder.addCase(fetchUser.rejected, (state, action) => {
-      state.error = action.error.message || 'An Error accured'
+      state.error = action.error.message || 'An Error accrued'
       state.isLoading = false
     })
 

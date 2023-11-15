@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 import { AppDispatch, RootState } from '../../redux/store'
 import { deleteCategory, fetchCategory } from '../../redux/slices/category/categorySlice'
 
-import { FaEdit } from 'react-icons/fa'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
-import EditCategory from './EditCategory'
+import { FaEdit } from 'react-icons/fa'
+
 
 
 const Category = () => {
@@ -37,17 +37,15 @@ const Category = () => {
   }
 
   return (
-    <>
+    <div>
 
       <div className="mainContentCategory">
-        <Link to="/dashboard/admin/ddNewCategory">
+        <Link to="/dashboard/admin/addCategory">
           <FontAwesomeIcon icon={faAdd} className="addProduct" />
         </Link>
 
-
-
         {categories.length > 0 ? (
-          <>
+          <div>
             <div className="tableDiv">
               <table>
                 <thead>
@@ -83,12 +81,12 @@ const Category = () => {
                 </tbody>
               </table>
             </div>
-          </>
+          </div>
         ) : (
           <h2>Not Add Category Yet ...</h2>
         )}
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router'
 import { ChangeEvent, FormEvent, useState } from 'react'
-
 import { useDispatch } from 'react-redux'
-import { AppDispatch} from '../../redux/store'
 
-import { addNewProduct, fetchProducts } from '../../redux/slices/products/productSlice'
+import { AppDispatch} from '../../redux/store'
+import { addNewProduct } from '../../redux/slices/products/productSlice'
 
 
 const AddProduct = () => {
@@ -70,10 +69,8 @@ const AddProduct = () => {
         sizes:size,
         price:price}
 
-      // dispatch(fetchProducts()).then(() => dispatch(addNewProduct(newProduct))) 
       dispatch(addNewProduct(newProduct))
       navigate('/dashboard/admin/products')
-      // alert('success added  product');
 
     }else{
       return false;
@@ -82,11 +79,9 @@ const AddProduct = () => {
 
 
   return (
-    <>
+    <div>
          <div className="mainContentCategory"> 
          <h2 className='titleCategory'>Add Product</h2>
-
-     {/* <section>   */}
       <form onSubmit={handleSubmit} >
        
           <label htmlFor='nameAddProduct'></label>
@@ -129,7 +124,6 @@ const AddProduct = () => {
             type="text"
             name="categoryAddProduct"
             placeholder='Categories:(use comma ,to create multiple)'
-            // value={Array.isArray(addProduct.categories) ? addProduct.categories.join(',') : ''}
             value={categories}
             onChange={handleCategoriesChange}
           />
@@ -141,7 +135,6 @@ const AddProduct = () => {
             type="text"
             name="variaAddProduct"
             placeholder='Variants:(use comma , to create multiple)'
-            // value={Array.isArray(addProduct.variants) ? addProduct.variants.join(',') : ''}
             value={variants}
             onChange={handleVariantsChange}
           />
@@ -153,7 +146,6 @@ const AddProduct = () => {
             type="text"
             name="sizeAddProduct"
             placeholder='Sizes: (use comma ,to create multiple)'
-            // value={Array.isArray(addProduct.sizes) ? addProduct.sizes.join(',') : ''}
             value={size}
             onChange={handleSizeChange}
           />
@@ -172,10 +164,9 @@ const AddProduct = () => {
         
         <button type="submit">Add Product</button>
       </form>
-      {/* </section> */}
       </div>
 
-    </>
+    </div>
   )
 }
 

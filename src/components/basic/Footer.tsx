@@ -1,8 +1,6 @@
 
 const Footer =()=> {
   return (
-<>
-
 	<footer className="footer">
 	<h1
 				style={{
@@ -16,10 +14,7 @@ const Footer =()=> {
 				Privacy & Legal Policies | Do Not Sell My Personal Information | Cookie Preferences
 			</h1> 
 	</footer>
-	
-	
 
-</>  
 )}
 
 export default Footer

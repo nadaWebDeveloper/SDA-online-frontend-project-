@@ -24,7 +24,6 @@ const {id, firstName, lastName, email } = userData || {};
  
 
   return (
-<>
 
 <div className="upc">
 <FontAwesomeIcon icon={faTimes} onClick={handleClick} className="closeProfile"/>
@@ -42,8 +41,7 @@ const {id, firstName, lastName, email } = userData || {};
 
   </div>
 </div>
-
-</> )
+ )
 }
 
 export default UserProfile

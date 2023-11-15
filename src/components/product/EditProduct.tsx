@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { ChangeEvent, FormEvent, useState } from 'react'
 
-import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../redux/store'
 import { updateProduct } from '../../redux/slices/products/productSlice'
 
@@ -9,7 +9,6 @@ function EditProduct() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const { state } = useLocation()
-  console.log(state)
 
   const [nameEditProduct, setNameEditProduct] = useState(state.name)
   const [imageEditProduct, setImageEditProduct] = useState(state.image)
@@ -75,7 +74,7 @@ function EditProduct() {
   }
 
   return (
-    <>
+    <div>
       <div className="mainContentCategory">
         <h2 className="titleCategory">Edit Product</h2>
         <form onSubmit={handleSubmit}>
@@ -155,7 +154,7 @@ function EditProduct() {
           <button type="submit">Edit</button>
         </form>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -2,10 +2,9 @@ import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 import { ChangeEvent, FormEvent, useState } from 'react'
 
+import { addCategory } from '../../redux/slices/category/categorySlice'
 import { AppDispatch } from '../../redux/store'
 
-
-import { addCategory } from '../../redux/slices/category/categorySlice'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 
@@ -39,7 +38,6 @@ const AddNewCategory = () => {
   }
 
   return (
-    <>
     <div className='mainContentCategory'> 
       <h1 className='titleCategory'>Add Category</h1>
       <form onSubmit={handleSubmit}>
@@ -60,7 +58,7 @@ const AddNewCategory = () => {
         </button>
       </form>
       </div>
-    </>
+
   )
 }
 
