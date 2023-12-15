@@ -8,7 +8,7 @@ const AdminSideBar = () => {
   return (
 <div>
 <div >
-  <span><h1>{userData?.role}  : {userData?.firstName}</h1></span>
+  <span><h1>{userData?.isAdmin}  : {userData?.firstName}</h1></span>
 </div> 
 <aside> 
   <ul>

@@ -48,23 +48,24 @@ function App() {
           <Route path="/product" element={<ProductDetails />} />
 
           {/* this line to protected all inside in go to component and check if (isLoggedIn = true) then enter in all path */}
-          <Route path="/dashboard"   element={
+          {/* <Route path="/dashboard"   element={
               <ProtectRouterUser>
                 <UserSideBar />
               </ProtectRouterUser>
-            }>
+            }> */}
             <Route path="user" element={<User />} />
             <Route path="user/profile" element={<UserProfile />} />
             <Route path="user/editProfile" element={<EditProfile />} />
             <Route path="user/orders" element={<UserOrders />} />
-          </Route>
+          {/* </Route> */}
 
           {/* protected admin page & check (isLoggedIn = true && userData?.role === 'admin') can not anu user enter except admin */}
-          <Route path="/dashboard"    element={
+          {/* <Route path="/dashboard"    element={
               <ProtectRouterAdmin>
                 <AdminSideBar />
               </ProtectRouterAdmin>
-            }>
+            }> */}
+            <Route path="/dashboard" > 
             <Route path="admin" element={<Admin />} />
             <Route path="admin/category" element={<Category />} />
             <Route path="admin/products" element={<Products />} />
@@ -74,6 +75,7 @@ function App() {
             <Route path="admin/addCategory" element={<AddNewCategory />} />
             <Route path="admin/orders" element={<AdminOrder />} />
             <Route path="admin/listUser" element={<ListUser />} />
+          {/* </Route> */}
           </Route>
 
           <Route path="*" element={<Error />} />
@@ -85,3 +87,4 @@ function App() {
 }
 
 export default App
+

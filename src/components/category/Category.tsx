@@ -12,7 +12,7 @@ import { FaEdit } from 'react-icons/fa'
 
 
 const Category = () => {
-  const { categories, isLoading, error } = useSelector(
+  const { categoryArray, isLoading, error } = useSelector(
     (state: RootState) => state.categoriesReducer
   )
   const dispatch = useDispatch<AppDispatch>()
@@ -21,13 +21,33 @@ const Category = () => {
     dispatch(fetchCategory())
   }, [])
 
-  const handleDeleteCategory = (id: number) => {
-    if (confirm('Are you sure to delete category')) {
-      dispatch(deleteCategory(id))
-    } else {
-      return false
-    }
-  }
+  // const handleDeleteCategory = (id: string) => {
+  //   if (confirm('Are you sure to delete category')) {
+  //     dispatch(deleteCategory(id))
+  //   } else {
+  //     return false
+  //   }
+  // }
+
+  const handleDelete = async(_id: string)=>{
+    if(confirm("Are you sure to Delete Category?")){
+         try {
+          const response = await deleteCategory(_id)
+          dispatch(fetchCategory())
+          //to use message from back-end
+          alert(response.message);
+          console.log(response.message)
+         } catch (error: unknown ) {
+          //to use error message from back-end
+          if(error instanceof Error){
+            alert(error.response.data.msg);
+          }
+          console.log(error);
+         }
+
+    }else{
+      return false;
+  }}
 
   if (isLoading) {
     return <h1>loading ...</h1>
@@ -44,7 +64,7 @@ const Category = () => {
           <FontAwesomeIcon icon={faAdd} className="addProduct" />
         </Link>
 
-        {categories.length > 0 ? (
+        {categoryArray.length > 0 ? (
           <div>
             <div className="tableDiv">
               <table>
@@ -56,20 +76,20 @@ const Category = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {categories.map((category) => {
-                    const { id, name } = category
+                  {categoryArray.map((category) => {
+                    const { _id, name } = category
                     return (
-                      <tr key={id}>
-                        <td>{id}</td>
+                      <tr key={_id}>
+                        <td>{_id}</td>
                         <td>{name}</td>
                         <td>
                           <button
                             onClick={() => {
-                              handleDeleteCategory(id)
+                              handleDelete(_id)
                             }}>
                             Delete
                           </button>
-                          <Link to="/dashboard/admin/editCategory" state={{ id, name }}>
+                          <Link to="/dashboard/admin/editCategory" state={{ _id, name }}>
                             <button>
                               <FaEdit />
                             </button>

@@ -1,15 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import axios from 'axios'
 
-import api from '../../../api'
 
+
+export const baseURL =`http://localhost:5050`
 export const fetchProducts = createAsyncThunk('users/fetchProducts', async() =>
 {
   try {
-  const response = await api.get('/mock/e-commerce/products.json')
+  const response = await axios.get(`${baseURL}/products`)
   if (!response) {
     throw new Error('Network response error');
   }
-  return response.data
+  return response.data.payload.products.allProductOnPage
+
 } 
   
 catch (error) {
@@ -18,16 +21,27 @@ console.log(error)
 }
 })
 
+export const fetchSingleProducts =  async(id: string) =>{
+  const response = await axios.get(`${baseURL}/products/${id}`)
+  console.log('response',response.data.payload);
+  return response.data.payload
+
+}
+
+
+
 
 export type Product = {
-  id: number
+  _id: string
   name: string
-  image: string
-  description: string
-  categories: number[]
-  variants: string[]
-  sizes: string[]
   price: number
+  image: string
+  quantity: number
+  sold: number
+  categories: string[]
+  description: string
+  createAt?: Date
+  updateAt?: Date
 }
 export type ProductState = {
   products: Product[]
@@ -51,7 +65,6 @@ const initialState: ProductState = {
   singlePageProduct: {} as Product
 }
 
-
 export const productSlice = createSlice({
   name: 'products',
   initialState,
@@ -64,18 +77,24 @@ export const productSlice = createSlice({
             state.products = action.payload
           },
     searchProduct:(state, action)=> {
-      state.searchTerm = action.payload
+       state.searchTerm = action.payload
     },
-   findProductById: (state, action) =>  
+   findProductById:  (state, action) =>  
     {
-    const id = action.payload
+    // const id = action.payload
           
-    const foundSingleProduct = state.products.find((product) => product.id === id )
-    if(foundSingleProduct)
-    {
-      state.singlePageProduct = foundSingleProduct
+    // const foundSingleProduct = state.products.find((product) => product.id === id )
+    // if(foundSingleProduct)
+    // {
+    //   state.singlePageProduct = foundSingleProduct
+    // }
+    const id = action.payload
+    fetchSingleProducts(id)
+    // const singleProduct =  api.get(`http://localhost:5050/products/${id}`)
+    // console.log("singleProduct",singleProduct);
 
-    }
+    // console.log("singleProduct",singleProduct.data.payload);
+
 },
     sortProducts: (state, action) =>
    {
@@ -97,27 +116,33 @@ export const productSlice = createSlice({
 
   deleteProduct :(state, action) =>{
 
-    const filterProduct= state.products.filter((product) => product.id !== action.payload)
-    state.products = filterProduct
+    // const filterProduct= state.products.filter((product) => product.id !== action.payload)
+    // state.products = filterProduct
+    const id = action.payload
+    axios.delete(`http://localhost:5050/products/${id}`)
+    //window.location.reload()
+    fetchProducts()
 
   },
   updateProduct: (state, action) => {
-   
-    const {id,name , image ,description, categories, variants, sizes, price } = action.payload; 
-    console.log(action.payload);
-      const categoryExist = state.products.find((product)=> product.id === id)
-      console.log(categoryExist);
-    if(categoryExist){
-      categoryExist.name = name 
-      categoryExist.image =image
-      categoryExist.description = description
-      categoryExist.categories = categories
-      categoryExist.variants = variants
-      categoryExist.sizes = sizes
-      categoryExist.price = price
-    }
-
-    state.productData = action.payload   
+    // const {id,name , image ,description, categories, variants, sizes, price } = action.payload; 
+    // console.log(action.payload);
+    //   const categoryExist = state.products.find((product)=> product.id === id)
+    //   console.log(categoryExist);
+    // if(categoryExist){
+    //   categoryExist.name = name 
+    //   categoryExist.image =image
+    //   categoryExist.description = description
+    //   categoryExist.categories = categories
+    //   categoryExist.variants = variants
+    //   categoryExist.sizes = sizes
+    //   categoryExist.price = price
+    // }
+    // state.productData = action.payload   
+    const id = action.payload._id
+    axios.put(`http://localhost:5050/products/${id}`)
+    window.location.reload()
+    fetchProducts()
 },
   },
   extraReducers(builder){

@@ -1,31 +1,42 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import api from '../../../api'
+import axios from 'axios'
+import { baseURL } from '../products/productSlice';
 
 export const fetchCategory = createAsyncThunk('users/fetchCategory', async() =>
 {
   try {
-    const response = await api.get('/mock/e-commerce/categories.json')
+    const response = await axios.get(`${baseURL}/categories`)
       // checking there is any issue with network
       if (!response) {
         throw new Error('Network response error');
       }
-    return response.data
+    return response.data.payload.allCategoriesOnPage
   } 
-  
   catch (error) {
     //checking if there is any issue when fetch process
   console.log(error) 
   }
 })
 
+export const deleteCategory =  async (id: string) =>{
+  console.log('object');
+    const response = await  axios.delete(`${baseURL}/categories/${id}`)
+    console.log('categories',response.data);
+    return response.data
+}
+
 export type category = {
-  id: number
+  _id: string
   name: string
+  createAt?: string
+  updateAt?: string
+  __v: number
+
 }
 
 export type categoryState = {
-  categories: category[]
+  categoryArray: category[]
   error: null | string
   isLoading: boolean
   categoryData: category | null
@@ -39,7 +50,7 @@ const data= localStorage.getItem('categories') !== null
 : []
 
 const initialState: categoryState = {
-  categories: [],
+  categoryArray: [],
   error: null,
   isLoading: false,
   categoryData: data.categoryData,
@@ -58,38 +69,28 @@ export const categorySlice = createSlice({
     },
     categoriesSuccess: (state, action) => {
       state.isLoading = false
-      state.categories = action.payload
+      state.categoryArray = action.payload
     },
     sortCategoryByName: (state, action) => {
 
       const sortCategory = action.payload
-    if(sortCategory === state.categories){
-      state.categories.sort((a, b) => a.name.localeCompare(b.name))
+    if(sortCategory === state.categoryArray){
+      state.categoryArray.sort((a, b) => a.name.localeCompare(b.name))
     }
 
     },
     addCategory: (state, action) =>{
 
       console.log(action.payload);
-      state.categories.push(action.payload)
-      localStorage.setItem('categories', JSON.stringify(state.categories))
+      state.categoryArray.push(action.payload)
+      localStorage.setItem('categories', JSON.stringify(state.categoryArray))
       state.categoryData =action.payload
-
-    },
-
-    deleteCategory :(state, action) =>{
-
-      const filterCategory= state.categories.filter((category) => category.id !== action.payload)
-      state.categories = filterCategory
-      localStorage.setItem('categories', JSON.stringify(state.categories)) 
-      state.categoryData =action.payload
-
 
     },
     updateCategory: (state, action) => {
       const {id,name } = action.payload; 
       console.log(action.payload);
-        const categoryExist = state.categories.find((category)=> category.id === id)
+        const categoryExist = state.categoryArray.find((category)=> category._id === id)
         console.log(categoryExist);
       if(categoryExist){
         categoryExist.name = name 
@@ -105,7 +106,7 @@ export const categorySlice = createSlice({
       state.error = null;
     })
     builder.addCase(fetchCategory.fulfilled, (state,action) => {
-      state.categories = action.payload
+      state.categoryArray = action.payload
       state.isLoading = false
     })
     builder.addCase(fetchCategory.rejected, (state, action) => {
@@ -115,7 +116,7 @@ export const categorySlice = createSlice({
 
   }
 })
-export const { sortCategoryByName, categoryRequest, categoriesSuccess,addCategory, deleteCategory, updateCategory } = categorySlice.actions
+export const { sortCategoryByName, categoryRequest, categoriesSuccess,addCategory, updateCategory } = categorySlice.actions
 
 export default categorySlice.reducer
 

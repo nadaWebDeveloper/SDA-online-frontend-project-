@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import {
   Product,
+  baseURL,
   fetchProducts,
   searchProduct,
   sortProducts
@@ -22,12 +23,11 @@ const StoreProduct = () => {
    
   //pagination  1- current page number 2- item per page 
 
-  const { products, isLoading, error, searchTerm } = useSelector((state: RootState) => state.productsReducer
-  )
-  const { categories } = useSelector((state: RootState) => state.categoriesReducer)
+  const { products, isLoading, error, searchTerm } = useSelector((state: RootState) => state.productsReducer)
+  const { categoryArray } = useSelector((state: RootState) => state.categoriesReducer)
   const [priceRange, setPriceRange] = useState<number[]>([])
   const dispatch = useDispatch<AppDispatch>()
-  const [checkedCategory, setCheckedCategory] = useState<number[]>([])
+  const [checkedCategory, setCheckedCategory] = useState<string[]>([])
   const optionArr = ['name', 'price']
 
   //current page
@@ -49,7 +49,7 @@ const StoreProduct = () => {
     dispatch(sortProducts(inputValue))
   }
 
-  const handelCheckCategory = (idCategory:number) => {
+  const handelCheckCategory = (idCategory:string) => {
     if (checkedCategory.includes(idCategory)) {
       const filteredCategory = checkedCategory.filter((category) => category !== idCategory)
       setCheckedCategory(filteredCategory)
@@ -70,7 +70,7 @@ const StoreProduct = () => {
   const filterProducts = products.filter((product) => {
     const categoryMatch =
       checkedCategory.length > 0
-        ? checkedCategory.some((id) => product.categories.includes(Number(id)))
+        ? checkedCategory.some((id) => product.categories.includes(String(id)))
         : product
 
     const priceMatch =
@@ -100,7 +100,7 @@ const StoreProduct = () => {
  }
 
  const handleNextPage =() =>
- {
+  {
   setCurrentPage( currentPage + 1 )
  }
 
@@ -170,18 +170,18 @@ const StoreProduct = () => {
         </div>
         <div className='filterCategory'>
           <h2>Filter by Category</h2>
-          {categories.length > 0 &&
-            categories.map((categoryFilter) => {
-              const { id, name } = categoryFilter
+          {categoryArray.length > 0 &&
+            categoryArray.map((categoryFilter) => {
+              const { _id, name } = categoryFilter
               return (
-                <div key={id}>
+                <div key={_id}>
                   <label htmlFor="filterCategory" >
                     <input
                       type="checkbox"
                       name="fiCategory"
                       value={name}
                       onChange={() => {
-                        handelCheckCategory(id)
+                        handelCheckCategory(_id)
                       }}
                     />
                     {name}
@@ -195,18 +195,18 @@ const StoreProduct = () => {
       <div className="homePageRight">
         <h1 className="productTitle">best selling</h1>
 
-        {currentItem.length > 0 ? (
+        {filterProducts.length > 0 ? (
           <div className="productHome">
-            {currentItem.map((product) => {
-              const { id, name, image, price } = product
+            {filterProducts.map((product) => {
+              const { _id, name, image, price } = product
               return (
                 
-                <div className="product-container" key={id}>
+                <div className="product-container" key={_id}>
                   <div className="product-card">
                     <div className="product-image">
-                      <Link to={`/products/${name}/${id}`}>
+                      <Link to={`/products/${name}/${_id}`}>
                         <span className="discount-tag">50% off</span>
-                        <img src={image} className="product-thumb" alt={name} />
+                        <img src={`${baseURL}/${image}`} className="product-thumb" alt={name} />
                       </Link>
                       <div className="div-card-btn">
                         <FontAwesomeIcon icon={faBasketShopping} className="card-btn" onClick={()=>{handleAddToCart(product)}} />

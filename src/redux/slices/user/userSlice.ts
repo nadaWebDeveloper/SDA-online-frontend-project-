@@ -1,31 +1,52 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import axios from 'axios';
 
-import api from '../../../api'
+
+const baseURL =`http://localhost:5050`
 
 export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
 {
   try {
-  const response = await api.get('/mock/e-commerce/users.json')
+    const response = await axios.get(`${baseURL}/users`)
   if (!response) {
     throw new Error('Network response error');
   }
-  return response.data
+  console.log(response. data.allUsers);
+  return response.data.allUsers
 } 
-  
 catch (error) {
-  //checking if there is any issue when fetch process
 console.log(error) 
 }
 })
 
+export const deleteUser =  async (id: string) =>{
+  console.log('object');
+    const response = await  axios.delete(`${baseURL}/users/${id}`)
+    console.log(response.data);
+    return response.data
+}
+
+export const blockedUser =  async (id: string) =>{
+  const response = await  axios.put(`${baseURL}/users/ban/${id}`)
+  //console.log(response.data);
+  return response.data
+}
+
+export const unBlockedUser =  async (id: string) =>{
+  const response = await  axios.put(`${baseURL}/users/unban/${id}`)
+  //console.log(response.data);
+  return response.data
+}
+
 export type user = {
-  id: number
+  _id: string
   firstName: string
   lastName: string
   email: string
-  password: string | number
-  role: string
-  ban: boolean
+  password: string
+  isAdmin: boolean
+  isBanned: boolean
+  balance: number
 }
 
 export type userState = {
@@ -89,20 +110,6 @@ export const userSlice = createSlice({
     searchUser:(state, action)=> {
       state.searchTerm = action.payload
     },
-    deleteUser :(state, action) =>{
-
-      const filterUser= state.users.filter((user) => user.id !== action.payload)
-      state.users = filterUser
-
-    },
-    blockUser :(state, action) =>{
-      const id = action.payload
-      const findUser= state.users.find((user) => user.id === id)
-      if(findUser){
-        findUser.ban = !findUser.ban //flip the value
-      }
-
-    },
     registerUser: (state, action) =>{
       console.log(action.payload);
       state.users.push(action.payload)
@@ -110,18 +117,18 @@ export const userSlice = createSlice({
 
     },
     updateUser: (state, action) => {
-      const {id, firstName, lastName, email} = action.payload; 
-      console.log(action.payload);
-        const userExist = state.users.find((user)=> user.id === id)
-        console.log(userExist);
-      if(userExist){
-        userExist.firstName = firstName 
-        userExist.lastName = lastName 
-        userExist.email = email 
+      // const {id, firstName, lastName, email} = action.payload; 
+      // console.log(action.payload);
+      //   const userExist = state.users.find((user)=> user.id === id)
+      //   console.log(userExist);
+      // if(userExist){
+      //   userExist.firstName = firstName 
+      //   userExist.lastName = lastName 
+      //   userExist.email = email 
 
-      }
+      // }
 
-      state.userData = action.payload
+      // state.userData = action.payload
 
 },
 
@@ -142,7 +149,7 @@ export const userSlice = createSlice({
 
   }
 })
-export const { login ,logout ,searchUser ,deleteUser , blockUser ,registerUser , updateUser ,userRequest ,userSuccess } = userSlice.actions
+export const { login ,logout ,searchUser  ,registerUser , updateUser ,userRequest ,userSuccess } = userSlice.actions
 
 export default userSlice.reducer
 

@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, RootState } from '../../redux/store'
-import { fetchProducts, findProductById } from '../../redux/slices/products/productSlice'
+import { baseURL, fetchProducts, fetchSingleProducts } from '../../redux/slices/products/productSlice'
 import { fetchCategory } from '../../redux/slices/category/categorySlice'
 
 import { faClose, faBasketShopping, faHeart } from '@fortawesome/free-solid-svg-icons'
@@ -19,17 +19,32 @@ const ProductDetails = () => {
   const { singlePageProduct, isLoading, error } = useSelector(
     (state: RootState) => state.productsReducer
   )
-  const { categories } = useSelector((state: RootState) => state.categoriesReducer)
+  console.log('singlePageProduct',singlePageProduct);
+  const { categoryArray } = useSelector((state: RootState) => state.categoriesReducer)
+
+  // const singlePage = async (id: string) => {
+  //   try {
+  //     await fetchSingleProducts(id)
+  //   } catch (error) {
+      
+  //   }
+  // }
 
   useEffect(() => {
     //fetch all data on store then fetch single page because when user refresh the page not remove all data on screen
-    const ID = Number(id)
-    dispatch(fetchProducts()).then(() => dispatch(findProductById(ID)))
-    dispatch(fetchCategory())
+    try {
+      const ID = String(id)
+      dispatch(fetchProducts()).then(() =>  fetchSingleProducts(ID))
+      dispatch(fetchCategory())
+      // fetchSingleProducts(ID)
+      console.log(fetchSingleProducts(ID));
+    } catch (error) {
+      
+    }
   }, [])
 
-  const getCategoryNameById = (categoryId: number) => {
-    const category = categories.find((categoryTable) => categoryTable.id === categoryId)
+  const getCategoryNameById = (categoryId: string) => {
+    const category = categoryArray.find((categoryTable) => categoryTable._id === categoryId)
     const categoryName = !category ? 'Not Found' : category.name
     return categoryName
   }
@@ -48,13 +63,13 @@ const ProductDetails = () => {
             <FontAwesomeIcon
               icon={faClose}
               onClick={() => {
-                navigate('/homeProducts')
+                navigate('/storeProducts')
               }}
               className="closeRight"
             />
             <div className="poster">
               <img
-                src={singlePageProduct.image}
+                src={`${baseURL}/${singlePageProduct.image}`}
                 alt={singlePageProduct.name}
                 className="product-thumb"
               />
@@ -73,12 +88,13 @@ const ProductDetails = () => {
             {singlePageProduct.categories &&
               singlePageProduct.categories
                 .map((categoryId) => getCategoryNameById(categoryId))
-                .join(' | ')}
+                .join(' || ')}
+     {/* <p>categories: {singlePageProduct.categories ? singlePageProduct.categories.map((category) => category.name).join(','): 'No categories'}</p> */}
+
           </p>
 
           <p className="sizeDetail">
             {' '}
-            <br /> {singlePageProduct.sizes && singlePageProduct.sizes.join('  |  ')}
           </p>
         </div>
       </div>

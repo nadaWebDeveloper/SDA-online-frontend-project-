@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { AppDispatch, RootState } from '../../redux/store'
 import {
+  baseURL,
   deleteProduct,
   fetchProducts,
   searchProduct
@@ -19,6 +20,10 @@ const Products = () => {
   const { products, isLoading, error, searchTerm } = useSelector(
     (state: RootState) => state.productsReducer
   )
+  const { categoryArray } = useSelector(
+    (state: RootState) => state.categoriesReducer
+  )
+
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
@@ -34,13 +39,19 @@ const Products = () => {
     ? products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
     : products
 
-  const handleDeleteProduct = (id: number) => {
-    if (confirm('Are you sure you Delete Product')) {
+  const handleDeleteProduct = (id: string) => {
+    if (confirm('Are you sure to Delete Product')) {
       dispatch(deleteProduct(id))
       alert('success deleted  product')
     } else {
       return false
     }
+  }
+
+  const getCategoryNameById = (categoryId: string) => {
+    const category = categoryArray.find((categoryTable) => categoryTable._id === categoryId)
+    const categoryName = !category ? 'Not Found' : category.name
+    return categoryName
   }
 
   if (isLoading) {
@@ -52,7 +63,7 @@ const Products = () => {
 
   return (
     <div>
-      {searchProducts.length > 0 ? (
+      {searchProducts.length > 0 ? (      //{searchProducts.length > 0 ? (
         <div>
           <div className="filter">
             <Search searchTerm={searchTerm} handleSearch={handleSearch} />
@@ -67,32 +78,29 @@ const Products = () => {
 
             <div className="product">
               {searchProducts.map((product) => {
-                const { id, name, image, price, description, variants, sizes, categories } = product
+                const { _id, name, image, price, description } = product
                 return (
-                  <div className="product-container" key={id}>
+                  <div className="product-container" key={_id}>
                     <div >
                       <div className="product-imageAdmin">
                         <span className="discount-tag">50% off</span>
-                        <img src={image} className="product-thumb" alt={name} />
+                        <img src={`${baseURL}/${image}`} className="product-thumb" alt={name} />
                         <div className="">
                           <FontAwesomeIcon
                             icon={faDeleteLeft}
                             onClick={() => {
-                              handleDeleteProduct(id)
+                              handleDeleteProduct(_id)
                             }}
                             className="iconAdminProduct"
                           />
                           <Link
                             to="/dashboard/admin/editProduct"
                             state={{
-                              id,
+                              _id,
                               name,
                               image,
                               price,
-                              description,
-                              variants,
-                              sizes,
-                              categories
+                              description
                             }}>
                             <FontAwesomeIcon icon={faEdit} className="iconAdminProduct1" />
                           </Link>
@@ -105,11 +113,11 @@ const Products = () => {
                         <br />
                         <b>{description}</b>
                         <br />
-                        <p>categories: {categories}</p>
-                        <br />
-                        <p>variants: {variants}</p>
-                        <br />
-                        <p>sizes: {sizes}</p>
+                        <p>categories: {product.categories.length > 0  ? product.categories.map((category) => category.name).join(' || '): 'No categories'}</p>
+                        {/* <p>{product.categories &&
+                         product.categories
+                         .map((categoryId) => getCategoryNameById(categoryId))
+                         .join(' || ')}</p> */}
                       </div>
                     </div>
                   </div>
