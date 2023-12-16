@@ -1,9 +1,7 @@
 import { useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux'
 import { ChangeEvent, FormEvent, useState } from 'react'
 
-import { addCategory } from '../../redux/slices/category/categorySlice'
-import { AppDispatch } from '../../redux/store'
+import { createCategory } from '../../redux/slices/category/categorySlice'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
@@ -11,26 +9,34 @@ import { faAdd } from '@fortawesome/free-solid-svg-icons'
 
 const AddNewCategory = () => {
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
   const [categoryName, setCategoryName] = useState('')
 
   const handleAddChange = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value
     setCategoryName(inputValue)
+
   }
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
 
-    if (confirm('Are you sure to Add category')) {
-      const addNewCategory = {
-        id: new Date().getMilliseconds(),
-        name: categoryName
-      }
-
-      dispatch(addCategory(addNewCategory))
-      alert('success added category')
+ if (confirm('Are you sure to Add category')) {    
+try{
+  const newCategory = {name :categoryName}
+      const response = await createCategory(newCategory)
+      alert(response.message);
       navigate('/dashboard/admin/category')
+}catch (error) {
+    if(categoryName === ''){
+      const errors = `
+      ${error.response.data.errors[0]}
+      ${error.response.data.errors[1]}
+     `
+    alert(errors);
+    }else{
+      alert(error.response.data.msg);
+    }
+   }
 
     } else {
       return false
