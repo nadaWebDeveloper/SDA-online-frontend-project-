@@ -28,6 +28,12 @@ export const fetchSingleProducts =  async(id: string) =>{
 
 }
 
+export const createProduct =  async (newData: FormData) =>{
+  const response = await  axios.post(`${baseURL}/products`,newData)
+  //console.log(response.data);
+  return response.data
+}
+
 
 
 
@@ -105,14 +111,6 @@ export const productSlice = createSlice({
       state.products.sort((a, b) => a.price - b.price )
     }
    },
-   addNewProduct: (state, action) =>{
-
-    console.log(action.payload);
-    state.products.push(action.payload)
-    state.productData = action.payload   
-
-
-  },
 
   deleteProduct :(state, action) =>{
 
@@ -162,6 +160,6 @@ export const productSlice = createSlice({
 
   }
 })
-export const { findProductById, searchProduct, sortProducts , productsRequest , productsSuccess , addNewProduct , deleteProduct ,updateProduct } = productSlice.actions
+export const { findProductById, searchProduct, sortProducts , productsRequest , productsSuccess , deleteProduct ,updateProduct } = productSlice.actions
 
 export default productSlice.reducer
