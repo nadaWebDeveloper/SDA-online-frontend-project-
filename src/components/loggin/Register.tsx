@@ -1,12 +1,15 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch} from 'react-redux'
+import { useNavigate } from 'react-router'
 
 import { AppDispatch} from '../../redux/store'
-import { fetchUser, registerUser } from '../../redux/slices/user/userSlice'
+import { activateUser, fetchUser, registerUser } from '../../redux/slices/user/userSlice'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { AxiosError } from 'axios'
+
 
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/
@@ -16,20 +19,26 @@ const EMAIL_REGEX = /^[\w-\._\+%]+@(?!(live|hotmail|outlook|aol|yahoo|rocketmail
 const Register = () => {
 
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
 
-  const [firstName, setFirstName] = useState('')
+  const [register, setRegister] = useState({
+    firstName: '',
+    lastName:'',
+    email:'',
+    password:'',
+  })
+   const [token, setToken] = useState('')
+
+
   const [validName, setValidName] = useState(false)
   const [userFocus, setUserFocus] = useState(false)
 
-  const [lastName, setLastName] = useState('')
   const [validLastName, setValidLastName] = useState(false)
   const [userLastFocus, setUserLastFocus] = useState(false)
 
-  const [email, setEmail] = useState('')
   const [validEmail, setValidEmail] = useState(false)
   const [emailFocus, setEmailFocus] = useState(false)
 
-  const [pwd, setPwd] = useState('')
   const [validPwd, setValidPwd] = useState(false)
   const [pwdFocus, setPwdFocus] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -47,60 +56,57 @@ const Register = () => {
 
 
   useEffect(() => {
-    setValidName(USER_REGEX.test(firstName))
-  }, [firstName])
+    setValidName(USER_REGEX.test(register.firstName))
+  }, [register.firstName])
 
   useEffect(() => {
-    setValidLastName(USER_REGEX.test(lastName))
-  },[lastName])
+    setValidLastName(USER_REGEX.test(register.lastName))
+  },[register.lastName])
 
   useEffect(() => {
-    setValidEmail(EMAIL_REGEX.test(email))
-  },[email])
+    setValidEmail(EMAIL_REGEX.test(register.email))
+  },[register.email])
 
   useEffect(() => {
-    setValidPwd(PWD_REGEX.test(pwd))
-    setValidMatch(pwd === matchPwd)
-  }, [pwd, matchPwd])
+    setValidPwd(PWD_REGEX.test(register.password))
+    setValidMatch(register.password === matchPwd)
+  }, [register.password, matchPwd])
 
   useEffect(() => {
     setErrMsg('')
-  }, [firstName,lastName, email, pwd, matchPwd])
+  }, [register.firstName,register.lastName, register.email, register.password, matchPwd])
 
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-
-  const handleFirstNameChange = (event : ChangeEvent<HTMLInputElement>) =>
- {
-  setFirstName(event.target.value);
- }
- const handleLastNameChange = (event : ChangeEvent<HTMLInputElement>) =>
- {
-  setLastName(event.target.value);
- }
- const handleEmailChange = (event : ChangeEvent<HTMLInputElement>) =>
- {
-  setEmail(event.target.value);
- }
- const handlePassWordChange = (event : ChangeEvent<HTMLInputElement>) =>
- {
-  setPwd(event.target.value);
- }
  const handleMatchPasswordChange = (event : ChangeEvent<HTMLInputElement>) =>
  {
   setMatchPwd(event.target.value);
  }
 
-  const handleSubmit =  (event: FormEvent) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.type === 'file') {
+      const fileInput = (event.target as HTMLInputElement) || ''
+      setRegister((prevUser) => {
+        return { ...prevUser, [event.target.name]: fileInput.files?.[0] }
+      })
+    } else {
+      setRegister((prevUser) => {
+        return { ...prevUser, [event.target.name]: event.target.value }
+      })
+    }
+  }
+
+
+  const handleSubmit = async (event: FormEvent) => {  
     event.preventDefault()
     // if button enabled with JS hack
-    const v1 = USER_REGEX.test(firstName)
-    const v2 = USER_REGEX.test(lastName)
-    const v3 = EMAIL_REGEX.test(email)
-    const v4 = PWD_REGEX.test(pwd)
+    const v1 = USER_REGEX.test(register.firstName)
+    const v2 = USER_REGEX.test(register.lastName)
+    const v3 = EMAIL_REGEX.test(register.email)
+    const v4 = PWD_REGEX.test(register.password)
     if (!v1 || !v2 || !v3 || !v4) {
       setErrMsg('Invalid Entry')
       return
@@ -108,28 +114,63 @@ const Register = () => {
 
     setSuccess(true);
 
-    const newUser ={
-    id: new Date().getMilliseconds() ,
-    firstName: firstName,
-    lastName: lastName,
-    email:email,
-    pwd:pwd
-    };
-    console.log(newUser);
+    try{
+      const newUser ={
+        firstName: register.firstName,
+        lastName: register.lastName,
+        email:register.email,
+        password:register.password
+        };    
 
-    dispatch(registerUser(newUser));
+          const response = await registerUser(newUser)
+          alert(response.message);
+          setToken(response.token)
+    }catch (error) {
+     alert(error.response.data.msg)
+      if(register.firstName || register.lastName || register.email || register.password === ''){
+        const errors = `
+        ${error.response.data.errors[0]}
+        ${error.response.data.errors[1]}
+        ${error.response.data.errors[2]}
+        ${error.response.data.errors[3]}
+        ${error.response.data.errors[4]}
+        ${error.response.data.errors[5]}
+        ${error.response.data.errors[6]}
+        ${error.response.data.errors[7]}
+       `
+      alert(errors);
+     }
+    }
+       
+    
 
   }
 
+  const handleActive = async (event: FormEvent) => {
+    event.preventDefault()
+    try {
+      const response =  await activateUser(String(token))
+      alert(response.message);
+      navigate('/login')
+
+    } catch (error) {
+      alert(error.response.data.msg)
+    }
+  }
   return (
     <div>
       {success ? (
         <section>
-          <h1>Success!</h1>
-          <p>Welcome {firstName}</p>
-          <h4>
-            <Link to="/login">Sing In</Link>
-          </h4>
+         <h1>Success!</h1>
+          <form onSubmit={handleActive}>
+        <h1>
+        Hello {register.firstName} Click the Button to Activate your Account
+        </h1>        
+          <button >
+            Activate
+            </button>
+          </form>
+
         </section>
       ) : (
         <section>
@@ -142,7 +183,7 @@ const Register = () => {
           <form onSubmit={handleSubmit}>
             <label htmlFor="FirstName">
               <FontAwesomeIcon icon={faCheck} className={validName ? 'valid' : 'hide'} />
-              <FontAwesomeIcon icon={faTimes} className={validName || !firstName ? 'hide' : 'invalid'} />
+              <FontAwesomeIcon icon={faTimes} className={validName || !register.firstName ? 'hide' : 'invalid'} />
             </label>
 
             <div className="inputField">
@@ -150,10 +191,10 @@ const Register = () => {
               type="text"
               placeholder='First Name'
               id="FirstName"
-              name='FirstName'
+              name='firstName'
               autoComplete="off"
-              onChange={handleFirstNameChange}
-              value={firstName}
+              onChange={handleChange}
+              value={register.firstName}
               required
               aria-invalid={validName ? 'false' : 'true'}
               aria-describedby="FirstName"
@@ -177,7 +218,7 @@ const Register = () => {
 
             <label htmlFor="LastName">
               <FontAwesomeIcon icon={faCheck} className={validLastName ? 'valid' : 'hide'} />
-              <FontAwesomeIcon icon={faTimes} className={validLastName || !lastName ? 'hide' : 'invalid'} />
+              <FontAwesomeIcon icon={faTimes} className={validLastName || !register.lastName ? 'hide' : 'invalid'} />
             </label>
 
             <div className="inputField">
@@ -185,9 +226,9 @@ const Register = () => {
               type="text"
               placeholder='Last Name'
               id="LastName"
-              name='LastName'
-              value={lastName}
-              onChange={handleLastNameChange}
+              name='lastName'
+              value={register.lastName}
+              onChange={handleChange}
               autoComplete="off"
               required
               aria-invalid={validLastName ? 'false' : 'true'}
@@ -212,7 +253,7 @@ const Register = () => {
 
             <label htmlFor="email">
               <FontAwesomeIcon icon={faCheck} className={validEmail ? 'valid' : 'hide'} />
-              <FontAwesomeIcon icon={faTimes} className={validEmail || !email ? 'hide' : 'invalid'} />
+              <FontAwesomeIcon icon={faTimes} className={validEmail || !register.email ? 'hide' : 'invalid'} />
             </label>
             
             <div className="inputField">
@@ -221,8 +262,8 @@ const Register = () => {
               placeholder='Email'
               id="email"
               name='email'
-              value={email}
-              onChange={handleEmailChange}
+              value={register.email}
+              onChange={handleChange}
               autoComplete="off"
               required
               aria-invalid={validEmail ? 'false' : 'true'}
@@ -248,7 +289,7 @@ const Register = () => {
 
             <label htmlFor="password">
               <FontAwesomeIcon icon={faCheck} className={validPwd ? 'valid' : 'hide'} />
-              <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? 'hide' : 'invalid'} />
+              <FontAwesomeIcon icon={faTimes} className={validPwd || !register.password ? 'hide' : 'invalid'} />
             </label>
 
             <div className="inputField">
@@ -258,8 +299,8 @@ const Register = () => {
               placeholder='Password'
               name='password'
               autoComplete="new-password"
-              onChange={handlePassWordChange}
-              value={pwd}
+              onChange={handleChange}
+              value={register.password}
               required
               aria-invalid={validPwd ? 'false' : 'true'}
               aria-describedby="pwdnote"
@@ -314,11 +355,10 @@ const Register = () => {
               Must match the first password input field.
             </p>
 
-            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-               
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////// */} 
             <button disabled={!validName || !validLastName || !validEmail || !validPwd || !validMatch ? true : false}>
               Sign Up
-            </button>
+            </button >
           </form>
           <h4>
             Already registered?

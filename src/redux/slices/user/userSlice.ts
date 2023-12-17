@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios';
 
-
 const baseURL =`http://localhost:5050`
 
 export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
@@ -11,33 +10,32 @@ export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
   if (!response) {
     throw new Error('Network response error');
   }
-  console.log(response. data.allUsers);
   return response.data.allUsers
 } 
 catch (error) {
 console.log(error) 
 }
 })
-
+export const registerUser  =  async (newUser: {}) =>{
+  const response = await  axios.post(`${baseURL}/users/register`,newUser)
+  return response.data
+}
+export const activateUser  =  async (token: string) =>{
+  const response = await  axios.post(`${baseURL}/users/activate`,{token})
+  return response.data
+}
 export const deleteUser =  async (id: string) =>{
-  console.log('object');
     const response = await  axios.delete(`${baseURL}/users/${id}`)
-    console.log(response.data);
     return response.data
 }
-
 export const blockedUser =  async (id: string) =>{
   const response = await  axios.put(`${baseURL}/users/ban/${id}`)
-  //console.log(response.data);
   return response.data
 }
-
 export const unBlockedUser =  async (id: string) =>{
   const response = await  axios.put(`${baseURL}/users/unban/${id}`)
-  //console.log(response.data);
   return response.data
 }
-
 export type user = {
   _id: string
   firstName: string
@@ -48,7 +46,6 @@ export type user = {
   isBanned: boolean
   balance: number
 }
-
 export type userState = {
   users: user[]
   error: null | string
@@ -110,12 +107,6 @@ export const userSlice = createSlice({
     searchUser:(state, action)=> {
       state.searchTerm = action.payload
     },
-    registerUser: (state, action) =>{
-      console.log(action.payload);
-      state.users.push(action.payload)
-      state.userData = action.payload
-
-    },
     updateUser: (state, action) => {
       // const {id, firstName, lastName, email} = action.payload; 
       // console.log(action.payload);
@@ -149,7 +140,7 @@ export const userSlice = createSlice({
 
   }
 })
-export const { login ,logout ,searchUser  ,registerUser , updateUser ,userRequest ,userSuccess } = userSlice.actions
+export const { login ,logout ,searchUser , updateUser ,userRequest ,userSuccess } = userSlice.actions
 
 export default userSlice.reducer
 
