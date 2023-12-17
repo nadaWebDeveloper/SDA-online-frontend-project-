@@ -24,6 +24,10 @@ export const activateUser  =  async (token: string) =>{
   const response = await  axios.post(`${baseURL}/users/activate`,{token})
   return response.data
 }
+export const logInUser  =  async (newUser: {}) =>{
+  const response = await  axios.post(`${baseURL}/auth/login`,newUser)
+  return response.data
+}
 export const deleteUser =  async (id: string) =>{
     const response = await  axios.delete(`${baseURL}/users/${id}`)
     return response.data

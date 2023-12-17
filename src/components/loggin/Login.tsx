@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../redux/store'
-import { fetchUser, login } from '../../redux/slices/user/userSlice'
+import { fetchUser, logInUser } from '../../redux/slices/user/userSlice'
 
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -33,32 +33,29 @@ const Login = ({ pathName }: { pathName: string }) => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
-    try {
-      const foundUser = users.find((userData) => userData.email === user.email) //to checked if email exist on database or not & if email found then match the password
-      //blockUser if is not found
-      if (!foundUser) {
-        alert('user not match email in DB')
-        return
-      }
-
-      if (foundUser.password !== user.password) {
-        alert('password in not match')
-        return
-      }
-
-      if (foundUser.ban) {
-        alert('banned account , connect with company')
-        return
-      }
-
-      //loggedin
-      dispatch(login(foundUser))
-      navigate(pathName ? pathName : `/dashboard/${foundUser.role}`)
-    } catch (error) {
-      console.log(error)
-    }
-
-    setUser({
+try{
+  const loggInUser ={
+    email: user.email,
+    password: user.password,
+    };    
+      const response = await logInUser(loggInUser)
+      alert(response.message);
+      // const role = foundUser.isAdmin 
+      // role ? 'admin' : 'user'
+      //  navigate(pathName ? pathName : `/dashboard/${role}`)
+}catch (error) {
+ alert(error.response.data.msg)
+  if(user.email || user.password === ''){
+    const errors = `
+    ${error.response.data.errors[0]}
+    ${error.response.data.errors[1]}
+    ${error.response.data.errors[2]}
+    ${error.response.data.errors[3]}
+   `
+  alert(errors);
+ }
+}
+   setUser({
       email: '',
       password: ''
     })
