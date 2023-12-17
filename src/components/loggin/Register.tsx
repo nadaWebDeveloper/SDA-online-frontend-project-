@@ -8,7 +8,6 @@ import { activateUser, fetchUser, registerUser } from '../../redux/slices/user/u
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-import { AxiosError } from 'axios'
 
 
 

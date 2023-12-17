@@ -15,7 +15,6 @@ const initialState: cartState=
     cartItem:data
 }
 
-
 const cartSlice= createSlice ({
     name: 'cart',
     initialState:initialState,
@@ -26,7 +25,7 @@ const cartSlice= createSlice ({
           localStorage.setItem('cart', JSON.stringify(state.cartItem))  //to add cart to local storage 
         },
         deleteFromCart:(state, action) =>{
-            const filterCart= state.cartItem.filter((cart) => cart.id !== action.payload)
+            const filterCart= state.cartItem.filter((cart) => cart._id !== action.payload)
             state.cartItem = filterCart
             localStorage.setItem('cart', JSON.stringify(state.cartItem))  //to update local storage  after deleting
 

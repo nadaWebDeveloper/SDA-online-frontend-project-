@@ -37,12 +37,10 @@ const Category = () => {
           //to use message from back-end
           alert(response.message);
           console.log(response.message)
-         } catch (error: unknown ) {
+         } catch (error ) {
           //to use error message from back-end
-          if(error instanceof Error){
             alert(error.response.data.msg);
-          }
-          console.log(error);
+        
          }
 
     }else{

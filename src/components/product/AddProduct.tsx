@@ -18,37 +18,30 @@ const AddProduct = () => {
   })
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const {value} = event.target
-    const {name} = event.target
+    const {value, name} = event.target
     const {type} = event.target
     if(type === 'file'){
-    console.log('file selected');
     const fileInput = (event.target as HTMLInputElement) || ''
-    console.log(fileInput.files?.[0].name);
     setProduct((prevProduct) => {
    return { ...prevProduct,[name]: fileInput.files?.[0].name}})
     }
    else{
   setProduct((prevProduct) => {
     return { ...prevProduct,[name]:[value]}  })
-}}
+}
+}
 
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
-
     if(confirm("Are you sure to Add Product")){
-   
     const formData = new FormData(event.currentTarget)
-
      try {
       const response = await createProduct(formData)
       alert(response.message);
-      console.log('response',response);
-
       navigate('/dashboard/admin/products')
 
-     } catch (error: unknown) {
+     } catch (error) {
        const values = [...formData.values()]
       const isEmpty = values.includes('')
       if(isEmpty){
@@ -62,7 +55,7 @@ const AddProduct = () => {
        `
       alert(errors);
       }else{
-        alert(error.response.data.msg);
+        alert(error.response.data.msg)
       }
      }
    

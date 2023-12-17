@@ -19,10 +19,13 @@ export const fetchCategory = createAsyncThunk('users/fetchCategory', async() =>
   }
 })
 
+export const createCategory  =  async (name: {}) =>{
+  const response = await  axios.post(`${baseURL}/categories`,name)
+  return response.data
+}
+
 export const deleteCategory =  async (id: string) =>{
-  console.log('object');
     const response = await  axios.delete(`${baseURL}/categories/${id}`)
-    console.log('categories',response.data);
     return response.data
 }
 

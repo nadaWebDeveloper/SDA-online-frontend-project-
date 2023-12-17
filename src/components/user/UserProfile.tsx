@@ -14,7 +14,7 @@ const UserProfile = () => {
 
 const navigate = useNavigate()
 const {userData} = useUserState()
-const {id, firstName, lastName, email } = userData || {};
+const {_id, firstName, lastName, email } = userData || {};
 
 
   const handleClick = () => {
@@ -35,7 +35,7 @@ const {id, firstName, lastName, email } = userData || {};
     <div className="titleProfile"><b>{firstName}  {lastName}</b></div>
     <div className="descriptProfile">{email}</div>
 
-    <Link to="/dashboard/user/editProfile" state={{id, firstName, lastName, email }}>
+    <Link to="/dashboard/user/editProfile" state={{_id, firstName, lastName, email }}>
     <FontAwesomeIcon icon={faEdit}  className="closeProfile"/>
     </Link> 
 
