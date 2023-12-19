@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from 'react-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, RootState } from '../../redux/store'
-import { baseURL, fetchProducts, fetchSingleProducts } from '../../redux/slices/products/productSlice'
+import { SingleProducts, baseURL, fetchProducts } from '../../redux/slices/products/productSlice'
 import { fetchCategory } from '../../redux/slices/category/categorySlice'
 
 import { faClose, faBasketShopping, faHeart } from '@fortawesome/free-solid-svg-icons'
@@ -15,37 +15,28 @@ const ProductDetails = () => {
   //from name can fetch the data from store
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
+  const [singleproduct, setSingleproduct] = useState({});
 
   const { singlePageProduct, isLoading, error } = useSelector(
     (state: RootState) => state.productsReducer
   )
   console.log('singlePageProduct',singlePageProduct);
+
   const { categoryArray } = useSelector((state: RootState) => state.categoriesReducer)
 
-  // const singlePage = async (id: string) => {
-  //   try {
-  //     await fetchSingleProducts(id)
-  //   } catch (error) {
-      
-  //   }
-  // }
 
   useEffect(() => {
-    //fetch all data on store then fetch single page because when user refresh the page not remove all data on screen
-    try {
+ 
       const ID = String(id)
-      dispatch(fetchProducts()).then(() =>  fetchSingleProducts(ID))
-      dispatch(fetchCategory())
-      // fetchSingleProducts(ID)
-      console.log(fetchSingleProducts(ID));
-    } catch (error) {
-      
-    }
+      dispatch(SingleProducts(ID))
+      fetchProducts()
+
   }, [])
 
   const getCategoryNameById = (categoryId: string) => {
-    const category = categoryArray.find((categoryTable) => categoryTable._id === categoryId)
-    const categoryName = !category ? 'Not Found' : category.name
+    const id = String(categoryId)
+    const category = categoryArray.find((categoryTable) => categoryTable._id === id)
+    const categoryName = category ? category.name : 'Not Found'
     return categoryName
   }
 
@@ -57,7 +48,10 @@ const ProductDetails = () => {
   }
 
   return (
+   
       <div className="backDetail">
+         {singlePageProduct && (
+      <> 
         <div className="wrapper">
           <div className="card">
             <FontAwesomeIcon
@@ -78,27 +72,28 @@ const ProductDetails = () => {
             <FontAwesomeIcon icon={faBasketShopping} className="shopIcon" />
           </div>
         </div>
-
         <div className="backInfo">
           <h1 className="nameDetail">{singlePageProduct.name}</h1>
           <h2 className="priceDetail">{singlePageProduct.price} SR</h2>
           <p className="">{singlePageProduct.description}</p>
 
           <p className="categoryDetail">
+          Categories:
             {singlePageProduct.categories &&
               singlePageProduct.categories
-                .map((categoryId) => getCategoryNameById(categoryId))
-                .join(' || ')}
-     {/* <p>categories: {singlePageProduct.categories ? singlePageProduct.categories.map((category) => category.name).join(','): 'No categories'}</p> */}
-
+                .map((categoryId: string) => getCategoryNameById(categoryId))
+                .join(' || ')
+                }
           </p>
 
           <p className="sizeDetail">
             {' '}
           </p>
         </div>
+        </>
+        )}
       </div>
-   
+     
   )
 }
 

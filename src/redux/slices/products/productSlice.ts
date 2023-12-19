@@ -3,6 +3,7 @@ import axios from 'axios'
 
 
 
+
 export const baseURL =`http://localhost:5050`
 export const fetchProducts = createAsyncThunk('users/fetchProducts', async() =>
 {
@@ -20,18 +21,32 @@ catch (error) {
 console.log(error) 
 }
 })
-
-export const fetchSingleProducts =  async(id: string) =>{
+export const SingleProducts = createAsyncThunk('users/SingleProducts', async(id: string) =>{
+try {
   const response = await axios.get(`${baseURL}/products/${id}`)
-  console.log('response',response.data.payload);
   return response.data.payload
-
+} catch (error) {
+  console.log(error) 
 }
 
+})
 export const createProduct =  async (newData: FormData) =>{
   const response = await  axios.post(`${baseURL}/products`,newData)
   //console.log(response.data);
   return response.data
+}
+export const updatedProduct =  async (id: string, newData: FormData) =>{
+  const response = await  axios.put(`${baseURL}/products/${id}`, newData)
+  return response.data
+}
+//http://localhost:5050/products?page=3&rangeId=range4&limit=3&search=nada&sortName=price&sortNum=1
+export const sortedProduct =  async (sortName: string) =>{
+  const response = await  axios.get(`${baseURL}/products?sortName=${sortName}&sortNum=1`)
+  return response.data.payload.products.allProductOnPage
+}
+export const searchedProduct =  async (searched: string) =>{
+  const response = await  axios.get(`${baseURL}/products?search=${searched}`)
+  return response.data.payload.products.allProductOnPage
 }
 
 
@@ -83,7 +98,11 @@ export const productSlice = createSlice({
             state.products = action.payload
           },
     searchProduct:(state, action)=> {
-       state.searchTerm = action.payload
+      //  state.searchTerm = action.payload
+      //  console.log( 'state.searchTerm', state.searchTerm  );
+      //  console.log('action.payload',action.payload);
+      // const response = await  axios.get(`${baseURL}/products?search=${action}`)
+      // return response.data.payload.products.allProductOnPage
     },
    findProductById:  (state, action) =>  
     {
@@ -95,7 +114,7 @@ export const productSlice = createSlice({
     //   state.singlePageProduct = foundSingleProduct
     // }
     const id = action.payload
-    fetchSingleProducts(id)
+    SingleProducts(id)
     // const singleProduct =  api.get(`http://localhost:5050/products/${id}`)
     // console.log("singleProduct",singleProduct);
 
@@ -150,6 +169,10 @@ export const productSlice = createSlice({
     })
     builder.addCase(fetchProducts.fulfilled, (state,action) => {
       state.products = action.payload
+      state.isLoading = false
+    })
+    builder.addCase(SingleProducts.fulfilled, (state,action) => {
+      state.singlePageProduct = action.payload
       state.isLoading = false
     })
     builder.addCase(fetchProducts.rejected, (state, action) => {
