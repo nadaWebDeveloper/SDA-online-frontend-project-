@@ -9,8 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { FaEdit } from 'react-icons/fa'
 
-
-
 const Category = () => {
   const { categoryArray, isLoading, error } = useSelector(
     (state: RootState) => state.categoriesReducer
@@ -21,42 +19,16 @@ const Category = () => {
     dispatch(fetchCategory())
   }, [])
 
-  // const handleDeleteCategory = (id: string) => {
-  //   if (confirm('Are you sure to delete category')) {
-  //     dispatch(deleteCategory(id))
-  //   } else {
-  //     return false
-  //   }
-  // }
-
-  const handleDelete = async(_id: string)=>{
-    if(confirm("Are you sure to Delete Category?")){
-         try {
-          const response = await deleteCategory(_id)
-          dispatch(fetchCategory())
-          //to use message from back-end
-          alert(response.message);
-          console.log(response.message)
-         } catch (error ) {
-          //to use error message from back-end
-            alert(error.response.data.msg);
-        
-         }
-
-    }else{
-      return false;
-  }}
-
-  if (isLoading) {
-    return <h1>loading ...</h1>
-  }
-  if (error) {
-    return <h1>{error}</h1>
+  const handleDelete = (_id: string) => {
+    if (confirm('Are you sure to Delete Category?')) {
+      dispatch(deleteCategory(_id))
+    } else {
+      return false
+    }
   }
 
   return (
     <div>
-
       <div className="mainContentCategory">
         <Link to="/dashboard/admin/addCategory">
           <FontAwesomeIcon icon={faAdd} className="addProduct" />
