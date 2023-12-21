@@ -29,6 +29,7 @@ import AddNewCategory from './components/category/AddNewCategory'
 import StoreProduct from './components/basic/StoreProduct'
 import AdminSideBar from './components/admin/AdminSideBar'
 import UserSideBar from './components/user/UserSideBar'
+import Activate from './components/loggin/Activate'
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/products/:name/:id" element={<ProductDetails />} />
           <Route path="/login" element={<Login pathName="/" />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/users/activate/:token" element={<Activate />} />
           <Route path="/product" element={<ProductDetails />} />
 
           {/* this line to protected all inside in go to component and check if (isLoggedIn = true) then enter in all path */}

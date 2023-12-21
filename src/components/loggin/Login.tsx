@@ -111,6 +111,12 @@ try{
             <Link to="/register">Register</Link>
           </span>
         </h4>
+        <h4>
+          Forget password{' '}
+          <span>
+            <Link to="">Register</Link>
+          </span>
+        </h4>
       </div>
     </section>
   )
