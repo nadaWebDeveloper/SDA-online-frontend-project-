@@ -10,8 +10,9 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import useUserState from '../Hooks/useUserState'
 
-const Login = ({ pathName }: { pathName: string }) => {
-  const { users } = useUserState()
+const Login = ({ pathName = '' }: { pathName: string }) => {
+  const {userData, isLoggedIn} = useUserState()
+
   const dispatch = useDispatch<AppDispatch>() //generics "is the better and more commonly used way to declare the type when working with Redux Toolkit and TypeScript in a React application."
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const navigate = useNavigate()
@@ -20,9 +21,16 @@ const Login = ({ pathName }: { pathName: string }) => {
     password: ''
   })
 
+console.log(userData?.isAdmin);
+console.log(isLoggedIn);
   useEffect(() => {
-    dispatch(fetchUser())
-  }, [])
+    if(userData){
+      navigate(
+        pathName ? pathName: `/dashboard/${userData && userData.isAdmin ? 'admin' : 'user'}`
+        )
+
+    }
+  }, [userData, navigate,pathName ])
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name: nameInput, value: valueInput } = event.target
@@ -33,32 +41,11 @@ const Login = ({ pathName }: { pathName: string }) => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
-try{
   const loggInUser ={
     email: user.email,
     password: user.password,
-    };    
-      const response = await logInUser(loggInUser)
-      alert(response.message);
-      // const role = foundUser.isAdmin 
-      // role ? 'admin' : 'user'
-      //  navigate(pathName ? pathName : `/dashboard/${role}`)
-}catch (error) {
- alert(error.response.data.msg)
-  if(user.email || user.password === ''){
-    const errors = `
-    ${error.response.data.errors[0]}
-    ${error.response.data.errors[1]}
-    ${error.response.data.errors[2]}
-    ${error.response.data.errors[3]}
-   `
-  alert(errors);
- }
-}
-   setUser({
-      email: '',
-      password: ''
-    })
+    };   
+    dispatch(logInUser(loggInUser))
   }
 
   const togglePasswordVisibility = () => {
@@ -112,9 +99,9 @@ try{
           </span>
         </h4>
         <h4>
-          Forget password{' '}
           <span>
-            <Link to="">Register</Link>
+          Did you Forget password ?
+            <Link to="/forget-password"> Click</Link>
           </span>
         </h4>
       </div>

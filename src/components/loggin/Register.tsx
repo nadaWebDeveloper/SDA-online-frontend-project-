@@ -4,7 +4,7 @@ import { useDispatch} from 'react-redux'
 import { useNavigate } from 'react-router'
 
 import { AppDispatch} from '../../redux/store'
-import { activateUser, fetchUser, registerUser } from '../../redux/slices/user/userSlice'
+import { fetchUser, registerUser } from '../../redux/slices/user/userSlice'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
@@ -26,8 +26,6 @@ const Register = () => {
     email:'',
     password:'',
   })
-   const [token, setToken] = useState('')
-
 
   const [validName, setValidName] = useState(false)
   const [userFocus, setUserFocus] = useState(false)
@@ -111,9 +109,6 @@ const Register = () => {
       return
     }
 
-    setSuccess(true);
-
-    try{
       const newUser ={
         firstName: register.firstName,
         lastName: register.lastName,
@@ -121,55 +116,25 @@ const Register = () => {
         password:register.password
         };    
 
-          const response = await registerUser(newUser)
-          alert(response.message);
-          setToken(response.token)
-    }catch (error) {
-     alert(error.response.data.msg)
-      if(register.firstName || register.lastName || register.email || register.password === ''){
-        const errors = `
-        ${error.response.data.errors[0]}
-        ${error.response.data.errors[1]}
-        ${error.response.data.errors[2]}
-        ${error.response.data.errors[3]}
-        ${error.response.data.errors[4]}
-        ${error.response.data.errors[5]}
-        ${error.response.data.errors[6]}
-        ${error.response.data.errors[7]}
-       `
-      alert(errors);
-     }
-    }
-       
-    
-
+        dispatch(registerUser(newUser))
+  
+        setSuccess(true);
   }
 
-  const handleActive = async (event: FormEvent) => {
-    event.preventDefault()
-    try {
-      const response =  await activateUser(String(token))
-      alert(response.message);
-      navigate('/login')
 
-    } catch (error) {
-      alert(error.response.data.msg)
-    }
-  }
   return (
     <div>
       {success ? (
         <section>
          <h1>Success!</h1>
-          <form onSubmit={handleActive}>
+          
         <h1>
-        Hello {register.firstName} Click the Button to Activate your Account
-        </h1>        
-          <button >
-            Activate
-            </button>
-          </form>
+        Hello {register.firstName} Check your email to Activate your Account
+        <span className="line">
+              <Link to="/">Home</Link>
+            </span>
 
+        </h1>        
         </section>
       ) : (
         <section>

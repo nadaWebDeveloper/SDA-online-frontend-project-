@@ -106,17 +106,19 @@ export const unBlockedUser = createAsyncThunk('users/unBlockedUser', async (id: 
 export const forgetPassword = createAsyncThunk('users/forgetPassword', async (email: string , {rejectWithValue}) =>{
 try {
     const response = await  axios.post(`${baseURL}/users/forget-password`,{email: email})
+    alert(response.data.message)
     return response.data
 } catch (error) {
  return rejectWithValue(error) 
 }
 })
-export const resetPassword = createAsyncThunk('users/resetPassword', async (dataReLoad: object , {rejectWithValue}) =>{
-  // const response = await  axios.put(`${baseURL}/users/reset-password`,{
-  //   password: dataReLoad.password,
-  //   token: dataReLoad.token
-  // })
-  // return response.data
+export const resetPassword = createAsyncThunk('users/resetPassword', async (data: object , {rejectWithValue}) =>{
+  const response = await  axios.put(`${baseURL}/users/reset-password`,{
+    password: data.password,
+    token: data.token
+  })
+  alert(response.data.message)
+  return response.data
 })
 export const updateUser =  createAsyncThunk('users/updateUser',async (user:Partial<user> , {rejectWithValue} ) =>{
 try {
