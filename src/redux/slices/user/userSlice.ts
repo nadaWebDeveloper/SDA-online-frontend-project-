@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios';
-// axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true
 
 
 const baseURL =`http://localhost:5050`
@@ -22,6 +22,9 @@ export type userState = {
   userData: user | null
   searchTerm: string
   ban: boolean
+  state: string
+  //singlePageProduct: Product
+
 
 }
 //set the data in the local storage if user refresh the page keep logged in (fetch data)
@@ -34,62 +37,101 @@ export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
   const response = await axios.get(`${baseURL}/users`)
   return response.data.allUsers
 })
-export const registerUser  =  async (newUser: {}) =>{
+export const SingleUser = createAsyncThunk('users/SingleUser', async(id: string ,{rejectWithValue}) =>{
+  try {
+    const response = await axios.get(`${baseURL}/users/profile/${id}`)
+    console.log('single user',response);
+    return response.data.payload
+  } catch (error) {
+  return rejectWithValue(error)
+  }
+  
+  })
+export const registerUser  = createAsyncThunk('users/registerUser', async (newUser: {}, {rejectWithValue}) =>{
+ try {
   const response = await  axios.post(`${baseURL}/users/register`,newUser)
   return response.data
-}
+ } catch (error) {
+  return rejectWithValue(error.response.data)
+ }
+})
 export const activateUser  =  async (token: string) =>{
   const response = await  axios.post(`${baseURL}/users/activate`,{token})
   return response.data
 }
-export const logInUser  =  async (newUser: {}) =>{
-  const response = await  axios.post(`${baseURL}/auth/login`,newUser)
-  return response.data
-}
-export const logOutUser  = createAsyncThunk('users/logOutUser',async () =>{
-  const response = await  axios.post(`${baseURL}/auth/logout`)
-  return response.data
+export const logInUser  = createAsyncThunk('users/logInUser', async (user:Partial<user> , {rejectWithValue}) =>{
+ try {
+   const response = await  axios.post(`${baseURL}/auth/login`,
+   {
+     email: user.email,
+     password: user.password
+   })
+   return response.data
+ } catch (error) {
+  return rejectWithValue(error)
+ }
 })
-// export const deleteUser = createAsyncThunk('users/deleteUser', async (id: string, {rejectWithValue}) =>{
-//    try {
-//     await  axios.delete<user[]>(`${baseURL}/users/${id}`)
-//     return id
-//    } catch (error) {
-//     return rejectWithValue(error.response.data.msg)
-//    }
-// })
-export const deleteUser = createAsyncThunk('users/deleteUser', async (id: string) =>{
+export const logOutUser  = createAsyncThunk('users/logOutUser',async () =>{
   try {
-   await  axios.delete<user[]>(`${baseURL}/users/${id}`)
-   return id
+     const response = await  axios.post(`${baseURL}/auth/logout`)
+    return response.data
   } catch (error) {
-   return error
+    console.log(error);
   }
 })
-export const blockedUser =  async (id: string) =>{
-  const response = await  axios.put(`${baseURL}/users/ban/${id}`)
-  return response.data
-}
-export const unBlockedUser =  async (id: string) =>{
-  const response = await  axios.put(`${baseURL}/users/unban/${id}`)
-  return response.data
-}
-export const forgetPassword = createAsyncThunk('users/forgetPassword', async (email: string) =>{
-  const response = await  axios.post(`${baseURL}/users/forget-password`,{email: email})
-  return response.data
+export const deleteUser = createAsyncThunk('users/deleteUser', async (id: string, {rejectWithValue}) =>{
+  try {
+     await  axios.delete<user[]>(`${baseURL}/users/${id}`)
+     return id
+  } catch (error) {
+    return rejectWithValue(error.response.data.msg)
+  }
 })
-export const resetPassword = createAsyncThunk('users/resetPassword', async (dataReLoad: object) =>{
+export const blockedUser = createAsyncThunk('users/blockedUser', async (id: string, {rejectWithValue}) =>{
+ try {
+   await  axios.put(`${baseURL}/users/ban/${id}`)
+   return  id 
+ } catch (error) {
+  return rejectWithValue(error)
+ }
+})
+export const unBlockedUser = createAsyncThunk('users/unBlockedUser', async (id: string, {rejectWithValue}) =>{
+ try {
+   await  axios.put(`${baseURL}/users/unban/${id}`)
+   return id 
+ } catch (error) {
+  return rejectWithValue(error)
+ }
+})
+export const forgetPassword = createAsyncThunk('users/forgetPassword', async (email: string , {rejectWithValue}) =>{
+try {
+    const response = await  axios.post(`${baseURL}/users/forget-password`,{email: email})
+    return response.data
+} catch (error) {
+ return rejectWithValue(error) 
+}
+})
+export const resetPassword = createAsyncThunk('users/resetPassword', async (dataReLoad: object , {rejectWithValue}) =>{
   // const response = await  axios.put(`${baseURL}/users/reset-password`,{
   //   password: dataReLoad.password,
   //   token: dataReLoad.token
   // })
   // return response.data
 })
-export const updateUser  =  createAsyncThunk('users/updateUser',async (userData: user ) =>{
-  // userData: Object
- await  axios.put(`${baseURL}/users/${userData._id}`, userData)
-  return userData
+export const updateUser =  createAsyncThunk('users/updateUser',async (user:Partial<user> , {rejectWithValue} ) =>{
+try {
+    const id = user._id
+   const response = await  axios.put(`${baseURL}/users/editProfile/${id}`, {
+     firstName: user.firstName,
+     lastName: user.lastName, 
+     email:user.email ,
+   })
+    return response.data
+} catch (error) {
+  return rejectWithValue(error)
+}
 })
+
 
 const initialState: userState = {
   users: [],
@@ -98,7 +140,8 @@ const initialState: userState = {
   isLoggedIn: dataReLoad.isLoggedIn,
   userData: dataReLoad.userData,
   searchTerm: '',
-  ban: false
+  ban: false,
+  state: ''
 }
 
 export const userSlice = createSlice({
@@ -118,68 +161,76 @@ export const userSlice = createSlice({
       state.isLoading = false
       state.users = action.payload
     },
-
-//     updateUser: (state, action) => {
-//       const {id, firstName, lastName, email} = action.payload; 
-//       console.log(action.payload);
-//         const userExist = state.users.find((user)=> user.id === id)
-//         console.log(userExist);
-//       if(userExist){
-//         userExist.firstName = firstName 
-//         userExist.lastName = lastName 
-//         userExist.email = email 
-//       }
-//       state.userData = action.payload
-// },
-
   },
   extraReducers(builder){
     builder.addCase(fetchUser.fulfilled, (state,action) => {
       state.users = action.payload
       state.isLoading = false
     })
-    // builder.addCase(deleteUser.fulfilled, (state,action) => {
-    //   state.users = state.users.filter((user) => user._id !== action.payload)
-    //   state.isLoading = false
-    // })
-    // builder.addCase(blockUser.fulfilled, (state,action) => {
-    //   const foundUser = state.users.find((user) => user._id === action.payload)
-    //   if(foundUser){
-    //     foundUser.isBanned = true
-    //   }
-    // })
-    // builder.addCase(unBlockUser.fulfilled, (state,action) => {
-    //   const foundUser = state.users.find((user) => user._id === action.payload)
-    //   if(foundUser){
-    //     foundUser.isBanned = false
-    //   }
-    // })
-    // builder.addCase(logInUser.fulfilled, (state,action) => {
-    //   state.isLoggedIn = true
-    //   state.userData = action.payload
-    //    //when log in save data in local Storage 
-    //    localStorage.setItem('loginData', JSON.stringify({
-    //     isLoggedIn: state.isLoggedIn,
-    //     userData: state.userData
-    //   }))
-    // })
-    // builder.addCase(logOutUser.fulfilled, (state,action) => {
-    //   state.isLoggedIn = false
-    //   state.userData = null
-    //    //when log out reset data in local Storage 
-    //    localStorage.setItem('loginData', JSON.stringify({
-    //     isLoggedIn: state.isLoggedIn,
-    //     userData: state.userData
-    //   }))
-    // })
-    // builder.addCase(updateUser.fulfilled, (state,action) => {
-    //   if(state.userData){
-    //    state.userData.firstName = action.payload.firstName
-    //    localStorage.setItem('loginData', JSON.stringify({
-    //     isLoggedIn: state.isLoggedIn,
-    //     userData: state.userData
-    //   }))}
-    // })
+    builder.addCase(SingleUser.fulfilled, (state,action) => {
+      state.userData = action.payload
+      state.isLoading = false
+    })
+    builder.addCase(registerUser.fulfilled, (state,action) => {
+      try {
+       state.users.push(action.payload)
+       const msg = action.payload.message
+       alert(msg)
+      } catch (error) {
+       console.log(error);
+      }
+     }) 
+    builder.addCase(deleteUser.fulfilled, (state,action) => {
+      state.users = state.users.filter((user) => user._id !== action.payload)
+      state.isLoading = false
+    })
+    builder.addCase(blockedUser.fulfilled, (state,action) => {
+      const foundUser = state.users.find((user) => user._id === action.payload)
+      if(foundUser){
+        foundUser.isBanned = true
+      }
+      //alert(action.payload.message)
+    })
+    builder.addCase(unBlockedUser.fulfilled, (state,action) => {
+      const foundUser = state.users.find((user) => user._id === action.payload)
+      if(foundUser){
+        foundUser.isBanned = false
+      }
+      //alert(action.payload.message)
+    })
+    builder.addCase(logInUser.fulfilled, (state,action) => {
+      state.isLoggedIn = true
+      state.userData = action.payload.user
+      alert(action.payload.message);
+       //when log in save data in local Storage 
+       localStorage.setItem('loginData', JSON.stringify({
+        isLoggedIn: state.isLoggedIn,
+        userData: state.userData
+      }))
+    })
+    builder.addCase(logOutUser.fulfilled, (state,action) => {
+      state.isLoggedIn = false
+      state.userData = null
+      console.log(action);
+      //alert(action.payload.message);
+       //when log out reset data in local Storage 
+       localStorage.setItem('loginData', JSON.stringify({
+        isLoggedIn: state.isLoggedIn,
+        userData: state.userData
+      }))
+    })
+    builder.addCase(updateUser.fulfilled, (state,action) => {
+    if(state.userData){
+    state.userData = action.payload.user
+    state.isLoading = false
+    localStorage.setItem('loginData', JSON.stringify({
+    isLoggedIn: state.isLoggedIn,
+    userData: state.userData
+    }))
+      const msg = action.payload.message
+      alert(msg)
+     }
+    })
     builder.addMatcher(
       (action) => action.type.endsWith(`/pending`),
       (state) => {
@@ -190,11 +241,11 @@ export const userSlice = createSlice({
       (action) => action.type.endsWith(`/rejected`),
       (state, action) => {
         state.isLoading = false
-        state.error = action.error.message || 'An Error accrued'
+        state.error = action.payload   || 'An Error accrued'
       })
   }
 })
-export const {searchUser ,userSuccess} = userSlice.actions
+export const {searchUser ,userSuccess, clearError} = userSlice.actions
 
 export default userSlice.reducer
 
