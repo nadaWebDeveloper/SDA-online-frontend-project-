@@ -7,6 +7,10 @@ import useUserState from "../Hooks/useUserState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
 import profilePicture from '../../profilePicture.jpg';
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { useEffect } from "react";
+import { SingleUser, fetchUser } from "../../redux/slices/user/userSlice";
 
 
 
@@ -14,8 +18,16 @@ const UserProfile = () => {
 
 const navigate = useNavigate()
 const {userData} = useUserState()
-const {_id, firstName, lastName, email } = userData || {};
+const {_id, firstName, lastName, email  } = userData || {};
 
+//const dispatch = useDispatch<AppDispatch>()
+
+
+// useEffect(() => {
+//   const ID = String(_id)
+//   dispatch(SingleUser(ID))
+//   fetchUser()
+// }, [])
 
   const handleClick = () => {
     navigate('/dashboard/user');
@@ -34,6 +46,7 @@ const {_id, firstName, lastName, email } = userData || {};
   <img src={profilePicture} alt="pictureProfile" />
     <div className="titleProfile"><b>{firstName}  {lastName}</b></div>
     <div className="descriptProfile">{email}</div>
+
 
     <Link to="/dashboard/user/editProfile" state={{_id, firstName, lastName, email }}>
     <FontAwesomeIcon icon={faEdit}  className="closeProfile"/>

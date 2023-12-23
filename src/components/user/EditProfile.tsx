@@ -3,50 +3,39 @@ import { ChangeEvent, FormEvent, useState } from 'react'
 
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../redux/store'
-import { updateUser } from '../../redux/slices/user/userSlice'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { updateUser } from '../../redux/slices/user/userSlice'
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { state } = useLocation()
-  console.log(state) // Check if id is present
 
-  const [firstName, setFirstName] = useState(state.firstName)
-  const [lastName, setLastName] = useState(state.lastName)
-  const [email, setEmail] = useState(state.email)
+
+  const [profile, setProfile] = useState({
+    firstName: state.firstName,
+    lastName:state.lastName,
+    email:state.email,
+  })
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name: nameInput, value: valueInput } = event.target;
-
-    switch (nameInput) {
-      case 'firstName':
-        setFirstName(valueInput)
-        break
-      case 'lastName':
-        setLastName(valueInput)
-        break
-      case 'email':
-        setEmail(valueInput)
-        break
-      default:
-        break
-    }
+    setProfile((prevUser) => {
+      return { ...prevUser, [nameInput]: valueInput }
+    })
   }
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-
     if (confirm('Are you sure to edit profile')) {
       const updateUserinfo = {
-        id: state.id,
-        firstName: firstName,
-        lastName: lastName,
-        email: email
+        _id: state._id,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: profile.email,
       }
-      console.log(updateUserinfo) // Check if id is present
       dispatch(updateUser(updateUserinfo))
       navigate('/dashboard/user')
     } else {
@@ -72,7 +61,7 @@ const EditProfile = () => {
                 type="text"
                 name="firstName"
                 placeholder="first Name"
-                value={firstName}
+                value={profile.firstName}
                 onChange={handleInputChange}
               />
             </div>
@@ -81,7 +70,7 @@ const EditProfile = () => {
                 type="text"
                 name="lastName"
                 placeholder="last Name"
-                value={lastName}
+                value={profile.lastName}
                 onChange={handleInputChange}
               />
             </div>
@@ -90,10 +79,19 @@ const EditProfile = () => {
                 type="email"
                 name="email"
                 placeholder="Email"
-                value={email}
+                value={profile.email}
                 onChange={handleInputChange}
               />
             </div>
+            {/* <div className="inputField">
+              <input
+                type="text"
+                name="password"
+                placeholder="password"
+                value={profile.password}
+                onChange={handleInputChange}
+              />
+            </div> */}
 
             <button type="submit">
               <FontAwesomeIcon icon={faEdit} />
