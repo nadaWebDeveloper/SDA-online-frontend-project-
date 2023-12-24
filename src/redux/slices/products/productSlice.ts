@@ -107,18 +107,19 @@ export const updatedProduct = createAsyncThunk('products/updatedProduct', async 
   }
  }
 })
+export const searchedProduct = createAsyncThunk('users/searchedProduct', async (Product:Partial<ProductState> , {rejectWithValue}) =>{
+  try {
+    const response = await  axios.get(`${baseURL}/products?search=${Product.searchTerm}`)
+    return response.data.payload.products.allProductOnPage
+  } catch (error) {
+   return rejectWithValue(error)
+  }
+ })
 export const sortedProduct =  async (sortName: string) =>{
   const response = await  axios.get(`${baseURL}/products?sortName=${sortName}&sortNum=1`)
   return response.data.payload.products.allProductOnPage
 }
-export const searchedProduct = createAsyncThunk('users/searchedProduct', async (Product:Partial<ProductState> , {rejectWithValue}) =>{
- try {
-   const response = await  axios.get(`${baseURL}/products?search=${Product.searchTerm}`)
-   return response.data.payload.products.allProductOnPage
- } catch (error) {
-  return rejectWithValue(error)
- }
-})
+
 
 const initialState: ProductState = {
   products: [],
