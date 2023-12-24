@@ -10,8 +10,8 @@ export type user = {
   lastName: string
   email: string
   password: string
-  isAdmin: boolean
-  isBanned: boolean
+  isAdmin?: boolean
+  isBanned?: boolean
   balance: number
 }
 export type userState = {
@@ -23,19 +23,20 @@ export type userState = {
   searchTerm: string
   ban: boolean
   state: string
-  //singlePageProduct: Product
-
-
 }
 //set the data in the local storage if user refresh the page keep logged in (fetch data)
 const dataReLoad = localStorage.getItem('loginData') !== null 
 ? JSON.parse(String(localStorage.getItem('loginData')))
 : []
 
-export const fetchUser = createAsyncThunk('users/fetchUser', async() =>
+export const fetchUser = createAsyncThunk('users/fetchUser', async(_, { rejectWithValue }) =>
 {
-  const response = await axios.get(`${baseURL}/users`)
-  return response.data.allUsers
+ try {
+   const response = await axios.get(`${baseURL}/users`)
+   return response.data.allUsers
+ } catch (error) {
+  return rejectWithValue(error)
+ }
 })
 export const SingleUser = createAsyncThunk('users/SingleUser', async(id: string ,{rejectWithValue}) =>{
   try {
@@ -46,7 +47,7 @@ export const SingleUser = createAsyncThunk('users/SingleUser', async(id: string 
   return rejectWithValue(error)
   }
   
-  })
+})
 export const registerUser  = createAsyncThunk('users/registerUser', async (newUser: {}, {rejectWithValue}) =>{
  try {
   const response = await  axios.post(`${baseURL}/users/register`,newUser)
@@ -55,10 +56,6 @@ export const registerUser  = createAsyncThunk('users/registerUser', async (newUs
   return rejectWithValue(error.response.data)
  }
 })
-export const activateUser  =  async (token: string) =>{
-  const response = await  axios.post(`${baseURL}/users/activate`,{token})
-  return response.data
-}
 export const logInUser  = createAsyncThunk('users/logInUser', async (user:Partial<user> , {rejectWithValue}) =>{
  try {
    const response = await  axios.post(`${baseURL}/auth/login`,
@@ -71,12 +68,12 @@ export const logInUser  = createAsyncThunk('users/logInUser', async (user:Partia
   return rejectWithValue(error)
  }
 })
-export const logOutUser  = createAsyncThunk('users/logOutUser',async () =>{
+export const logOutUser  = createAsyncThunk('users/logOutUser',async (_, { rejectWithValue }) =>{
   try {
      const response = await  axios.post(`${baseURL}/auth/logout`)
     return response.data
   } catch (error) {
-    console.log(error);
+    return rejectWithValue(error)
   }
 })
 export const deleteUser = createAsyncThunk('users/deleteUser', async (id: string, {rejectWithValue}) =>{
@@ -103,6 +100,14 @@ export const unBlockedUser = createAsyncThunk('users/unBlockedUser', async (id: 
   return rejectWithValue(error)
  }
 })
+export const grantRoleUser = createAsyncThunk('users/grantRoleUser', async (id: string, {rejectWithValue}) =>{
+  try {
+    await  axios.put(`${baseURL}/users/adminRole/${id}`)
+    return  id 
+  } catch (error) {
+   return rejectWithValue(error)
+  }
+})
 export const forgetPassword = createAsyncThunk('users/forgetPassword', async (email: string , {rejectWithValue}) =>{
 try {
     const response = await  axios.post(`${baseURL}/users/forget-password`,{email: email})
@@ -113,12 +118,16 @@ try {
 }
 })
 export const resetPassword = createAsyncThunk('users/resetPassword', async (data: object , {rejectWithValue}) =>{
-  const response = await  axios.put(`${baseURL}/users/reset-password`,{
-    password: data.password,
-    token: data.token
-  })
-  alert(response.data.message)
-  return response.data
+try {
+    const response = await  axios.put(`${baseURL}/users/reset-password`,{
+      password: data.password,
+      token: data.token
+    })
+    alert(response.data.message)
+    return response.data
+} catch (error) {
+  return rejectWithValue(error) 
+}
 })
 export const updateUser =  createAsyncThunk('users/updateUser',async (user:Partial<user> , {rejectWithValue} ) =>{
 try {
@@ -133,6 +142,14 @@ try {
   return rejectWithValue(error)
 }
 })
+export const activateUser  =  async (token: string) =>{
+  try {
+    const response = await  axios.post(`${baseURL}/users/activate`,{token})
+    return response.data
+  } catch (error) {
+   throw error
+  }
+ }
 
 
 const initialState: userState = {
@@ -200,6 +217,12 @@ export const userSlice = createSlice({
       }
       //alert(action.payload.message)
     })
+    builder.addCase(grantRoleUser.fulfilled, (state,action) => {
+      const foundUser = state.users.find((user) => user._id === action.payload)
+      if(foundUser){
+        foundUser.isAdmin = true
+      }
+    })
     builder.addCase(logInUser.fulfilled, (state,action) => {
       state.isLoggedIn = true
       state.userData = action.payload.user
@@ -214,7 +237,7 @@ export const userSlice = createSlice({
       state.isLoggedIn = false
       state.userData = null
       console.log(action);
-      //alert(action.payload.message);
+      alert(action.payload.message);
        //when log out reset data in local Storage 
        localStorage.setItem('loginData', JSON.stringify({
         isLoggedIn: state.isLoggedIn,
