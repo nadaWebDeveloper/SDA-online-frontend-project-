@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { ChangeEvent, useEffect } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { AppDispatch, RootState } from '../../redux/store'
 import {
   baseURL,
+  clearError,
   deleteProduct,
   fetchProducts,
-  searchProduct
 } from '../../redux/slices/products/productSlice'
 
 import SortProducts from './SortProducts'
@@ -15,6 +15,7 @@ import Search from '../Filtering/Search'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faDeleteLeft, faEdit } from '@fortawesome/free-solid-svg-icons'
+
 
 const Products = () => {
   const { products, isLoading, error, searchTerm } = useSelector(
@@ -24,24 +25,45 @@ const Products = () => {
     (state: RootState) => state.categoriesReducer
   )
 
+  const [product, setProduct] = useState([products]);
+const [search, setSearch] = useState('');
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     dispatch(fetchProducts())
   }, [])
 
-  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
+
+  const handleSearch = async(event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value
-    dispatch(searchProduct(inputValue))
+    setSearch(inputValue)
+    //dispatch(searchProduct(inputValue))
+    // try {
+    //  const response = await searchedProduct(search)
+    //  console.log('response',response.data.payload.products.allProductOnPage);
+    //  setProduct(response.data.payload.products.allProductOnPage)
+    //    return response.data.payload.products.allProductOnPage
+    // } catch (error) {
+      
+    // }
+ 
   }
 
   const searchProducts = searchTerm
     ? products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
     : products
 
-  const handleDeleteProduct = (id: string) => {
+  const handleDeleteProduct = (_id: string) => {
     if (confirm('Are you sure to Delete Product')) {
-      dispatch(deleteProduct(id))
+      dispatch(deleteProduct({_id}))
       alert('success deleted  product')
     } else {
       return false
@@ -54,37 +76,33 @@ const Products = () => {
     return categoryName
   }
 
-  if (isLoading) {
-    return <h1>loading ...</h1>
-  }
-  if (error) {
-    return <h1>{error}</h1>
-  }
+ 
 
   return (
     <div>
-      {searchProducts.length > 0 ? (      //{searchProducts.length > 0 ? (
+      {products.length > 0 ? (      //{searchProducts.length > 0 ? (
         <div>
           <div className="filter">
-            <Search searchTerm={searchTerm} handleSearch={handleSearch} />
+            <Search searchTerm={search} handleSearch={handleSearch} />
+            {/* <Search searchTerm={searchTerm} handleSearch={handleSearch} /> */}
             <SortProducts />
           </div>
 
+
           <div id="Product" className="homePage">
-            <Link to="/dashboard/admin/addProduct">
-              <FontAwesomeIcon icon={faAdd} className="addProduct" />
-              {/* <AddProduct /> */}
-            </Link>
+          <Link to="/dashboard/admin/addProduct">
+            <FontAwesomeIcon icon={faAdd} className="addProduct" />
+          </Link>
 
             <div className="product">
-              {searchProducts.map((product) => {
-                const { _id, name, image, price, description } = product
+              {products.map((product) => {
+                const { _id, name, image, price, description ,sold, quantity, categories} = product
                 return (
                   <div className="product-container" key={_id}>
                     <div >
                       <div className="product-imageAdmin">
                         <span className="discount-tag">50% off</span>
-                        <img src={`${baseURL}/${image}`} className="product-thumb" alt={name} />
+                        <img src={image} className="product-thumb" alt={name} />
                         <div className="">
                           <FontAwesomeIcon
                             icon={faDeleteLeft}
@@ -100,7 +118,10 @@ const Products = () => {
                               name,
                               image,
                               price,
-                              description
+                              description,
+                              sold,
+                              quantity, 
+                              categories
                             }}>
                             <FontAwesomeIcon icon={faEdit} className="iconAdminProduct1" />
                           </Link>
@@ -113,7 +134,7 @@ const Products = () => {
                         <br />
                         <b>{description}</b>
                         <br />
-                        <p>categories: {product.categories.length > 0  ? product.categories.map((category) => category.name).join(' || '): 'No categories'}</p>
+                        {/* <p>categories: {product.categories.length > 0  ? product.categories.map((category) => category.name).join(' || '): 'No categories'}</p> */}
                         {/* <p>{product.categories &&
                          product.categories
                          .map((categoryId) => getCategoryNameById(categoryId))
@@ -127,7 +148,12 @@ const Products = () => {
           </div>
         </div>
       ) : (
-        <h1> Not Add Products Yet ... </h1>
+        <div className="sectionAdmin">
+        <Link to="/dashboard/admin/addProduct">
+            <FontAwesomeIcon icon={faAdd} className="addProduct" />
+          </Link>
+          <h1> Not Add Products Yet ... </h1>
+        </div>
       )}
     </div>
   )

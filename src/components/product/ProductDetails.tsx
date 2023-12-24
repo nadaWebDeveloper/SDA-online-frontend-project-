@@ -1,10 +1,9 @@
 import { useNavigate, useParams } from 'react-router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, RootState } from '../../redux/store'
-import { SingleProducts, baseURL, fetchProducts } from '../../redux/slices/products/productSlice'
-import { fetchCategory } from '../../redux/slices/category/categorySlice'
+import { SingleProducts, baseURL, clearError, fetchProducts } from '../../redux/slices/products/productSlice'
 
 import { faClose, faBasketShopping, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,23 +14,27 @@ const ProductDetails = () => {
   //from name can fetch the data from store
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
-  const [singleproduct, setSingleproduct] = useState({});
 
-  const { singlePageProduct, isLoading, error } = useSelector(
+  const { singlePageProduct, error } = useSelector(
     (state: RootState) => state.productsReducer
   )
-  console.log('singlePageProduct',singlePageProduct);
 
   const { categoryArray } = useSelector((state: RootState) => state.categoriesReducer)
 
-
   useEffect(() => {
- 
       const ID = String(id)
       dispatch(SingleProducts(ID))
       fetchProducts()
-
   }, [])
+
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
 
   const getCategoryNameById = (categoryId: string) => {
     const id = String(categoryId)
@@ -40,12 +43,6 @@ const ProductDetails = () => {
     return categoryName
   }
 
-  if (isLoading) {
-    return <h1>loading ...</h1>
-  }
-  if (error) {
-    return <h1>{error}</h1>
-  }
 
   return (
    
@@ -63,7 +60,7 @@ const ProductDetails = () => {
             />
             <div className="poster">
               <img
-                src={`${baseURL}/${singlePageProduct.image}`}
+                src={singlePageProduct.image}
                 alt={singlePageProduct.name}
                 className="product-thumb"
               />
@@ -79,15 +76,15 @@ const ProductDetails = () => {
 
           <p className="categoryDetail">
           Categories:
-            {singlePageProduct.categories &&
-              singlePageProduct.categories
-                .map((categoryId: string) => getCategoryNameById(categoryId))
-                .join(' || ')
-                }
+            {/* {singlePageProduct.categories &&
+              singlePageProduct.categories.map((categoryId: string) => getCategoryNameById(categoryId)).join(' || ')} */}
+           {/* <p>{singlePageProduct.categories  ? singlePageProduct.categories.map((category) => category.name).join(' || '): 'No categories'}</p> */}
+           {/* {singlePageProduct.categories.name } */}
+
           </p>
 
           <p className="sizeDetail">
-            {' '}
+   
           </p>
         </div>
         </>

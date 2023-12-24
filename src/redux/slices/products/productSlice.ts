@@ -1,69 +1,25 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-
+import { category } from '../category/categorySlice'
+// axios.defaults.withCredentials = true
 
 
 
 export const baseURL =`http://localhost:5050`
-export const fetchProducts = createAsyncThunk('users/fetchProducts', async() =>
-{
-  try {
-  const response = await axios.get(`${baseURL}/products`)
-  if (!response) {
-    throw new Error('Network response error');
-  }
-  return response.data.payload.products.allProductOnPage
-
-} 
-  
-catch (error) {
-  //checking if there is any issue when fetch process
-console.log(error) 
-}
-})
-export const SingleProducts = createAsyncThunk('users/SingleProducts', async(id: string) =>{
-try {
-  const response = await axios.get(`${baseURL}/products/${id}`)
-  return response.data.payload
-} catch (error) {
-  console.log(error) 
-}
-
-})
-export const createProduct =  async (newData: FormData) =>{
-  const response = await  axios.post(`${baseURL}/products`,newData)
-  //console.log(response.data);
-  return response.data
-}
-export const updatedProduct =  async (id: string, newData: FormData) =>{
-  const response = await  axios.put(`${baseURL}/products/${id}`, newData)
-  return response.data
-}
-//http://localhost:5050/products?page=3&rangeId=range4&limit=3&search=nada&sortName=price&sortNum=1
-export const sortedProduct =  async (sortName: string) =>{
-  const response = await  axios.get(`${baseURL}/products?sortName=${sortName}&sortNum=1`)
-  return response.data.payload.products.allProductOnPage
-}
-export const searchedProduct =  async (searched: string) =>{
-  const response = await  axios.get(`${baseURL}/products?search=${searched}`)
-  return response.data.payload.products.allProductOnPage
-}
-
-
-
-
-export type Product = {
+//  const baseURL = import.meta.env.BASE_URL
+ export type Product = {
   _id: string
   name: string
   price: number
-  image: string
+  image?: string 
   quantity: number
   sold: number
-  categories: string[]
+  categories: category
   description: string
   createAt?: Date
   updateAt?: Date
 }
+
 export type ProductState = {
   products: Product[]
   error: null | string
@@ -71,11 +27,98 @@ export type ProductState = {
   searchTerm: string
   productData: Product | null
   singlePageProduct: Product
+  pagination: {
+  currentPage : number,
+  totalPage : number, 
+  totalProduct : number,
+  limit : number ,
+   page : number},
+   rangeId: string
 }
 
 const dataReLoad = localStorage.getItem('products') !== null 
 ? JSON.parse(String(localStorage.getItem('products')))
 : []
+
+//http://localhost:5050/products?page=3&rangeId=range4&limit=3&search=nada&sortName=price&sortNum=1
+export const fetchProducts = createAsyncThunk('products/fetchProducts', async() =>
+{
+  try {
+    // console.log('Product',Product);
+    // const page = Product.page 
+    // const limit = Product.limit  ?page=${page}&limit=${limit}
+  const response = await axios.get(`${baseURL}/products`)
+  //const response = await axios.get(`${baseURL}/products`)
+
+  if (!response) {
+    throw new Error('Network response error');
+  }
+  return response.data
+} 
+  
+catch (error) {
+//checking if there is any issue when fetch process
+console.log(error);
+console.log(`error is : ${error}`) 
+}
+})
+export const SingleProducts = createAsyncThunk('products/SingleProducts', async(id: string ,{rejectWithValue}) =>{
+try {
+  const response = await axios.get(`${baseURL}/products/${id}`)
+  return response.data.payload
+} catch (error) {
+return rejectWithValue(error)
+}
+
+})
+export const createProduct =  createAsyncThunk('products/createProduct', async (newData: FormData ,{rejectWithValue}) =>{
+ try {
+   const response = await  axios.post(`${baseURL}/products`,newData)
+   return response.data
+ } catch (error) {
+  if(error.response.data.errors){
+    return rejectWithValue(error.response.data.errors)
+  }
+  if(error.response.data.msg){
+    return rejectWithValue(error.response.data.msg)
+  } }
+})
+export const deleteProduct = createAsyncThunk('products/deleteProduct', async(Product:Partial<Product>, {rejectWithValue}) =>
+{
+ try {
+  const id = String(Product._id)
+  console.log(' inside id api delete',id);
+   await  axios.delete(`${baseURL}/products/${id}`)
+   return id
+ } catch (error) {
+  return rejectWithValue(error)
+ }
+})
+export const updatedProduct = createAsyncThunk('products/updatedProduct', async (newData: {} ,{rejectWithValue} ) =>{
+ try {
+   const response = await  axios.put(`${baseURL}/products/${ newData.id}`, newData.formData)
+   return response.data
+ } catch (error) {
+  if(error.response.data.errors){
+    return rejectWithValue(error.response.data.errors)
+  }
+  if(error.response.data.msg){
+    return rejectWithValue(error.response.data.msg)
+  }
+ }
+})
+export const sortedProduct =  async (sortName: string) =>{
+  const response = await  axios.get(`${baseURL}/products?sortName=${sortName}&sortNum=1`)
+  return response.data.payload.products.allProductOnPage
+}
+export const searchedProduct = createAsyncThunk('users/searchedProduct', async (Product:Partial<ProductState> , {rejectWithValue}) =>{
+ try {
+   const response = await  axios.get(`${baseURL}/products?search=${Product.searchTerm}`)
+   return response.data.payload.products.allProductOnPage
+ } catch (error) {
+  return rejectWithValue(error)
+ }
+})
 
 const initialState: ProductState = {
   products: [],
@@ -83,7 +126,14 @@ const initialState: ProductState = {
   isLoading: false,
   searchTerm: '',
   productData: dataReLoad.productData,
-  singlePageProduct: {} as Product
+  singlePageProduct: {} as Product,
+  pagination: {
+    currentPage : 0,
+    totalPage : 0, 
+    totalProduct : 0,
+    limit : 0 ,
+   page : 0},
+   rangeId: 'range0'
 }
 
 export const productSlice = createSlice({
@@ -97,30 +147,12 @@ export const productSlice = createSlice({
             state.isLoading = false
             state.products = action.payload
           },
+          clearError: (state) => {
+            state.error= null
+          },
     searchProduct:(state, action)=> {
-      //  state.searchTerm = action.payload
-      //  console.log( 'state.searchTerm', state.searchTerm  );
-      //  console.log('action.payload',action.payload);
-      // const response = await  axios.get(`${baseURL}/products?search=${action}`)
-      // return response.data.payload.products.allProductOnPage
+       state.searchTerm = action.payload
     },
-   findProductById:  (state, action) =>  
-    {
-    // const id = action.payload
-          
-    // const foundSingleProduct = state.products.find((product) => product.id === id )
-    // if(foundSingleProduct)
-    // {
-    //   state.singlePageProduct = foundSingleProduct
-    // }
-    const id = action.payload
-    SingleProducts(id)
-    // const singleProduct =  api.get(`http://localhost:5050/products/${id}`)
-    // console.log("singleProduct",singleProduct);
-
-    // console.log("singleProduct",singleProduct.data.payload);
-
-},
     sortProducts: (state, action) =>
    {
     const sortCategory = action.payload
@@ -130,59 +162,75 @@ export const productSlice = createSlice({
       state.products.sort((a, b) => a.price - b.price )
     }
    },
-
-  deleteProduct :(state, action) =>{
-
-    // const filterProduct= state.products.filter((product) => product.id !== action.payload)
-    // state.products = filterProduct
-    const id = action.payload
-    axios.delete(`http://localhost:5050/products/${id}`)
-    //window.location.reload()
-    fetchProducts()
-
-  },
-  updateProduct: (state, action) => {
-    // const {id,name , image ,description, categories, variants, sizes, price } = action.payload; 
-    // console.log(action.payload);
-    //   const categoryExist = state.products.find((product)=> product.id === id)
-    //   console.log(categoryExist);
-    // if(categoryExist){
-    //   categoryExist.name = name 
-    //   categoryExist.image =image
-    //   categoryExist.description = description
-    //   categoryExist.categories = categories
-    //   categoryExist.variants = variants
-    //   categoryExist.sizes = sizes
-    //   categoryExist.price = price
-    // }
-    // state.productData = action.payload   
-    const id = action.payload._id
-    axios.put(`http://localhost:5050/products/${id}`)
-    window.location.reload()
-    fetchProducts()
-},
   },
   extraReducers(builder){
-    builder.addCase(fetchProducts.pending, (state)=> {
-      state.isLoading = true;
-      state.error = null;
-    })
     builder.addCase(fetchProducts.fulfilled, (state,action) => {
-      state.products = action.payload
+      state.products = action.payload.allProductOnPage
+      const {currentPage ,totalPage , totalProduct , limit , page } = action.payload.pagination
+      state.pagination = {
+        currentPage : currentPage,
+        totalPage : totalPage, 
+        totalProduct : totalProduct,
+        limit : limit,
+        page: page,              
+      }
+      if(action.payload.rangeId)
+      {state.products = action.payload.rangeId}
       state.isLoading = false
+    })
+    builder.addCase(createProduct.fulfilled, (state,action) => {
+      try {
+       state.products.push(action.payload.newProduct) 
+       const msg = action.payload.message
+       alert(msg)
+      } catch (error) {
+       console.log(error);
+      }
+     }) 
+    builder.addCase(updatedProduct.fulfilled, (state,action) => {
+      const {_id , name , price , image ,quantity ,sold , categories , description} = action.payload.payload
+      const foundProduct = state.products.find((product) =>product._id === _id)
+      if(foundProduct && (name | price | image | quantity | sold | categories|description)){
+        foundProduct.name = name
+        foundProduct.price = price
+        foundProduct.image = image
+        foundProduct.quantity = quantity
+        foundProduct.sold = sold
+        foundProduct.categories = categories
+        foundProduct.description = description
+      }
+      const msg = action.payload.message
+      alert(msg)
     })
     builder.addCase(SingleProducts.fulfilled, (state,action) => {
       state.singlePageProduct = action.payload
       state.isLoading = false
     })
-    builder.addCase(fetchProducts.rejected, (state, action) => {
-      state.error = action.error.message || 'An Error accrued'
+    builder.addCase(deleteProduct.fulfilled, (state,action) => {
+      state.products = state.products.filter((product)=> product._id !== action.payload)
       state.isLoading = false
-    });
+    }) 
+    builder.addCase(searchedProduct.fulfilled, (state,action) => {
+      state.searchTerm = action.payload
+      state.isLoading = false
+    })
+    builder.addMatcher(
+      (action) => action.type.endsWith(`/pending`),
+      (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+    builder.addMatcher(
+      (action) => action.type.endsWith(`/rejected`),
+      (state, action) => {
+        state.isLoading = false
+        state.error = action.payload || 'An Error accrued' || action.error.message 
+
+      })
 
 
   }
 })
-export const { findProductById, searchProduct, sortProducts , productsRequest , productsSuccess , deleteProduct ,updateProduct } = productSlice.actions
+export const { searchProduct, sortProducts , productsRequest , productsSuccess, clearError } = productSlice.actions
 
 export default productSlice.reducer
