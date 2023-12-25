@@ -24,7 +24,6 @@ const StoreProduct = () => {
   //pagination  1- current page number 2- item per page 
   const { products, searchTerm  , pagination , error} = useSelector((state: RootState) => state.productsReducer)
   const { categoryArray } = useSelector((state: RootState) => state.categoriesReducer)
-  //const [priceRange, setPriceRange] = useState<number[]>([])
   const dispatch = useDispatch<AppDispatch>()
   const [checkedCategory, setCheckedCategory] = useState<string[]>([])
   const optionArr = ['name', 'price']
@@ -124,9 +123,8 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
       </div>
 
      <div className=''>  
-      {/* filter by category and price */}
       <div className="leftSideHome">
-      {/* <div className="heroSection"> */}
+
         <div className='filterPrice'>
           <h2>Filter by Price</h2>
           {prices.length > 0 &&
@@ -176,13 +174,11 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
 
       <div className="homePageRight">
         <h1 className="productTitle">best selling</h1>
-
         {products.length > 0 ? (  
           <div className="productHome">
             {products.map((product) => {
               const { _id, name, image, price } = product
               return (
-                
                 <div className="product-container" key={_id}>
                   <div className="product-card">
                     <div className="product-image">
