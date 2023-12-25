@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { category } from '../category/categorySlice'
-// axios.defaults.withCredentials = true
 
 
 
@@ -11,7 +10,7 @@ export const baseURL =`http://localhost:5050`
   _id: string
   name: string
   price: number
-  image?: string 
+  image?: string | undefined | File
   quantity: number
   sold: number
   categories: category
@@ -41,15 +40,10 @@ const dataReLoad = localStorage.getItem('products') !== null
 : []
 
 //http://localhost:5050/products?page=3&rangeId=range4&limit=3&search=nada&sortName=price&sortNum=1
-export const fetchProducts = createAsyncThunk('products/fetchProducts', async() =>
+export const fetchProducts = createAsyncThunk('products/fetchProducts', async(data:{page: number ; limit: number, rangeId: string, search: string}, {rejectWithValue}) =>
 {
   try {
-    // console.log('Product',Product);
-    // const page = Product.page 
-    // const limit = Product.limit  ?page=${page}&limit=${limit}
-  const response = await axios.get(`${baseURL}/products`)
-  //const response = await axios.get(`${baseURL}/products`)
-
+  const response = await axios.get(`${baseURL}/products?page=${data.page}&rangeId=${data.rangeId}&limit=${data.limit}&search=${data.search}`)
   if (!response) {
     throw new Error('Network response error');
   }
@@ -57,10 +51,12 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async() 
 } 
   
 catch (error) {
-//checking if there is any issue when fetch process
-console.log(error);
-console.log(`error is : ${error}`) 
-}
+  if(error.response.data.errors){
+    return rejectWithValue(error.response?.data?.errors)
+  }
+  if(error.response.data.msg){
+    return rejectWithValue(error.response?.data?.msg)
+  } }
 })
 export const SingleProducts = createAsyncThunk('products/SingleProducts', async(id: string ,{rejectWithValue}) =>{
 try {
@@ -77,10 +73,10 @@ export const createProduct =  createAsyncThunk('products/createProduct', async (
    return response.data
  } catch (error) {
   if(error.response.data.errors){
-    return rejectWithValue(error.response.data.errors)
+    return rejectWithValue(error.response?.data?.errors)
   }
   if(error.response.data.msg){
-    return rejectWithValue(error.response.data.msg)
+    return rejectWithValue(error.response?.data?.msg)
   } }
 })
 export const deleteProduct = createAsyncThunk('products/deleteProduct', async(Product:Partial<Product>, {rejectWithValue}) =>
@@ -94,7 +90,7 @@ export const deleteProduct = createAsyncThunk('products/deleteProduct', async(Pr
   return rejectWithValue(error)
  }
 })
-export const updatedProduct = createAsyncThunk('products/updatedProduct', async (newData: {} ,{rejectWithValue} ) =>{
+export const updatedProduct = createAsyncThunk('products/updatedProduct', async (newData: {id: string ; formData:FormData  } ,{rejectWithValue} ) =>{
  try {
    const response = await  axios.put(`${baseURL}/products/${ newData.id}`, newData.formData)
    return response.data
@@ -151,9 +147,6 @@ export const productSlice = createSlice({
           clearError: (state) => {
             state.error= null
           },
-    searchProduct:(state, action)=> {
-       state.searchTerm = action.payload
-    },
     sortProducts: (state, action) =>
    {
     const sortCategory = action.payload
@@ -175,8 +168,6 @@ export const productSlice = createSlice({
         limit : limit,
         page: page,              
       }
-      if(action.payload.rangeId)
-      {state.products = action.payload.rangeId}
       state.isLoading = false
     })
     builder.addCase(createProduct.fulfilled, (state,action) => {
@@ -232,6 +223,6 @@ export const productSlice = createSlice({
 
   }
 })
-export const { searchProduct, sortProducts , productsRequest , productsSuccess, clearError } = productSlice.actions
+export const {  sortProducts , productsRequest , productsSuccess, clearError } = productSlice.actions
 
 export default productSlice.reducer

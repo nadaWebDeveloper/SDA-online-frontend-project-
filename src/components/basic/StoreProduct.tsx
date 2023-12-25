@@ -5,11 +5,9 @@ import { Link } from 'react-router-dom'
 
 import {
   Product,
+  clearError,
   fetchProducts,
-  searchProduct,
-  searchedProduct,
   sortProducts,
-  sortedProduct
 } from '../../redux/slices/products/productSlice'
 import { addToCart } from '../../redux/slices/cart/cartSlice'
 
@@ -19,42 +17,48 @@ import { prices } from '../../Price'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBasketShopping, faArrowAltCircleLeft, faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
+import { fetchCategory } from '../../redux/slices/category/categorySlice'
 
 const StoreProduct = () => {
    
   //pagination  1- current page number 2- item per page 
-
-  const { products, searchTerm  , pagination} = useSelector((state: RootState) => state.productsReducer)
+  const { products, searchTerm  , pagination , error} = useSelector((state: RootState) => state.productsReducer)
   const { categoryArray } = useSelector((state: RootState) => state.categoriesReducer)
-  const [priceRange, setPriceRange] = useState<number[]>([])
+  //const [priceRange, setPriceRange] = useState<number[]>([])
   const dispatch = useDispatch<AppDispatch>()
   const [checkedCategory, setCheckedCategory] = useState<string[]>([])
   const optionArr = ['name', 'price']
-  const pageApi = Number(pagination.page)
-  const currentPageApi =Number(pagination.currentPage)
-  const totalPro = Number(pagination.totalProduct)
- 
-  //current page
-  const [currentPage, setCurrentPage ] = useState(currentPageApi) //1
-  //how item shown in one page in this case 3 item
-  const [itemPerPage] = useState(totalPro)//3
 
-  // useEffect(() => {
-  //   const inputPageApi = {page: pagination.page,
-  //   limit:pagination.limit }
-  //   dispatch(fetchProducts(inputPageApi))
-    
-      
-  // }, [pagination.page,pagination.limit ])
-     useEffect(() => {
-        dispatch(fetchProducts())
-   }, [])
+  //filter search 
+  const [search, setSearch] = useState(searchTerm);
+  //filter price 
+  const [filterPrice, setFilterPrice ] = useState('range0')
+  //current page
+  const [currentPage, setCurrentPage ] = useState(1) //1
+  //how item shown in one page in this case 3 item
+  const [itemPerPage] = useState(3)//3
+
+const filterProduct = async () =>{
+  const inputPageApI = {page: currentPage,limit:itemPerPage , rangeId: filterPrice , search: search }
+    await dispatch(fetchProducts(inputPageApI))
+    await dispatch(fetchCategory())
+}
+
+  useEffect(() => {
+    filterProduct()
+  }, [currentPage,itemPerPage ,filterPrice ,search])
+
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)}
+}, [error])
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value
-    //setSearch(inputValue)
-
-     dispatch(searchProduct(inputValue))
+    setSearch(inputValue)
   }
 
   const handleSortChange =async (event: ChangeEvent<HTMLSelectElement>) => {
@@ -73,47 +77,11 @@ const StoreProduct = () => {
     }
   }
 
-  const handelCheckPrice = (priceId: number) => {
-    const selectedPrice = prices.find((price) => price.id === priceId)
-    console.log('selectedPrice',selectedPrice);
-    if (selectedPrice) {
-      console.log('selectedPrice.range',selectedPrice.range);
-      setPriceRange(selectedPrice.range)
-    }
+  const handleCheckPrice = (priceId: string) => {
+    setFilterPrice(priceId)
   }
 
-  const filterProducts = products.filter((product) => {
-    const categoryMatch =
-      checkedCategory.length > 0
-        ? checkedCategory.some((id) => product.categories.includes(String(id)))
-        : product
 
-    const priceMatch =
-      priceRange.length > 0
-        ? product.price >= priceRange[0] && product.price <= priceRange[1]
-        : product
-
-    const searchMatch =
-      searchTerm !== '' 
-      ? product.name.toLowerCase().includes(searchTerm.toLowerCase())
-       : product
-
-    return categoryMatch && searchMatch && priceMatch
-  })
-
-  //  pagination logic 2
-  const indexOfLastItem = currentPage * itemPerPage;  //6
-  const indexOfFirstItem = indexOfLastItem - itemPerPage;  //6 - 3 = 3
-  const currentItem = filterProducts.slice(indexOfFirstItem, indexOfLastItem )
-
-  const totalPages = Math.ceil(filterProducts.length / itemPerPage)
-
-  // const indexOfLastItem = pagination.currentPage * pagination.totalProduct;  //6
-  // const indexOfFirstItem = indexOfLastItem - pagination.totalProduct;  //6 - 3 = 3
-  // const currentItem = filterProducts.slice(indexOfFirstItem, indexOfLastItem )
-
-  //const totalPages = Math.ceil(filterProducts.length / pagination.totalProduct)  //12 item / 3 itemPerPage = 4 pages we have  if the result 3.4 the ceil become equal 4
- 
  //  pagination logic 3
  const handlePageChange =(page: number) =>
  {
@@ -133,17 +101,11 @@ const StoreProduct = () => {
 
 
  const handleAddToCart = (products:Product)=> {
-
-  console.log(products);
   dispatch(addToCart(products))
  }
 
  //to display number of page between next and prev button
  let buttonPageNumber = []
-//  for (let pageNumber = 2 ; pageNumber <= totalPages -1 ; pageNumber++){
-//   buttonPageNumber.push
-//   (<button onClick={()=>{handlePageChange(pageNumber)}}>{pageNumber}</button>)
-//  }
 for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
   buttonPageNumber.push
   (<button onClick={()=>{handlePageChange(pageNumber)}}>{pageNumber}</button>)
@@ -153,8 +115,7 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
     <div>
       <div className="filter">
         <div>
-          {/* <Search searchTerm={search} handleSearch={handleSearch} /> */}
-          <Search searchTerm={searchTerm} handleSearch={handleSearch} />
+          <Search searchTerm={search} handleSearch={handleSearch} />
 
         </div>
         <div>
@@ -179,7 +140,7 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
                       name="price"
                       value={id}
                       onChange={() => {
-                        handelCheckPrice(id)
+                        handleCheckPrice(id)
                       }}
                     />
                     {name}
@@ -188,6 +149,7 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
               )
             })}
         </div>
+
         <div className='filterCategory'>
           <h2>Filter by Category</h2>
           {categoryArray.length > 0 &&
@@ -215,9 +177,9 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
       <div className="homePageRight">
         <h1 className="productTitle">best selling</h1>
 
-        {filterProducts.length > 0 ? (
+        {products.length > 0 ? (  
           <div className="productHome">
-            {filterProducts.map((product) => {
+            {products.map((product) => {
               const { _id, name, image, price } = product
               return (
                 
@@ -227,13 +189,12 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
                       <Link to={`/products/${name}/${_id}`}>
                         <span className="discount-tag">50% off</span>
                         {/* to store image on server src={`http://localhost:5050/${image}`} */}
-                        <img src={image} className="product-thumb" alt={name} />
+                        <img src={image as string} className="product-thumb" alt={name} />
                       </Link>
                       <div className="div-card-btn">
                         <FontAwesomeIcon icon={faBasketShopping} className="card-btn" onClick={()=>{handleAddToCart(product)}} />
                       </div>
                     </div>
-
                     <div className="product-info">
                       <h4 className="product-brand">{name}</h4>
                       <span className="price">{price} RS</span>
@@ -252,18 +213,12 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
            <button onClick={handlePrevPage}  disabled={currentPage === 1}>
            <FontAwesomeIcon icon={faArrowAltCircleLeft}  />
            </button>
-            {/* <button onClick={handlePrevPage}  disabled={pagination.currentPage === 1}>
-           <FontAwesomeIcon icon={faArrowAltCircleLeft}  />
-           </button> */}
          </div>
          <div key='numberPage'>
             {buttonPageNumber}
          </div>
          <div key='next'>
-           {/* <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-           <FontAwesomeIcon icon={faArrowAltCircleRight}  />
-           </button> */}
-             <button onClick={handleNextPage} disabled={pagination.currentPage === totalPages}>
+           <button onClick={handleNextPage} disabled={currentPage === pagination.totalPage}>
            <FontAwesomeIcon icon={faArrowAltCircleRight}  />
            </button>
          </div>
