@@ -8,12 +8,22 @@ import { faSignOut , faSignIn , faUser , faStore , faHome , faQuestionCircle } f
 
 import CartShopping from './CartShopping'
 import AdminSideBar from '../admin/AdminSideBar'
-import { logOutUser } from '../../redux/slices/user/userSlice'
+import { clearError, logOutUser } from '../../redux/slices/user/userSlice'
+import { useEffect } from 'react'
 
 function NavBar() {
-  const { isLoggedIn, userData } = useSelector((state: RootState) => state.usersReducer)
+  const { isLoggedIn, userData , error} = useSelector((state: RootState) => state.usersReducer)
   const {cartItem} = useSelector((state: RootState) => state.cartReducer)
   const dispatch: AppDispatch = useDispatch()
+
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
 
   const handleLogOut = () => {
     if (confirm("Are you sure to Sign Out!")) {

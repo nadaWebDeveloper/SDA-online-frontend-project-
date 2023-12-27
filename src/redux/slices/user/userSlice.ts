@@ -187,7 +187,7 @@ const initialState: userState = {
   users: [],
   error: null,
   isLoading: false,
-  isLoggedIn: dataReLoad.isLoggedIn,
+  isLoggedIn: dataReLoad.isLoggedIn || false,
   userData: dataReLoad.userData,
   searchTerm: '',
   ban: false,
@@ -267,7 +267,6 @@ export const userSlice = createSlice({
     builder.addCase(logOutUser.fulfilled, (state,action) => {
       state.isLoggedIn = false
       state.userData = null
-      console.log(action);
       alert(action.payload.message);
        //when log out reset data in local Storage 
        localStorage.setItem('loginData', JSON.stringify({
