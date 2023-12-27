@@ -9,3 +9,17 @@ export const prices =
     {id: 'range5', name: 'More than 1000 RS'},
 
 ]
+
+
+export const sorting =
+[
+    {sortNum: -1, sortName: 'price'},
+    {sortNum: 1, sortName: 'price' },
+    {sortNum: -1, sortName: 'name'},
+    {sortNum: 1, sortName: 'name' },
+     {sortNum: -1, sortName: 'createAt' },
+     {sortNum: 1, sortName: 'createAt' },
+     {sortNum: -1, sortName: 'updateAt' },
+     {sortNum: 1, sortName: 'updateAt' },
+
+]

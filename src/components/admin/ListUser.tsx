@@ -41,22 +41,10 @@ const ListUser = () => {
       dispatch(searchUser(inputValue))
     }
     
-    const searchUsers = searchTerm
-    ? users.filter((user) => user.firstName.toLowerCase().includes 
-    (searchTerm.toLowerCase()))
-    : users
-    ? users.filter((user) => user.lastName.toLowerCase().includes  
-    || user.email.toLowerCase().includes
-    (searchTerm.toLowerCase()))
-    : users
-    ? users.filter((user) =>  user.email.toLowerCase().includes 
-    (searchTerm.toLowerCase()))
-    : users
-
 
      const handleDelete = async(_id: string)=>{
       if(confirm("Are you sure to Delete user?")){
-            dispatch(deleteUser('987654'))
+            dispatch(deleteUser(_id))
       }else{
         return false;
     }}
@@ -87,7 +75,7 @@ const ListUser = () => {
 </div>
 
 <div className="contentUser"> 
-{searchUsers.length > 0 ? (   //{searchUsers.length > 0 ? (
+{users.length > 0 ? (   
   <div>
     <div className="tableDiv">
       <table>
@@ -100,7 +88,7 @@ const ListUser = () => {
           </tr>
         </thead>
         <tbody>
-          {searchUsers.map((user) => {
+          {users.map((user) => {
       let { _id,firstName,lastName,email,isAdmin, isBanned} = user
       if(user.isAdmin === false) {
             return (

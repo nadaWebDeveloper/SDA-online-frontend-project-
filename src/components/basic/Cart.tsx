@@ -10,7 +10,7 @@ const Cart = () => {
   const { cartItem } = useSelector((state: RootState) => state.cartReducer)
   const dispatch = useDispatch<AppDispatch>()
 
-  const handleDeleteCart = (id: number) => {
+  const handleDeleteCart = (id: string) => {
     if (confirm('Are you sure to delete item')) {
       dispatch(deleteFromCart(id))
     } else {
@@ -59,11 +59,11 @@ const Cart = () => {
               </thead>
               <tbody>
                 {cartItem.map((cartElement) => {
-                  const { id, name, image, price } = cartElement
+                  const { _id, name, image, price } = cartElement
                   return (
-                    <tr key={id}>
+                    <tr key={_id}>
                       <td>
-                      <img src={image}  alt={name}  className="productCartImage"/>{' '}
+                      <img src={image as string}  alt={name}  className="productCartImage"/>{' '}
                       </td>
                       <td>{name}</td>
                       <td>{price} RS</td>
@@ -72,7 +72,7 @@ const Cart = () => {
                           icon={faClose}
                           className="closeRightCart"
                           onClick={() => {
-                            handleDeleteCart(id)
+                            handleDeleteCart(_id)
                           }}
                         />
                       </td>

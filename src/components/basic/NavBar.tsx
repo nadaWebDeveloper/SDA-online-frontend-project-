@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { logout } from '../../redux/slices/user/userSlice'
 import { AppDispatch, RootState } from '../../redux/store'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,6 +8,7 @@ import { faSignOut , faSignIn , faUser , faStore , faHome , faQuestionCircle } f
 
 import CartShopping from './CartShopping'
 import AdminSideBar from '../admin/AdminSideBar'
+import { logOutUser } from '../../redux/slices/user/userSlice'
 
 function NavBar() {
   const { isLoggedIn, userData } = useSelector((state: RootState) => state.usersReducer)
@@ -16,24 +16,22 @@ function NavBar() {
   const dispatch: AppDispatch = useDispatch()
 
   const handleLogOut = () => {
-
     if (confirm("Are you sure to Sign Out!")) {
-      dispatch(logout())
+      dispatch(logOutUser())
     } else {
       false    }
-   
   }
+
   return (
     <div className='navBar'> 
       <nav>
        <ul>
         {/* for user  */}
-      {isLoggedIn && userData?.role === 'user' &&
+      {isLoggedIn === true && userData?.isAdmin === false &&
    <>
        <li>
    <Link to="/" >
    <FontAwesomeIcon icon={faHome} className="" />
-     {/* Home{' '} */}
    </Link>
  </li>
  <li>
@@ -44,12 +42,10 @@ function NavBar() {
  <li>
   <Link to="/aboutMe" >
   <FontAwesomeIcon icon={faQuestionCircle} className="" />
-     {/* About Me{' '} */}
    </Link>
  </li>
     <li>
-      <Link to={`/dashboard/${userData?.role}`} >
-        {/* {userData?.role }{' '} */}
+      <Link to={`/dashboard/${userData && userData?.isAdmin ?'admin':'user'}`} >
         <FontAwesomeIcon icon={faUser} className="" />
       </Link>
     </li>
@@ -65,9 +61,9 @@ function NavBar() {
     </li>
   </>
  
- }
+  } 
  {/* for admin navbar */}
- {isLoggedIn && userData?.role === 'admin' &&   <>  
+ {isLoggedIn === true && userData?.isAdmin === true  &&   <>  
  <li>
  <Link to="/" onClick={handleLogOut} >
  <FontAwesomeIcon icon={faSignOut} className="navbarLogOutAdmin" /> 
@@ -79,24 +75,21 @@ function NavBar() {
 </>}
 
 {/* for any visitor */}
- {!isLoggedIn && userData?.role !== 'user' && userData?.role !== 'admin' &&(
+ {isLoggedIn === false && 
    <>
     <li>
    <Link to="/" >
    <FontAwesomeIcon icon={faHome} className="" />
-     {/* Home{' '} */}
    </Link>
  </li>
  <li>
   <Link to="/storeProducts" >
   <FontAwesomeIcon icon={faStore} className="" />
-    {/* Store{' '} */}
   </Link>
  </li>
  <li>
    <Link to="/aboutMe" >
    <FontAwesomeIcon icon={faQuestionCircle} className="" />
-     {/* About Me{' '} */}
   </Link>
  </li>
  <li>
@@ -110,7 +103,8 @@ function NavBar() {
  </Link>
  </li>
    </>
- )}
+
+     } 
        </ul>
       </nav>
       </div>

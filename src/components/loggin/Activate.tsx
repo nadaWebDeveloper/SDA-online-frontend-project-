@@ -1,15 +1,18 @@
 import { useNavigate, useParams } from "react-router"
 import jwtDecode  from "jwt-decode";
+import axios from 'axios';
 
 import { activateUser } from "../../redux/slices/user/userSlice";
 
 
 function Activate() {
+
+  interface DecodedToken {
+    firstName: string;
+  }
     const {token} = useParams()
     const navigate = useNavigate()
-    const decoded = jwtDecode(String(token),{ header: true });
-    console.log('decoded',decoded);
-    console.log('token',token);
+    const decoded = jwtDecode(String(token)) as DecodedToken ;
 
     const handleActivate = async() => {
 try {
@@ -17,14 +20,14 @@ try {
   alert(response.message);
     navigate('/login')
 } catch (error) {
-  console.log(error.response.data.message);
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
+    alert(error.response?.data?.msg)
+  }
 }
-
     }
   return (
     <div className="sectionAdmin">
-      {/* {decoded.name} */}
-        <h2>Welcome {decoded.firstName}! click the button to Activate your account</h2>
+        <h2>Welcome <span className="colorName">{decoded.firstName}</span>!  click the button to Activate your account</h2>
         <button onClick={handleActivate}>Activate</button>
     </div>
   )

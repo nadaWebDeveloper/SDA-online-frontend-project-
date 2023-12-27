@@ -4,63 +4,92 @@ import { Link } from 'react-router-dom'
 
 import { AppDispatch, RootState } from '../../redux/store'
 import {
-  baseURL,
   clearError,
   deleteProduct,
   fetchProducts,
+  sortProducts,
 } from '../../redux/slices/products/productSlice'
 
-import SortProducts from './SortProducts'
 import Search from '../Filtering/Search'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faDeleteLeft, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faDeleteLeft, faEdit, faArrowAltCircleLeft, faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
+import Sort from '../Filtering/Sort'
+
 
 
 const Products = () => {
-  const { products, isLoading, error, searchTerm } = useSelector(
+  const { products, error, searchTerm , pagination } = useSelector(
     (state: RootState) => state.productsReducer
   )
-  const { categoryArray } = useSelector(
-    (state: RootState) => state.categoriesReducer
-  )
 
-  const [product, setProduct] = useState([products]);
-const [search, setSearch] = useState('');
+  const optionArr = ['name', 'price', 'createAt', 'updateAt']
+
+ // const [product, setProduct] = useState([products]);
   const dispatch = useDispatch<AppDispatch>()
 
-  useEffect(() => {
-    dispatch(fetchProducts())
-  }, [])
+   //filter search 
+   const [search, setSearch] = useState(searchTerm);
+   //filter price 
+   const [filterPrice, setFilterPrice ] = useState('range0')
+   //current page
+   const [currentPage, setCurrentPage ] = useState(1) //1
+   //how item shown in one page in this case 3 item
+   const [itemPerPage] = useState(6)//3
+ 
+ const filterProduct = async () =>{
+   const inputPageApI = {page: currentPage,limit:itemPerPage , rangeId: filterPrice , search: search }
+     await dispatch(fetchProducts(inputPageApI))
+ }
+ 
+   useEffect(() => {
+     filterProduct()
+   }, [currentPage,itemPerPage ,filterPrice ,search])
+ 
 
   useEffect(() => {
     if(error){
    alert(error)
    setTimeout(()=>{
      dispatch(clearError())    
-         }, 1000)
-    }
+         }, 1000) }
 }, [error])
 
-  const handleSearch = async(event: ChangeEvent<HTMLInputElement>) => {
+
+   //  pagination logic 3
+ const handlePageChange =(page: number) =>
+ {
+  setCurrentPage( page )
+ }
+
+ const handleNextPage =() =>
+  {
+  setCurrentPage( currentPage + 1 )
+ }
+
+ const handlePrevPage =() =>
+ {
+  setCurrentPage( currentPage - 1 )
+ }
+
+
+ //to display number of page between next and prev button
+ let buttonPageNumber = []
+for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
+  buttonPageNumber.push
+  (<button onClick={()=>{handlePageChange(pageNumber)}}>{pageNumber}</button>)
+ }
+
+
+ const handleSearch = async(event: ChangeEvent<HTMLInputElement>) => {
+  const inputValue = event.target.value
+console.log(inputValue);  
+  setSearch(inputValue)
+}
+  const handleSortChange =async (event: ChangeEvent<HTMLSelectElement>) => {
     const inputValue = event.target.value
-    setSearch(inputValue)
-    //dispatch(searchProduct(inputValue))
-    // try {
-    //  const response = await searchedProduct(search)
-    //  console.log('response',response.data.payload.products.allProductOnPage);
-    //  setProduct(response.data.payload.products.allProductOnPage)
-    //    return response.data.payload.products.allProductOnPage
-    // } catch (error) {
-      
-    // }
- 
+    dispatch(sortProducts(inputValue))
   }
-
-  const searchProducts = searchTerm
-    ? products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    : products
-
   const handleDeleteProduct = (_id: string) => {
     if (confirm('Are you sure to Delete Product')) {
       dispatch(deleteProduct({_id}))
@@ -70,25 +99,18 @@ const [search, setSearch] = useState('');
     }
   }
 
-  const getCategoryNameById = (categoryId: string) => {
-    const category = categoryArray.find((categoryTable) => categoryTable._id === categoryId)
-    const categoryName = !category ? 'Not Found' : category.name
-    return categoryName
-  }
-
- 
-
   return (
     <div>
-      {products.length > 0 ? (      //{searchProducts.length > 0 ? (
-        <div>
-          <div className="filter">
+      <div>
+      <div className="filter">
             <Search searchTerm={search} handleSearch={handleSearch} />
-            {/* <Search searchTerm={searchTerm} handleSearch={handleSearch} /> */}
-            <SortProducts />
+            <div>
+          <Sort optionArr={optionArr} handleSortChange={handleSortChange} />
+        </div>
           </div>
-
-
+      </div>
+      {products.length > 0 ? (     
+        <div>
           <div id="Product" className="homePage">
           <Link to="/dashboard/admin/addProduct">
             <FontAwesomeIcon icon={faAdd} className="addProduct" />
@@ -102,7 +124,7 @@ const [search, setSearch] = useState('');
                     <div >
                       <div className="product-imageAdmin">
                         <span className="discount-tag">50% off</span>
-                        <img src={image} className="product-thumb" alt={name} />
+                        <img src={image as string} className="product-thumb" alt={name} />
                         <div className="">
                           <FontAwesomeIcon
                             icon={faDeleteLeft}
@@ -134,16 +156,27 @@ const [search, setSearch] = useState('');
                         <br />
                         <b>{description}</b>
                         <br />
-                        {/* <p>categories: {product.categories.length > 0  ? product.categories.map((category) => category.name).join(' || '): 'No categories'}</p> */}
-                        {/* <p>{product.categories &&
-                         product.categories
-                         .map((categoryId) => getCategoryNameById(categoryId))
-                         .join(' || ')}</p> */}
                       </div>
                     </div>
                   </div>
                 )
               })}
+           {/* pagination logic 1*/}
+         <div className='pagination'>
+         <div key='prev'>
+           <button onClick={handlePrevPage}  disabled={currentPage === 1}>
+           <FontAwesomeIcon icon={faArrowAltCircleLeft}  />
+           </button>
+         </div>
+         <div key='numberPage'>
+            {buttonPageNumber}
+         </div>
+         <div key='next'>
+           <button onClick={handleNextPage} disabled={currentPage === pagination.totalPage}>
+           <FontAwesomeIcon icon={faArrowAltCircleRight}  />
+           </button>
+         </div>
+       </div>
             </div>
           </div>
         </div>

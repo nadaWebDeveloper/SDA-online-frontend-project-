@@ -1,37 +1,37 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import api from '../../../api'
+import axios from 'axios'
+import { Product } from '../products/productSlice';
 
-export const fetchOrders = createAsyncThunk('users/fetchOrders', async() =>
+export const fetchOrders = createAsyncThunk('orders/fetchOrders', async(_, { rejectWithValue }) =>
 {
   try {
-    const response = await api.get('/mock/e-commerce/orders.json')
-      // checking there is any issue with network
+    const response = await axios.get('/mock/e-commerce/orders.json')
       if (!response) {
         throw new Error('Network response error');
       }
     return response.data
-  } 
-  
+    } 
   catch (error) {
-    //checking if there is any issue when fetch process
-  console.log(error) 
+    return rejectWithValue(error)
   }
 })
 
 
 export type order = {
-  id: number
-  productId: number,
-  userId: number,
-  purchasedAt: string
+  _id: string
+  products: Product[]
+  // payment: IOrderPayment
+  // user: mongoose.Schema.Types.ObjectId
+  status: 'pending' | 'shipping' | 'shipped' | 'delivered' | 'canceled'
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export type ordersState = {
   orders: order[]
   error: null | string
   isLoading: boolean
- 
 }
 
 const initialState: ordersState = {
@@ -61,15 +61,13 @@ export const ordersSlice = createSlice({
     },
 
     deleteOrder :(state, action) =>{
-
-      const filterCategory= state.orders.filter((order) => order.id !== action.payload)
+      const filterCategory= state.orders.filter((order) => order._id !== action.payload)
       state.orders = filterCategory
-
     },
     updateOrder: (state, action) => {
       const {id,name } = action.payload; 
       console.log(action.payload);
-        const orderExist = state.orders.find((category)=> category.id === id)
+      const orderExist = state.orders.find((category)=> category._id === id)
 }
 },
   extraReducers(builder){

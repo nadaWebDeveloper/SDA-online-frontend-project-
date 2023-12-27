@@ -1,73 +1,60 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import { AppDispatch } from '../../redux/store'
-import { updateProduct } from '../../redux/slices/products/productSlice'
+import { AppDispatch, RootState } from '../../redux/store'
+import { clearError, updatedProduct} from '../../redux/slices/products/productSlice'
 
 function EditProduct() {
+  const { error } = useSelector(
+    (state: RootState) => state.productsReducer
+  )
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const { state } = useLocation()
 
-  const [nameEditProduct, setNameEditProduct] = useState(state.name)
-  const [imageEditProduct, setImageEditProduct] = useState(state.image)
-  const [descriptionEditProduct, setDescriptionEditProduct] = useState(state.description)
-  const [categoriesEditProduct, setCategoriesEditProduct] = useState(state.categories)
-  const [variantsEditProduct, setVariantsEditProduct] = useState(state.variants)
-  const [sizesEditProduct, setSizesEditProduct] = useState(state.sizes)
-  const [priceEditProduct, setPriceEditProduct] = useState(state.price)
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)}
+}, [error])
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
+  const [product, setProduct] = useState({
+    name: state.name,
+    image:state.image,
+    description:state.description,
+    categories:state.categories[0]._id,
+    sold:state.sold,
+    quantity:state.quantity,
+    price:state.price
+  })
 
-    switch (name) {
-      case 'nameEditProduct':
-        setNameEditProduct(value)
-        break
-      case 'imageEditProduct':
-        setImageEditProduct(value)
-        break
-      case 'descriptionEditProduct':
-        setDescriptionEditProduct(value)
-        break
-      case 'categoriesEditProduct':
-        setCategoriesEditProduct(value)
-        break
-      case 'variantsEditProduct':
-        setVariantsEditProduct(value)
-        break
-      case 'sizesEditProduct':
-        setSizesEditProduct(value)
-        break
-      case 'priceEditProduct':
-        setPriceEditProduct(value)
-        break
-      default:
-        break
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const {value, name} = event.target
+    const {type} = event.target
+    if(type === 'file'){
+    const fileInput = (event.target as HTMLInputElement) || ''
+    setProduct((prevProduct) => {
+   return { ...prevProduct,[name]: fileInput.files?.[0].name}})
     }
-  }
+   else{
+  setProduct((prevProduct) => {
+    return { ...prevProduct,[name]:[value]}  })
+}
+}
 
-
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async(event: FormEvent) => {
     event.preventDefault()
 
     if (confirm('Are you sure to Edit Product')) {
-      const editProduct = {
-        id: state.id,
-        name: nameEditProduct,
-        image: imageEditProduct,
-        description: descriptionEditProduct,
-        categories: categoriesEditProduct,
-        variants: variantsEditProduct,
-        sizes: sizesEditProduct,
-        price: priceEditProduct
-      }
-
-      dispatch(updateProduct(editProduct))
-      console.log(editProduct)
-      navigate('/dashboard/admin/products')
-      alert('success edit  product')
+      const formData = new FormData(event.currentTarget as HTMLFormElement)
+       const id: string = state._id
+       const input = {id,formData}
+       dispatch(updatedProduct(input))
+        navigate('/dashboard/admin/products')
+  
     } else {
       return false
     }
@@ -78,76 +65,76 @@ function EditProduct() {
       <div className="mainContentCategory">
         <h2 className="titleCategory">Edit Product</h2>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="nameEditProduct"></label>
+          <label htmlFor="name"></label>
           <div className="inputField">
             <input
               type="text"
               placeholder="Name"
-              name="nameEditProduct"
-              value={nameEditProduct}
-              onChange={handleInputChange}
+              name="name"
+              value={product.name}
+              onChange={handleChange}
             />
           </div>
 
-          <label htmlFor="imageEditProduct"></label>
+          <label htmlFor="image"></label>
           <div className="inputField">
             <input
-              type="text"
-              name="imageEditProduct"
-              placeholder="Image URL"
-              value={imageEditProduct}
-              onChange={handleInputChange}
+              type="file"
+              name="image"
+              placeholder="Image"
+              accept='image/*'
+              onChange={handleChange}
             />
           </div>
 
-          <label htmlFor="descriptionEditProduct"></label>
+          <label htmlFor="description"></label>
           <div className="inputField">
             <input
               type="text"
-              name="descriptionEditProduct"
+              name="description"
               placeholder="Description"
-              value={descriptionEditProduct}
-              onChange={handleInputChange}
+              value={product.description}
+              onChange={handleChange}
             />
           </div>
-          <label htmlFor="categoriesEditProduct"></label>
+          <label htmlFor="categories"></label>
           <div className="inputField">
             <input
               type="text"
-              name="categoriesEditProduct"
+              name="categories"
               placeholder="Categories"
-              value={categoriesEditProduct}
-              onChange={handleInputChange}
+              value={product.categories}
+              onChange={handleChange}
             />
           </div>
-          <label htmlFor="variantsEditProduct"></label>
+          <label htmlFor="quantity"></label>
           <div className="inputField">
             <input
-              type="text"
-              name="variantsEditProduct"
-              placeholder="Variants"
-              value={variantsEditProduct}
-              onChange={handleInputChange}
+              type="number"
+              name="quantity"
+              placeholder="Quantity"
+              value={product.quantity}
+              onChange={handleChange}
             />
           </div>
-          <label htmlFor="priceEditProduct"></label>
+          <label htmlFor="price"></label>
           <div className="inputField">
             <input
-              type="text"
-              name="priceEditProduct"
+              type="number"
+              name="price"
               placeholder="Price"
-              value={priceEditProduct}
-              onChange={handleInputChange}
+              value={product.price}
+              onChange={handleChange}
             />
           </div>
-          <label htmlFor="sizesEditProduct"></label>
+          <label htmlFor="sold"></label>
           <div className="inputField">
             <input
-              type="text"
-              name="sizesEditProduct"
-              placeholder="Sizes"
-              value={sizesEditProduct}
-              onChange={handleInputChange}
+              type="number"
+              name="sold"
+              placeholder="Sold"
+              value={product.sold}
+              onChange={handleChange}
             />
           </div>
 

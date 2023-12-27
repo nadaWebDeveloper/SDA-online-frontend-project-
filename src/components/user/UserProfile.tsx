@@ -1,33 +1,35 @@
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 import useUserState from "../Hooks/useUserState";
-
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { clearError } from "../../redux/slices/user/userSlice";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
 import profilePicture from '../../profilePicture.jpg';
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
-import { useEffect } from "react";
-import { SingleUser, fetchUser } from "../../redux/slices/user/userSlice";
+
 
 
 
 const UserProfile = () => {
 
 const navigate = useNavigate()
-const {userData} = useUserState()
+const {userData, error} = useUserState()
 const {_id, firstName, lastName, email  } = userData || {};
 
-//const dispatch = useDispatch<AppDispatch>()
+ const dispatch = useDispatch<AppDispatch>()
 
-
-// useEffect(() => {
-//   const ID = String(_id)
-//   dispatch(SingleUser(ID))
-//   fetchUser()
-// }, [])
+ useEffect(() => {
+  if(error){
+ alert(error)
+ setTimeout(()=>{
+   dispatch(clearError())    
+       }, 1000)
+  }
+}, [error])
 
   const handleClick = () => {
     navigate('/dashboard/user');

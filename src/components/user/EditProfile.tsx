@@ -1,14 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../redux/store'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes, faEdit } from '@fortawesome/free-solid-svg-icons'
-import { updateUser } from '../../redux/slices/user/userSlice'
+import { clearError, updateUser } from '../../redux/slices/user/userSlice'
+import useUserState from '../Hooks/useUserState'
 
 const EditProfile = () => {
+  const {error} = useUserState()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { state } = useLocation()
@@ -19,6 +21,15 @@ const EditProfile = () => {
     lastName:state.lastName,
     email:state.email,
   })
+
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name: nameInput, value: valueInput } = event.target;
@@ -83,16 +94,6 @@ const EditProfile = () => {
                 onChange={handleInputChange}
               />
             </div>
-            {/* <div className="inputField">
-              <input
-                type="text"
-                name="password"
-                placeholder="password"
-                value={profile.password}
-                onChange={handleInputChange}
-              />
-            </div> */}
-
             <button type="submit">
               <FontAwesomeIcon icon={faEdit} />
             </button>

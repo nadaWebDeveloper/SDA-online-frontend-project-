@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom'
 
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../redux/store'
-import { fetchUser, logInUser } from '../../redux/slices/user/userSlice'
+import { clearError, logInUser } from '../../redux/slices/user/userSlice'
 
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import useUserState from '../Hooks/useUserState'
 
 const Login = ({ pathName = '' }: { pathName: string }) => {
-  const {userData, isLoggedIn} = useUserState()
+  const {userData, error} = useUserState()
 
   const dispatch = useDispatch<AppDispatch>() //generics "is the better and more commonly used way to declare the type when working with Redux Toolkit and TypeScript in a React application."
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -21,16 +21,21 @@ const Login = ({ pathName = '' }: { pathName: string }) => {
     password: ''
   })
 
-console.log(userData?.isAdmin);
-console.log(isLoggedIn);
   useEffect(() => {
     if(userData){
       navigate(
         pathName ? pathName: `/dashboard/${userData && userData.isAdmin ? 'admin' : 'user'}`
-        )
-
-    }
+        ) }
   }, [userData, navigate,pathName ])
+
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name: nameInput, value: valueInput } = event.target
@@ -50,13 +55,6 @@ console.log(isLoggedIn);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible)
-  }
-
-  const [buttonClicked, setButtonClicked] = useState(false)
-
-  const handleButtonClick = () => {
-    setButtonClicked(true)
-    // Any other logic you want to execute on button click
   }
 
   return (
@@ -88,7 +86,7 @@ console.log(isLoggedIn);
             <FontAwesomeIcon icon={isPasswordVisible ? faEye : faEyeSlash} />
           </span>
         </div>
-        <button onClick={handleButtonClick}>Sign In</button>
+        <button >Sign In</button>
       </form>
 
       <div>

@@ -1,7 +1,7 @@
 function Hero() {
   return (
     <div className="heroSectionHeader">
-      <h1>My Electronic Website</h1>
+      <h1>My garden Website</h1>
     </div>
   )
 }

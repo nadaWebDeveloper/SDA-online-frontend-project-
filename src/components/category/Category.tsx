@@ -3,14 +3,14 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 import { AppDispatch, RootState } from '../../redux/store'
-import { deleteCategory, fetchCategory } from '../../redux/slices/category/categorySlice'
+import { clearError, deleteCategory, fetchCategory } from '../../redux/slices/category/categorySlice'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { FaEdit } from 'react-icons/fa'
 
 const Category = () => {
-  const { categoryArray, isLoading, error } = useSelector(
+  const { categoryArray , error } = useSelector(
     (state: RootState) => state.categoriesReducer
   )
   const dispatch = useDispatch<AppDispatch>()
@@ -18,6 +18,15 @@ const Category = () => {
   useEffect(() => {
     dispatch(fetchCategory())
   }, [])
+
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
 
   const handleDelete = (_id: string) => {
     if (confirm('Are you sure to Delete Category?')) {
@@ -33,7 +42,6 @@ const Category = () => {
         <Link to="/dashboard/admin/addCategory">
           <FontAwesomeIcon icon={faAdd} className="addProduct" />
         </Link>
-
         {categoryArray.length > 0 ? (
           <div>
             <div className="tableDiv">
@@ -73,7 +81,12 @@ const Category = () => {
             </div>
           </div>
         ) : (
+          <>   
+          <Link to="/dashboard/admin/addCategory">
+          <FontAwesomeIcon icon={faAdd} className="addProduct" />
+         </Link>
           <h2>Not Add Category Yet ...</h2>
+          </>
         )}
       </div>
     </div>

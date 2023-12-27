@@ -35,8 +35,9 @@ export const fetchUser = createAsyncThunk('users/fetchUser', async(_, { rejectWi
    const response = await axios.get(`${baseURL}/users`)
    return response.data.allUsers
  } catch (error) {
-  return rejectWithValue(error)
- }
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
+    return rejectWithValue(error.response?.data?.msg)
+  } }
 })
 export const SingleUser = createAsyncThunk('users/SingleUser', async(id: string ,{rejectWithValue}) =>{
   try {
@@ -53,7 +54,13 @@ export const registerUser  = createAsyncThunk('users/registerUser', async (newUs
   const response = await  axios.post(`${baseURL}/users/register`,newUser)
   return response.data
  } catch (error) {
-  return rejectWithValue(error.response.data)
+  if(axios.isAxiosError(error) && error.response?.data?.errors){
+    const errorData = error.response.data.errors
+    return rejectWithValue(`${errorData.message}`)
+  }
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
+    return rejectWithValue(error.response?.data?.msg)
+  }
  }
 })
 export const logInUser  = createAsyncThunk('users/logInUser', async (user:Partial<user> , {rejectWithValue}) =>{
@@ -65,24 +72,43 @@ export const logInUser  = createAsyncThunk('users/logInUser', async (user:Partia
    })
    return response.data
  } catch (error) {
-  return rejectWithValue(error)
- }
+  if(axios.isAxiosError(error) && error.response?.data?.errors){
+    const errorData = error.response.data.errors
+    return rejectWithValue(`${errorData.message}`)
+  }
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
+    return rejectWithValue(error.response?.data?.msg)
+  } }
 })
 export const logOutUser  = createAsyncThunk('users/logOutUser',async (_, { rejectWithValue }) =>{
   try {
      const response = await  axios.post(`${baseURL}/auth/logout`)
     return response.data
   } catch (error) {
-    return rejectWithValue(error)
-  }
+    if(axios.isAxiosError(error) && error.response?.data?.errors){
+      const errorData = error.response.data.errors
+      return rejectWithValue(`${errorData.message}`)
+    }
+    if(axios.isAxiosError(error) && error.response?.data?.msg){
+      return rejectWithValue(error.response?.data?.msg)
+    } 
+    if(axios.isAxiosError(error) && error.response?.data?.payload?.message){
+      return rejectWithValue(error.response?.data?.payload?.message)
+    }
+   }
 })
 export const deleteUser = createAsyncThunk('users/deleteUser', async (id: string, {rejectWithValue}) =>{
   try {
      await  axios.delete<user[]>(`${baseURL}/users/${id}`)
      return id
   } catch (error) {
-    return rejectWithValue(error.response.data.msg)
-  }
+    if(axios.isAxiosError(error) && error.response?.data?.errors){
+      const errorData = error.response.data.errors
+      return rejectWithValue(`${errorData.message}`)
+    }
+    if(axios.isAxiosError(error) && error.response?.data?.msg){
+      return rejectWithValue(error.response?.data?.msg)
+    }  }
 })
 export const blockedUser = createAsyncThunk('users/blockedUser', async (id: string, {rejectWithValue}) =>{
  try {
@@ -117,7 +143,7 @@ try {
  return rejectWithValue(error) 
 }
 })
-export const resetPassword = createAsyncThunk('users/resetPassword', async (data: object , {rejectWithValue}) =>{
+export const resetPassword = createAsyncThunk('users/resetPassword', async (data: {password:string , token: string | undefined} , {rejectWithValue}) =>{
 try {
     const response = await  axios.put(`${baseURL}/users/reset-password`,{
       password: data.password,
@@ -139,8 +165,13 @@ try {
    })
     return response.data
 } catch (error) {
-  return rejectWithValue(error)
-}
+  if(axios.isAxiosError(error) && error.response?.data?.errors){
+    const errorData = error.response.data.errors
+    return rejectWithValue(`${errorData.message}`)
+  }
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
+    return rejectWithValue(error.response?.data?.msg)
+  }}
 })
 export const activateUser  =  async (token: string) =>{
   try {

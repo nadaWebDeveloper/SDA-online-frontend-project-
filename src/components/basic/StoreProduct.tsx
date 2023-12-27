@@ -23,9 +23,10 @@ const StoreProduct = () => {
    
   //pagination  1- current page number 2- item per page 
   const { products, searchTerm  , pagination , error} = useSelector((state: RootState) => state.productsReducer)
+  console.log(searchTerm);
   const { categoryArray } = useSelector((state: RootState) => state.categoriesReducer)
   const dispatch = useDispatch<AppDispatch>()
-  const [checkedCategory, setCheckedCategory] = useState<string[]>([])
+  const [checkedCategory, setCheckedCategory] = useState<number[]>([])
   const optionArr = ['name', 'price']
 
   //filter search 
@@ -35,7 +36,7 @@ const StoreProduct = () => {
   //current page
   const [currentPage, setCurrentPage ] = useState(1) //1
   //how item shown in one page in this case 3 item
-  const [itemPerPage] = useState(3)//3
+  const [itemPerPage] = useState(6)//3
 
 const filterProduct = async () =>{
   const inputPageApI = {page: currentPage,limit:itemPerPage , rangeId: filterPrice , search: search }
@@ -65,7 +66,8 @@ const filterProduct = async () =>{
     dispatch(sortProducts(inputValue))
   }
 
-  const handelCheckCategory = (idCategory:string) => {
+  const handelCheckCategory = (idCategory:number) => {
+    console.log('idCategory',idCategory);
     if (checkedCategory.includes(idCategory)) {
       const filteredCategory = checkedCategory.filter((category) => category !== idCategory)
       setCheckedCategory(filteredCategory)
@@ -113,16 +115,10 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
   return (
     <div>
       <div className="filter">
-        <div>
           <Search searchTerm={search} handleSearch={handleSearch} />
-
-        </div>
-        <div>
           <Sort optionArr={optionArr} handleSortChange={handleSortChange} />
-        </div>
       </div>
 
-     <div className=''>  
       <div className="leftSideHome">
 
         <div className='filterPrice'>
@@ -161,7 +157,7 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
                       name="fiCategory"
                       value={name}
                       onChange={() => {
-                        handelCheckCategory(_id)
+                        handelCheckCategory(Number(_id))
                       }}
                     />
                     {name}
@@ -193,17 +189,14 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
                     </div>
                     <div className="product-info">
                       <h4 className="product-brand">{name}</h4>
-                      <span className="price">{price} RS</span>
-                      <span className="actual-price">2000 RS</span>
-                      {/* put button inside link cause it's create single page the path change by change product in router like /Home/product/{it change for every product}
-             single page  by id */}
+                      <span className="price">{price}RS</span>
+                      <span className="actual-price">2000RS</span>
                     </div>
                   </div>
                 </div>
               )
               
             })}
-               {/* pagination logic 1*/}
          <div className='pagination'>
          <div key='prev'>
            <button onClick={handlePrevPage}  disabled={currentPage === 1}>
@@ -226,9 +219,6 @@ for (let pageNumber = 2 ; pageNumber <= pagination.totalPage -1 ; pageNumber++){
           <h1>Not Add Products Yet ... </h1>
         )}
       </div>
-
-      </div>
-
     </div>
   )
 }

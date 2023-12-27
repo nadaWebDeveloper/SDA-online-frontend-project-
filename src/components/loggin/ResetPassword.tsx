@@ -6,16 +6,21 @@ import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { AppDispatch } from "../../redux/store";
 import { useDispatch } from "react-redux";
-import { resetPassword } from "../../redux/slices/user/userSlice";
+import { clearError, resetPassword } from "../../redux/slices/user/userSlice";
+import useUserState from "../Hooks/useUserState";
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
 
 
 function ResetPassword() {
 
+  interface DecodedToken {
+    firstName: string;
+  }
+    const {error} = useUserState()
     const {token} = useParams()
     const navigate = useNavigate()
-    const decoded = jwtDecode(String(token));
+    const decoded = jwtDecode(String(token)) as DecodedToken;
     const dispatch = useDispatch<AppDispatch>()
     const name = decoded.firstName
 
@@ -40,7 +45,17 @@ function ResetPassword() {
     useEffect(() => {
       setErrMsg('')
     }, [password, matchPwd])
-  
+     
+    useEffect(() => {
+      if(error){
+     alert(error)
+     setTimeout(()=>{
+       dispatch(clearError())    
+           }, 1000)
+      }
+  }, [error])
+
+
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -65,7 +80,6 @@ const handleSubmit = async (event: FormEvent) => {
     return
   }
   dispatch(resetPassword({password, token}))
-
   navigate('/login')
 
 }

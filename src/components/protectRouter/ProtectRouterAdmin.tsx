@@ -9,15 +9,9 @@ import Login from '../loggin/Login'
 const ProtectRouterAdmin = ({ children }:{ children:{} }) => {
   const pathLocationEveryUser = useLocation()
 
-  const { isLoggedIn, isLoading, userData } = useSelector((state: RootState) => state.usersReducer)
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
+  const { isLoggedIn, userData } = useSelector((state: RootState) => state.usersReducer)
 
-  if (!isLoggedIn) {
-    return <Link to="/login" />
-  }
-  return children && isLoggedIn && userData?.role === 'admin' ? (
+  return children && isLoggedIn && userData?.isAdmin === true ? (
     <Outlet />
   ) : (
     <Login pathName={pathLocationEveryUser.pathname} />

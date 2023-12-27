@@ -1,23 +1,51 @@
 import { useNavigate } from 'react-router'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import { createProduct } from '../../redux/slices/products/productSlice'
+import { clearError, createProduct } from '../../redux/slices/products/productSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '../../redux/store'
+import { fetchCategory } from '../../redux/slices/category/categorySlice'
 
 
 const AddProduct = () => {
 
+  const { error } = useSelector(
+    (state: RootState) => state.productsReducer
+  )
+  const { categoryArray } = useSelector(
+    (state: RootState) => state.categoriesReducer
+  )
   const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
   const [product, setProduct] = useState({
     name: '',
-    image:'',
+    image: undefined,
     description:'',
     categories:'',
-    sold:0,
-    quantity:0,
-    price:0
+    sold:'0',
+    quantity:'0',
+    price:'0'
   })
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+  useEffect(() => {
+    dispatch(fetchCategory())
+ if(categoryArray.length > 0) {  
+      setProduct((prevProduct) =>{
+      return{ ...prevProduct, ['categories'] : categoryArray[0]._id}
+    })}
+  }, [])
+
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {value, name} = event.target
     const {type} = event.target
     if(type === 'file'){
@@ -27,7 +55,7 @@ const AddProduct = () => {
     }
    else{
   setProduct((prevProduct) => {
-    return { ...prevProduct,[name]:[value]}  })
+    return { ...prevProduct,[name]:value}  })
 }
 }
 
@@ -35,35 +63,13 @@ const AddProduct = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     if(confirm("Are you sure to Add Product")){
-    const formData = new FormData(event.currentTarget)
-     try {
-      const response = await createProduct(formData)
-      alert(response.message);
-      navigate('/dashboard/admin/products')
-
-     } catch (error) {
-       const values = [...formData.values()]
-      const isEmpty = values.includes('')
-      if(isEmpty){
-        const errors = `
-        ${error.response.data.errors[0]}
-        ${error.response.data.errors[1]}
-        ${error.response.data.errors[2]}
-        ${error.response.data.errors[3]}
-        ${error.response.data.errors[4]}
-        ${error.response.data.errors[5]}
-       `
-      alert(errors);
-      }else{
-        alert(error.response.data.msg)
-      }
-     }
-   
+    const formData = new FormData(event.currentTarget as HTMLFormElement)
+   await dispatch(createProduct(formData))
+    navigate('/dashboard/admin/products')
     }else{
       return false;
     }
   }
-
 
   return (
     <div>
@@ -90,7 +96,6 @@ const AddProduct = () => {
             name="image"
             placeholder='Image'
             accept='image/*'
-            // value={product.image}
             onChange={handleChange}
           />
           </div>
@@ -147,7 +152,7 @@ const AddProduct = () => {
             onChange={handleChange}
           />
         </div>
-        
+       
         <button type="submit">Add Product</button>
       </form>
       </div>

@@ -13,7 +13,7 @@ export const baseURL =`http://localhost:5050`
   image?: string | undefined | File
   quantity: number
   sold: number
-  categories: category
+  categories: category | string
   description: string
   createAt?: Date
   updateAt?: Date
@@ -39,6 +39,8 @@ const dataReLoad = localStorage.getItem('products') !== null
 ? JSON.parse(String(localStorage.getItem('products')))
 : []
 
+
+
 //http://localhost:5050/products?page=3&rangeId=range4&limit=3&search=nada&sortName=price&sortNum=1
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async(data:{page: number ; limit: number, rangeId: string, search: string}, {rejectWithValue}) =>
 {
@@ -51,12 +53,14 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async(da
 } 
   
 catch (error) {
-  if(error.response.data.errors){
-    return rejectWithValue(error.response?.data?.errors)
+  if(axios.isAxiosError(error) && error.response?.data?.errors){
+    const errorData = error.response.data.errors
+    return rejectWithValue(`${errorData.message}`)
   }
-  if(error.response.data.msg){
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
     return rejectWithValue(error.response?.data?.msg)
-  } }
+  }
+}
 })
 export const SingleProducts = createAsyncThunk('products/SingleProducts', async(id: string ,{rejectWithValue}) =>{
 try {
@@ -72,10 +76,10 @@ export const createProduct =  createAsyncThunk('products/createProduct', async (
    const response = await  axios.post(`${baseURL}/products`,newData)
    return response.data
  } catch (error) {
-  if(error.response.data.errors){
+  if(axios.isAxiosError(error) && error.response?.data?.errors){
     return rejectWithValue(error.response?.data?.errors)
   }
-  if(error.response.data.msg){
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
     return rejectWithValue(error.response?.data?.msg)
   } }
 })
@@ -95,10 +99,10 @@ export const updatedProduct = createAsyncThunk('products/updatedProduct', async 
    const response = await  axios.put(`${baseURL}/products/${ newData.id}`, newData.formData)
    return response.data
  } catch (error) {
-  if(error.response.data.errors){
+  if(axios.isAxiosError(error) && error.response?.data?.errors){
     return rejectWithValue(error.response.data.errors)
   }
-  if(error.response.data.msg){
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
     return rejectWithValue(error.response.data.msg)
   }
  }
@@ -111,10 +115,7 @@ export const searchedProduct = createAsyncThunk('users/searchedProduct', async (
    return rejectWithValue(error)
   }
  })
-export const sortedProduct =  async (sortName: string) =>{
-  const response = await  axios.get(`${baseURL}/products?sortName=${sortName}&sortNum=1`)
-  return response.data.payload.products.allProductOnPage
-}
+
 
 
 const initialState: ProductState = {
@@ -168,15 +169,20 @@ export const productSlice = createSlice({
         limit : limit,
         page: page,              
       }
+
+      if(state.searchTerm){
+        state.searchTerm = action.payload.allProductOnPage
+      }
+ 
       state.isLoading = false
     })
     builder.addCase(createProduct.fulfilled, (state,action) => {
       try {
-       state.products.push(action.payload.newProduct) 
+       state.products.push(action.payload.payload) 
        const msg = action.payload.message
        alert(msg)
       } catch (error) {
-       console.log(error);
+       throw(error);
       }
      }) 
     builder.addCase(updatedProduct.fulfilled, (state,action) => {

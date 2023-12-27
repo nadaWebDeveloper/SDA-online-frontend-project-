@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from "../../redux/store"
 
 const AdminOrder=() => {
 
-  const { orders, isLoading, error } = useSelector((state: RootState) => state.orderReducer)
+  const { orders} = useSelector((state: RootState) => state.orderReducer)
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
@@ -24,18 +24,11 @@ const AdminOrder=() => {
   }
 
   }
-
-  if (isLoading) {
-    return <h1>loading ...</h1>
-  }
-  if (error) {
-    return <h1>{error}</h1>
-  }
   
   return (
 
 <div className="mainContent"> 
-{orders.length > 0 ? (
+{/* {orders.length > 0 ? (
   <div>
     <div className="tableDiv">
       <table>
@@ -69,7 +62,7 @@ const AdminOrder=() => {
     </div>
    
   </div>
-) :(<h2>Not Add orders Yet ... </h2>) }
+) :(<h2>Not Add orders Yet ... </h2>) } */}
  </div>  
 
  )

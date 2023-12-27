@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, RootState } from '../../redux/store'
-import { SingleProducts, baseURL, clearError, fetchProducts } from '../../redux/slices/products/productSlice'
+import { SingleProducts, clearError } from '../../redux/slices/products/productSlice'
 
 import { faClose, faBasketShopping, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -24,7 +24,6 @@ const ProductDetails = () => {
   useEffect(() => {
       const ID = String(id)
       dispatch(SingleProducts(ID))
-      fetchProducts()
   }, [])
 
   useEffect(() => {
@@ -60,7 +59,7 @@ const ProductDetails = () => {
             />
             <div className="poster">
               <img
-                src={singlePageProduct.image}
+                src={singlePageProduct.image as string}
                 alt={singlePageProduct.name}
                 className="product-thumb"
               />
@@ -76,11 +75,8 @@ const ProductDetails = () => {
 
           <p className="categoryDetail">
           Categories:
-            {/* {singlePageProduct.categories &&
-              singlePageProduct.categories.map((categoryId: string) => getCategoryNameById(categoryId)).join(' || ')} */}
-           {/* <p>{singlePageProduct.categories  ? singlePageProduct.categories.map((category) => category.name).join(' || '): 'No categories'}</p> */}
-           {/* {singlePageProduct.categories.name } */}
-
+            {Array.isArray(singlePageProduct.categories)  &&
+              singlePageProduct.categories.map((categoryId: string) => getCategoryNameById(categoryId)).join(' || ')}
           </p>
 
           <p className="sizeDetail">

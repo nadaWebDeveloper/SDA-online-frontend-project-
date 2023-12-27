@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-// axios.defaults.withCredentials = true
 
 
  const baseURL =`http://localhost:5050`
@@ -13,30 +12,6 @@ export type category = {
   __v: number
 }
 
-export const fetchCategory = createAsyncThunk('categories/fetchCategory', async() =>
-{
-    const response = await axios.get(`${baseURL}/categories`)
-    return response.data.payload.allCategoriesOnPage
-})
-export const createCategory = createAsyncThunk('categories/createCategory', async(category:Partial<category> ) =>
-{
-  const response = await  axios.post(`${baseURL}/categories`,{name: category.name})
-   return response.data
-})
-export const deleteCategory = createAsyncThunk('categories/deleteCategory', async(id:string) =>
-{
-  const response = await  axios.delete(`${baseURL}/categories/${id}`)
-  return id
-})
-export const updateCategory = createAsyncThunk('categories/updateCategory', async(category:Partial<category> ) =>
-{
-  const id =category._id
-  const response = await  axios.put(`${baseURL}/categories/${id}`,{name:category.name})
-  return response.data
-})
-
-
-
 export type categoryState = {
   categoryArray: category[]
   error: null | string
@@ -46,6 +21,54 @@ export type categoryState = {
   // ... any other state properties
 }
 
+export const fetchCategory = createAsyncThunk('categories/fetchCategory', async(_, { rejectWithValue }) =>
+{
+   try {
+     const response = await axios.get(`${baseURL}/categories`)
+     return response.data.payload.allCategoriesOnPage
+   } catch (error) {
+    return rejectWithValue(error)
+   }
+})
+export const createCategory = createAsyncThunk('categories/createCategory', async(category:Partial<category> , {rejectWithValue}) =>
+{
+  try {
+    const response = await  axios.post(`${baseURL}/categories`,{name: category.name})
+     return response.data
+  } catch (error) {
+    if(axios.isAxiosError(error) && error.response?.data?.errors){
+      const errorData = error.response.data.errors
+      return rejectWithValue(`${errorData.message}`)
+    }
+    if(axios.isAxiosError(error) && error.response?.data?.msg){
+      return rejectWithValue(error.response?.data?.msg)
+    }
+  }
+})
+export const deleteCategory = createAsyncThunk('categories/deleteCategory', async(id:string, {rejectWithValue}) =>
+{
+ try {
+   await  axios.delete(`${baseURL}/categories/${id}`)
+   return id
+ } catch (error) {
+  return rejectWithValue(error)
+ }
+})
+export const updateCategory = createAsyncThunk('categories/updateCategory', async(category:Partial<category>, {rejectWithValue} ) =>
+{
+ try {
+   const id = category._id
+   const response = await  axios.put(`${baseURL}/categories/${id}`,{name:category.name})
+   return response.data
+ } catch (error) {
+  if(axios.isAxiosError(error) && error.response?.data?.errors){
+    const errorData = error.response.data.errors
+    return rejectWithValue(`${errorData.message}`)
+  }
+  if(axios.isAxiosError(error) && error.response?.data?.msg){
+    return rejectWithValue(error.response?.data?.msg)
+  } }
+})
 
 const data= localStorage.getItem('categories') !== null 
 ? JSON.parse(String(localStorage.getItem('categories')))
@@ -70,6 +93,9 @@ export const categorySlice = createSlice({
       state.isLoading = false
       state.categoryArray = action.payload
     },
+    clearError: (state) => {
+      state.error= null
+    },
     sortCategoryByName: (state, action) => {
 
       const sortCategory = action.payload
@@ -85,9 +111,7 @@ export const categorySlice = createSlice({
     })
     builder.addCase(createCategory.fulfilled, (state,action) => {
      try {
-      state.categoryArray.push(action.payload.payload )
-      // localStorage.setItem('categories', JSON.stringify(state.categoryArray))
-      // state.categoryData =action.payload
+      state.categoryArray.push(action.payload.payload)
       const msg = action.payload.message
       alert(msg)
      } catch (error) {
@@ -99,9 +123,9 @@ export const categorySlice = createSlice({
       state.isLoading = false
     }) 
      builder.addCase(updateCategory.fulfilled, (state,action) => {
-      const {id , name} = action.payload
-      const foundCategory = state.categoryArray.find((category) =>category._id === id)
-      if(foundCategory){
+      const {_id , name} = action.payload
+      const foundCategory = state.categoryArray.find((category) =>category._id === _id)
+      if(foundCategory && name){
         foundCategory.name = name
       }
       const msg = action.payload.message
@@ -121,7 +145,7 @@ export const categorySlice = createSlice({
       })
   }
 })
-export const { sortCategoryByName, categoryRequest, categoriesSuccess } = categorySlice.actions
+export const { sortCategoryByName, categoryRequest, categoriesSuccess , clearError} = categorySlice.actions
 
 export default categorySlice.reducer
 

@@ -1,13 +1,13 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch} from 'react-redux'
-import { useNavigate } from 'react-router'
 
 import { AppDispatch} from '../../redux/store'
-import { fetchUser, registerUser } from '../../redux/slices/user/userSlice'
+import { clearError, fetchUser, registerUser } from '../../redux/slices/user/userSlice'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes, faInfoCircle , faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import useUserState from '../Hooks/useUserState'
 
 
 
@@ -17,8 +17,8 @@ const EMAIL_REGEX = /^[\w-\._\+%]+@(?!(live|hotmail|outlook|aol|yahoo|rocketmail
 
 const Register = () => {
 
+  const {error} = useUserState()
   const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
 
   const [register, setRegister] = useState({
     firstName: '',
@@ -51,6 +51,14 @@ const Register = () => {
     dispatch(fetchUser())
   }, [])
 
+  useEffect(() => {
+    if(error){
+   alert(error)
+   setTimeout(()=>{
+     dispatch(clearError())    
+         }, 1000)
+    }
+}, [error])
 
   useEffect(() => {
     setValidName(USER_REGEX.test(register.firstName))

@@ -1,4 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react"
+import { useNavigate } from "react-router"
+
 import { AppDispatch } from "../../redux/store"
 import { useDispatch } from "react-redux"
 import { forgetPassword } from "../../redux/slices/user/userSlice"
@@ -6,6 +8,7 @@ import { forgetPassword } from "../../redux/slices/user/userSlice"
 function ForgetPassword() {
 
      const [email, setEmail] = useState('')
+     const navigate = useNavigate()
      const dispatch = useDispatch<AppDispatch>() 
 
      const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -14,13 +17,14 @@ function ForgetPassword() {
       }
       const handleSubmit = async (event: FormEvent) => {
         event.preventDefault()
-      console.log('email',email);
         dispatch(forgetPassword(email))
+        navigate('/login')
+
       }
 
   return (
     <div className="sectionAdmin">
-        ForgetPassword
+        Forget Password
         <form action="" onSubmit={handleSubmit}>
         <div className="inputField">
           <input
